@@ -20,29 +20,48 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:'Segoe UI',Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink-dark);position:relative;min-height:100vh;}
 
-  /* ---------- Background ---------- */
-  /* Tiled line-art of packaging/glass containers (bottle, jar, tumbler, mug,
-     wine glass, plate) in the Kandil brand colours, at low opacity — the
-     same treatment used on the Packaging Request Form, adapted here.
-     Self-contained inline SVG so it always renders, even offline. */
+  /* ---------- Dynamic background ---------- */
+  /* Soft brand-colour blobs that slowly drift, plus a couple of faint glass-jar
+     silhouettes (drawn in CSS/SVG — no external image, so it always renders,
+     even offline) to keep the packaging theme without using a stock photo. */
   body::before{
     content:"";
-    position:fixed; inset:0; z-index:-1;
-    background:#fff url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iNjQwIiB2aWV3Qm94PSIwIDAgNjQwIDY0MCI+PGRlZnM+CjxnIGlkPSJib3R0bGUiPjxwYXRoIGQ9Ik0tMjIgNjBWLTEwUS0yMiAtMjQgLTEwIC0zMFYtNzBIMTBWLTMwUTIyIC0yNCAyMiAtMTBWNjBRMjIgNjggMTQgNjhILTE0US0yMiA2OCAtMjIgNjBaIi8+PHBhdGggZD0iTS0xMiAtNFY1MCIgZmlsbD0ibm9uZSIvPjwvZz4KPGcgaWQ9ImphciI+PHJlY3QgeD0iLTMwIiB5PSItNTIiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxNCIgcng9IjQiLz48cGF0aCBkPSJNLTI2IC0zOEgyNlEzNCAtMzAgMzQgLTE2VjQ0UTM0IDU0IDI0IDU0SC0yNFEtMzQgNTQgLTM0IDQ0Vi0xNlEtMzQgLTMwIC0yNiAtMzhaIi8+PHBhdGggZD0iTS0yMiAtMTRWMzgiIGZpbGw9Im5vbmUiLz48L2c+CjxnIGlkPSJ0dW1ibGVyIj48cGF0aCBkPSJNLTI4IC01MEgyOEwyMiA1MFEyMiA1NiAxNiA1NkgtMTZRLTIyIDU2IC0yMiA1MFoiLz48cGF0aCBkPSJNLTE2IC0zMEwtMTIgMzYiIGZpbGw9Im5vbmUiLz48L2c+CjxnIGlkPSJtdWciPjxwYXRoIGQ9Ik0tMjggLTM2SDI0VjMwUTI0IDQwIDE0IDQwSC0xOFEtMjggNDAgLTI4IDMwWiIvPjxwYXRoIGQ9Ik0yNCAtMjJIMzZRNDYgLTIyIDQ2IC04VjZRNDYgMjAgMzQgMjBIMjQiIGZpbGw9Im5vbmUiLz48L2c+CjxnIGlkPSJ3aW5lIj48cGF0aCBkPSJNLTI0IC01MEgyNFEyNiAtMTAgMCA0US0yNiAtMTAgLTI0IC01MFoiLz48cGF0aCBkPSJNMCA0VjQ0TS0xNiA0OEgxNiIgZmlsbD0ibm9uZSIvPjwvZz4KPGcgaWQ9InBsYXRlIj48Y2lyY2xlIHI9IjQ0Ii8+PGNpcmNsZSByPSIzMCIgZmlsbD0ibm9uZSIvPjwvZz4KPC9kZWZzPjxnIGZpbGwtb3BhY2l0eT0iLjEwIiBzdHJva2Utb3BhY2l0eT0iLjM4IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48dXNlIGhyZWY9IiNib3R0bGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkwIDExMCkgcm90YXRlKC0xMikiIGZpbGw9IiM0RkM2Q0IiIHN0cm9rZT0iIzRGQzZDQiIvPjx1c2UgaHJlZj0iI2phciIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzAwIDkwKSByb3RhdGUoOCkiIGZpbGw9IiNENzE2NzIiIHN0cm9rZT0iI0Q3MTY3MiIvPjx1c2UgaHJlZj0iI3dpbmUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUyMCAxNTApIHJvdGF0ZSgtOCkiIGZpbGw9IiNGQUJCMTUiIHN0cm9rZT0iI0ZBQkIxNSIvPjx1c2UgaHJlZj0iI211ZyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTUwIDM0MCkgcm90YXRlKDEwKSIgZmlsbD0iI0I5RDUzMiIgc3Ryb2tlPSIjQjlENTMyIi8+PHVzZSBocmVmPSIjcGxhdGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQwMCAzMzApIHJvdGF0ZSgwKSIgZmlsbD0iIzRGQzZDQiIgc3Ryb2tlPSIjNEZDNkNCIi8+PHVzZSBocmVmPSIjdHVtYmxlciIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTYwIDQ3MCkgcm90YXRlKDE0KSIgZmlsbD0iI0Q3MTY3MiIgc3Ryb2tlPSIjRDcxNjcyIi8+PHVzZSBocmVmPSIjYm90dGxlIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNjAgNTMwKSByb3RhdGUoMTUpIiBmaWxsPSIjQjlENTMyIiBzdHJva2U9IiNCOUQ1MzIiLz48dXNlIGhyZWY9IiNqYXIiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDYwIDU2MCkgcm90YXRlKC0xMCkiIGZpbGw9IiNGQUJCMTUiIHN0cm9rZT0iI0ZBQkIxNSIvPjwvZz48L3N2Zz4=") fixed;
-    background-size:640px 640px;
-    /* Static tile — continuous animation caused scroll lag on large pages */
+    position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(circle at 12% 18%, rgba(215,22,114,0.09), transparent 42%),
+      radial-gradient(circle at 88% 12%, rgba(250,187,21,0.11), transparent 46%),
+      radial-gradient(circle at 18% 88%, rgba(79,198,203,0.11), transparent 46%),
+      radial-gradient(circle at 92% 82%, rgba(185,213,50,0.11), transparent 42%),
+      var(--bg);
+    background-size:180% 180%;
+    animation:bgDrift 36s ease-in-out infinite alternate;
   }
-  body.dark-mode::before{
-    background-color:#1a1e26;
-    background-blend-mode:luminosity;
+  body::after{
+    content:"";
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    opacity:.05;
+    background-repeat:no-repeat;
+    background-position:-40px 60%, calc(100% + 60px) 8%;
+    background-size:220px 260px, 180px 210px;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 130'><path d='M30 10h40v14l8 10v86a6 6 0 0 1-6 6H28a6 6 0 0 1-6-6V34l8-10z' fill='none' stroke='%235B5B5C' stroke-width='3'/><line x1='24' y1='46' x2='76' y2='46' stroke='%235B5B5C' stroke-width='3'/></svg>"),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 130'><path d='M38 6h24v16c10 6 14 14 14 26v66a10 10 0 0 1-10 10H34a10 10 0 0 1-10-10V48c0-12 4-20 14-26z' fill='none' stroke='%235B5B5C' stroke-width='3'/></svg>");
+    animation:bgFloat 22s ease-in-out infinite alternate;
+  }
+  @keyframes bgDrift{
+    0%{background-position:0% 0%, 100% 0%, 0% 100%, 100% 100%, 0 0;}
+    100%{background-position:18% 14%, 82% 18%, 16% 82%, 84% 86%, 0 0;}
+  }
+  @keyframes bgFloat{
+    0%{background-position:-40px 60%, calc(100% + 60px) 8%;}
+    100%{background-position:-20px 66%, calc(100% + 40px) 14%;}
   }
 
-/* ---------- App shell: left sidebar + main content ---------- */
+  /* ---------- App shell: left sidebar + main content ---------- */
   .app-shell{display:flex;align-items:flex-start;max-width:1440px;margin:0 auto;}
   .sidebar{
     width:238px;flex:0 0 238px;position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;
-    background:rgba(255,255,255,.96);
-    border-right:1px solid var(--border);display:flex;flex-direction:column;box-shadow:2px 0 12px rgba(40,60,70,.06);
+    background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;
   }
   .sidebar .masthead{flex-direction:column;align-items:flex-start;gap:10px;padding:20px 18px 14px;margin:0;background:none;}
   .sidebar .masthead img.logo{height:44px;}
@@ -51,10 +70,8 @@
   .sidebar .rainbow-bar{height:4px;margin:0;}
   .sidebar .dark-toggle{margin:0 18px 14px;align-self:flex-start;}
   .page{max-width:1180px;margin:0 auto;padding:0 18px 60px;}
-  /* overflow-x:clip (not hidden) so position:sticky on KPI cards still works */
-  .main-content{flex:1;min-width:0;overflow-x:clip;}
+  .main-content{flex:1;min-width:0;overflow-x:hidden;}
   .main-content .page{padding-top:22px;}
-  #report{overflow:visible;}
 
   @media (max-width:900px){
     .app-shell{flex-direction:column;}
@@ -75,7 +92,7 @@
     background:none;border:none;padding:13px 14px;font-size:.86rem;font-weight:700;color:#999;cursor:pointer;
     text-align:left;border-radius:8px;border-left:3px solid transparent;white-space:nowrap;
   }
-  .tab-btn.active{color:var(--ink-dark);border-left-color:var(--magenta);background:var(--magenta-tint);box-shadow:0 2px 8px rgba(215,22,114,.12);}
+  .tab-btn.active{color:var(--ink-dark);border-left-color:var(--magenta);background:var(--magenta-tint);}
   .tab-btn:hover{color:var(--ink-dark);}
   @media (max-width:900px){
     .tabbar{flex-direction:row;overflow-x:auto;border-bottom:1px solid var(--border);}
@@ -101,8 +118,7 @@
     .field-grid.four-col,.field-grid.two-col{grid-template-columns:1fr;}
     .masthead{flex-direction:column;text-align:center;}
   }
-  .field-group{background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:12px;border-top:4px solid var(--accent);padding:14px 16px 16px;box-shadow:0 2px 10px rgba(40,60,70,.06);transition:box-shadow .2s ease;}
-  .field-group:hover{box-shadow:0 4px 20px rgba(40,60,70,.13);}
+  .field-group{background:var(--card);border:1px solid var(--border);border-radius:10px;border-top:4px solid var(--accent);padding:14px 16px 16px;}
   .field-group h3{margin:0 0 12px;font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--accent-dark);font-weight:800;}
   .group-teal{--accent:var(--teal);--accent-dark:var(--teal-dark);}
   .group-lime{--accent:var(--lime);--accent-dark:var(--lime-dark);}
@@ -119,8 +135,6 @@
   /* ---------- Calculations layout ---------- */
   .calc-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:18px;align-items:start;}
   .calc-inputs{grid-row:1 / span 3;}
-  .calc-inputs .split-media{grid-template-columns:minmax(0,1fr) minmax(140px,200px);gap:12px;}
-  @media (max-width:700px){ .calc-inputs .split-media{grid-template-columns:1fr;} }
   @media (max-width:860px){ .calc-grid{grid-template-columns:1fr;} .calc-inputs{grid-row:auto;} }
   .calc-inputs h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .required-pill{background:var(--red);color:#fff;font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.04em;}
@@ -185,58 +199,33 @@
 
   /* ---------- Dark mode ---------- */
   body.dark-mode{
-    /* Soft charcoal theme — not pure black; keeps brand tints readable */
-    --ink:#b8c0cc; --ink-dark:#e6eaf0;
-    --bg:#1a1e26; --card:#242a33; --border:#3a4350;
-    --teal-tint:#1a3336; --lime-tint:#2a3218; --gold-tint:#3a3018; --magenta-tint:#3a1a28;
+    --ink:#c9ced6; --ink-dark:#e8ecf1;
+    --bg:#14171c; --card:#1e2229; --border:#333a44;
+    --teal-tint:#123033; --lime-tint:#232b12; --gold-tint:#332a10; --magenta-tint:#331525;
   }
-  body.dark-mode .sidebar{background:#1e242c;border-right-color:var(--border);}
-  body.dark-mode .main-content{background:transparent;}
-  body.dark-mode .tabbar{background:transparent;}
-  body.dark-mode .tab-btn{color:#9aa3b0;}
-  body.dark-mode .tab-btn.active{color:#fff;background:rgba(215,22,114,.18);}
-  body.dark-mode .tab-btn:hover{color:#e6eaf0;}
-  body.dark-mode .section-banner{
-    background:linear-gradient(120deg,#3a4350 0%,#4a5462 100%);
-    color:#f0f3f7;box-shadow:0 4px 14px rgba(0,0,0,.25);
-  }
-  body.dark-mode .field-group{background:var(--card);border-color:var(--border);}
-  body.dark-mode input,body.dark-mode select,body.dark-mode textarea{
-    background:#2c333e;border-color:#45505e;color:#e6eaf0;
-  }
-  body.dark-mode input[readonly]{background:#262c36;color:#c2c8d0;}
-  body.dark-mode input:focus,body.dark-mode select:focus{
-    border-color:var(--teal);box-shadow:0 0 0 3px rgba(79,198,203,.22);
-  }
+  body.dark-mode .tabbar{background:var(--card);}
+  body.dark-mode .tab-btn{color:#8a929d;}
+  body.dark-mode .tab-btn.active{color:#fff;}
+  body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:#262b33;border-color:#3a424e;color:#e8ecf1;}
+  body.dark-mode input[readonly]{background:#20242b;color:#c2c8d0;}
   body.dark-mode .hint{color:#8f97a2;}
   body.dark-mode label.field{color:#a8b0bb;}
   body.dark-mode .out-label{color:#a8b0bb;}
-  body.dark-mode .out-value{background:rgba(255,255,255,.07);color:var(--accent-dark,#e6eaf0);}
+  body.dark-mode .out-value{background:rgba(255,255,255,.06);}
   body.dark-mode table.bom-table{background:var(--card);color:var(--ink-dark);}
-  body.dark-mode table.bom-table thead th{background:#2c333e;color:#e6eaf0;}
-  body.dark-mode table.bom-table tbody tr:nth-child(even){background:#2a303a;}
-  body.dark-mode table.bom-table tbody td{border-bottom-color:#3a4350;}
-  body.dark-mode table.formula-table th{background:#2c333e;color:#e6eaf0;}
-  body.dark-mode table.formula-table td{border-color:#3a4350;}
-  body.dark-mode .btn-ghost{background:#2c333e;color:#e6eaf0;border-color:#5a636f;}
-  body.dark-mode .btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
-  body.dark-mode details.opt-card{background:var(--card);border-color:var(--border);}
+  body.dark-mode table.bom-table tbody tr:nth-child(even){background:#242932;}
+  body.dark-mode table.bom-table tbody td{border-bottom-color:#333a44;}
+  body.dark-mode table.formula-table th{background:#2b313a;color:#e8ecf1;}
+  body.dark-mode table.formula-table td{border-color:#333a44;}
+  body.dark-mode .btn-ghost{background:#262b33;color:#e8ecf1;border-color:#5a636f;}
+  body.dark-mode details.opt-card{background:var(--card);}
   body.dark-mode details.opt-card summary{color:var(--ink-dark);}
-  body.dark-mode details.opt-card summary .count{background:#2c333e;color:#aab1bb;}
-  body.dark-mode .chip{background:#1a3336;border-color:#2a4a4e;color:var(--teal);}
+  body.dark-mode details.opt-card summary .count{background:#2b313a;color:#aab1bb;}
+  body.dark-mode .chip{background:#123033;border-color:#1f4a4d;}
   body.dark-mode .pack-preview svg{background:#fff;}
   body.dark-mode .opt-group-title{color:var(--ink-dark);}
   body.dark-mode .status,body.dark-mode footer.note{color:#8f97a2;}
-  body.dark-mode .photo-zone{background:#1a3336;border-color:var(--teal);color:var(--teal);}
-  body.dark-mode .kpi-label{color:#9aa3b0;}
-  body.dark-mode .kpi-unit{color:#8a929d;}
-  body.dark-mode .kpi-value{color:#e6eaf0;}
-  body.dark-mode .kpi-intro p{color:#8a929d;}
-  body.dark-mode .product-card{background:var(--card);border-color:var(--border);}
-  body.dark-mode .masthead-text p{color:#8a929d;}
-  body.dark-mode .eqn-preview{background:#2c333e;color:#a8b0bb;}
-  body.dark-mode .threeD-legend{color:#a8b0bb;}
-  body.dark-mode textarea#additionalComments{background:#2c333e;border-color:#45505e;color:#e6eaf0;}
+  body.dark-mode .photo-zone{background:#123033;}
   .dark-toggle{margin-left:auto;background:transparent;border:1.5px solid var(--border);color:var(--ink-dark);
     border-radius:20px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
   .dark-toggle:hover{border-color:var(--teal);color:var(--teal-dark);}
@@ -302,149 +291,57 @@
   .product-card .pc-meta{font-size:.76rem;color:#999;margin-top:2px;}
   .product-card.is-loaded{border-top-color:var(--magenta);}
 
-  /* ---------- Visual direction (aligned with v14 theme) ---------- */
-  body{background-color:var(--bg);}
-  .main-content{background:transparent;}
-  .sidebar{z-index:2;}
-  .section-banner{
-    background:linear-gradient(120deg,var(--ink) 0%,#7b7b7d 100%);
-    box-shadow:0 4px 14px rgba(40,60,70,.10);
-  }
-  .product-card,details.opt-card{
-    background:rgba(255,255,255,.94);
-    box-shadow:0 2px 10px rgba(40,60,70,.06);border-radius:12px;
-  }
-  details.opt-card:hover,.product-card:hover{box-shadow:0 4px 20px rgba(40,60,70,.13);}
+  /* ---------- Data Provider visual direction ---------- */
+  body{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='640' viewBox='0 0 640 640'%3E%3Cg fill='none' stroke='%2350c0c8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' opacity='.13'%3E%3Cpath d='M70 106h42v14l8 10v62a6 6 0 0 1-6 6H68a6 6 0 0 1-6-6v-62l8-10z'/%3E%3Cpath d='M64 140h54'/%3E%3Cpath d='M260 78h40v12c10 6 14 14 14 25v68a8 8 0 0 1-8 8h-52a8 8 0 0 1-8-8v-68c0-11 4-19 14-25z' stroke='%23d01070'/%3E%3Ccircle cx='490' cy='140' r='34'/%3E%3Ccircle cx='490' cy='140' r='22'/%3E%3Cpath d='M440 470h110M455 470c0-26 18-42 35-42s35 16 35 42M470 420v-28h40v28' stroke='%23f0b828'/%3E%3Cpath d='M130 500h66l-8 50h-50zM138 500l-6-32h62l-6 32' stroke='%23b8d030'/%3E%3C/g%3E%3C/svg%3E") fixed;background-size:640px 640px;background-color:#f8fbfa;}
+  .main-content{background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(246,250,249,.48));}
+  .sidebar{box-shadow:8px 0 26px rgba(40,60,70,.08);z-index:2;}
+  .section-banner{background:linear-gradient(120deg,var(--ink-dark) 0%,#74777a 100%);box-shadow:0 5px 16px rgba(40,60,70,.10);}
+  .field-group,.product-card,details.opt-card{box-shadow:0 5px 18px rgba(40,60,70,.06);}
   .pm-inline-custom-fields{display:contents;}
   .pm-inline-custom-section{grid-column:1/-1;border:1px dashed var(--magenta);border-radius:8px;padding:10px 12px;margin:2px 0 4px;background:var(--magenta-tint);}
   .pm-inline-custom-section-title{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--magenta-dark);font-weight:800;margin-bottom:8px;}
   .pm-section-admin-tools{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
   .pm-move-btn{border:1px solid var(--border);background:#fff;color:var(--ink-dark);border-radius:5px;padding:3px 7px;font-weight:800;cursor:pointer;font-size:.74rem;}
   .pm-move-btn:hover{border-color:var(--teal);color:var(--teal-dark);}
-  /* KPI summary cards — exact v14 design + sticky pin */
-  .kpi-rail{
-    display:flex;flex-direction:column;gap:10px;margin:0 0 26px;
-    position:sticky;top:0;z-index:100;
-    padding:12px 6px 14px;margin-left:-6px;margin-right:-6px;
-    /* Solid theme-matched wash (no heavy blur) so sticky scrolling stays smooth */
-    background:color-mix(in srgb, var(--bg) 92%, #fff);
-    border-bottom:1px solid transparent;
-    transition:border-color .15s ease, box-shadow .15s ease, padding .15s ease, background .15s ease;
-  }
-  .kpi-rail.is-stuck{
-    border-bottom-color:var(--border);
-    background:color-mix(in srgb, var(--bg) 96%, #fff);
-    box-shadow:0 6px 18px rgba(40,60,70,.08);
-    padding-top:10px;padding-bottom:10px;
-  }
-  .kpi-rail.is-stuck .kpi-intro{display:none;}
-  .kpi-intro{grid-column:1/-1;display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:2px;flex-wrap:wrap;}
+  .pm-move-btn:disabled{opacity:.38;cursor:not-allowed;}
+  .pm-sections-container{display:grid;gap:14px;}
+  .pm-sections-container>.field-group{margin:0;}
+  .pm-sections-container>.field-group h3{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pm-section-tools{display:inline-flex;align-items:center;gap:5px;margin-left:auto;flex-wrap:wrap;}
+  .pm-section-add-field{white-space:nowrap;}
+  .pm-manual-editor{margin:0 0 16px;}
+  .pm-manual-editor>summary{cursor:pointer;list-style:none;color:var(--ink-dark);font-size:1rem;font-weight:900;}
+  .pm-manual-editor>summary::-webkit-details-marker{display:none;}
+  .pm-manual-editor>summary:after{content:"Show / hide";float:right;color:#888;font-size:.72rem;font-weight:700;}
+  .pm-editor-controls{display:grid;grid-template-columns:minmax(170px,1fr) auto minmax(170px,1fr) minmax(180px,1fr) auto;gap:10px;align-items:end;margin:12px 0 14px;}
+  .pm-editor-controls .field{min-width:0;margin:0;}
+  .pm-editor-controls button{min-height:38px;}
+  .pm-field-admin-list{display:grid;gap:10px;}
+  .pm-admin-sections,.pm-admin-fields{display:grid;gap:8px;}
+  .pm-admin-section-row{display:flex;align-items:end;gap:10px;padding:10px;border:1px solid var(--border);border-radius:9px;background:rgba(255,255,255,.62);}
+  .pm-admin-section-row .field{flex:1;margin:0;}
+  .pm-admin-field-row{display:grid;grid-template-columns:minmax(140px,1.4fr) minmax(160px,1fr) 34px 34px 34px;gap:7px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,.62);}
+  .pm-admin-field-row input,.pm-admin-field-row select,.pm-admin-section-row input{min-width:0;width:100%;font:inherit;padding:7px 8px;border:1px solid #d8dde3;border-radius:6px;background:#fff;color:var(--ink-dark);}
+  .pm-admin-field-row .pm-move-btn{min-height:32px;}
+  .pm-empty-section,.pm-editor-empty{grid-column:1/-1;margin:0;color:#777;}
+  body.dark-mode .pm-admin-field-row,body.dark-mode .pm-admin-section-row{background:var(--card);}
+  body.dark-mode .pm-admin-field-row input,body.dark-mode .pm-admin-field-row select,body.dark-mode .pm-admin-section-row input{background:#262b33;border-color:#3a424e;color:#e8ecf1;}
+  @media(max-width:900px){.pm-editor-controls{grid-template-columns:1fr auto;}.pm-editor-controls .field:nth-of-type(2){grid-column:1}.pm-editor-controls .field:nth-of-type(3){grid-column:1}.pm-admin-field-row{grid-template-columns:minmax(120px,1fr) minmax(130px,1fr) 32px 32px 32px;}}
+  @media(max-width:560px){.pm-editor-controls{grid-template-columns:1fr;}.pm-editor-controls button{justify-self:start;}.pm-admin-section-row{align-items:stretch;flex-direction:column}.pm-admin-field-row{grid-template-columns:minmax(0,1fr) 30px 30px 30px}.pm-admin-field-row select{grid-column:1/-1;grid-row:2}.pm-admin-field-row .pmfield-up{grid-column:2;grid-row:1}.pm-admin-field-row .pmfield-down{grid-column:3;grid-row:1}.pm-admin-field-row .pmsec-field-delete{grid-column:4;grid-row:1}.pm-sections-container>.field-group h3{align-items:flex-start}.pm-section-tools{width:100%;margin-left:0;}}
+  .kpi-rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:0 0 20px;}
+  .kpi-intro{grid-column:1/-1;display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:2px;}
   .kpi-intro h2{margin:0;color:var(--ink-dark);font-size:1.06rem;letter-spacing:-.01em;}
-  .kpi-intro p{margin:2px 0 0;color:#8a8a8a;font-size:.76rem;font-style:italic;}
-  .kpi-intro-actions{display:flex;gap:8px;flex-wrap:wrap;}
-  .kpi-cards-wrap{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;}
-  @media(max-width:1050px){.kpi-cards-wrap{grid-template-columns:repeat(3,minmax(0,1fr));}}
-  @media(max-width:900px){.kpi-cards-wrap{grid-template-columns:repeat(2,minmax(0,1fr));}}
-  .kpi-card{cursor:pointer;}
-  .kpi-card .kpi-edit-hint{display:none;position:absolute;top:8px;right:8px;font-size:.65rem;font-weight:700;color:#999;background:rgba(255,255,255,.85);padding:2px 6px;border-radius:4px;}
-  .kpi-card:hover .kpi-edit-hint{display:block;}
-  .kpi-editor-panel{position:fixed;inset:0;z-index:200;background:rgba(20,24,30,.45);display:flex;align-items:center;justify-content:center;padding:18px;}
-  .kpi-editor-panel.hidden{display:none;}
-  .kpi-editor-card{background:var(--card);border-radius:14px;border:1px solid var(--border);box-shadow:0 16px 48px rgba(20,30,40,.22);padding:18px 20px;max-width:520px;width:100%;}
-  .kpi-editor-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-  .kpi-editor-head strong{font-size:1rem;color:var(--ink-dark);}
-  .kpi-editor-actions{display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:wrap;}
-  body.dark-mode .kpi-editor-card{background:var(--card);border-color:var(--border);}
-  body.dark-mode .kpi-card .kpi-edit-hint{background:rgba(30,34,41,.9);color:#aab1bb;}
-  .kpi-card{
-    background:linear-gradient(155deg, rgba(255,255,255,.96), var(--kpi-t, var(--teal-tint)) 130%);
-    border:1px solid var(--border);border-radius:14px;padding:16px 14px;text-align:center;
-    box-shadow:0 2px 10px rgba(40,60,70,.06);position:relative;overflow:hidden;
-    transition:box-shadow .15s ease,padding .15s ease;
-    min-height:auto;
-  }
-  .kpi-card:after{display:none;} /* remove old corner blob */
-  .kpi-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--kpi-c, var(--teal));}
-  .kpi-card:hover{box-shadow:0 4px 14px rgba(40,60,70,.12);}
-  .kpi-card.teal{--kpi-c:var(--teal);--kpi-t:var(--teal-tint);}
-  .kpi-card.magenta{--kpi-c:var(--magenta);--kpi-t:var(--magenta-tint);}
-  .kpi-card.lime{--kpi-c:var(--lime);--kpi-t:var(--lime-tint);}
-  .kpi-card.gold{--kpi-c:var(--gold);--kpi-t:var(--gold-tint);}
-  .kpi-label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#7b8288;margin-bottom:6px;}
-  .kpi-value{display:block;margin-top:0;font-size:1.5rem;font-weight:800;color:var(--kpi-c, var(--teal));line-height:1.15;letter-spacing:-.02em;}
-  .kpi-unit{display:block;margin-top:4px;color:#92999d;font-size:.68rem;font-weight:700;}
-  .kpi-rail.is-stuck .kpi-card{padding:12px 10px;}
-  .kpi-rail.is-stuck .kpi-value{font-size:1.25rem;}
-  @media(max-width:1050px){.kpi-cards-wrap{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}}
-  @media(max-width:900px){.kpi-cards-wrap{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}}
-  @media(max-width:620px){.kpi-cards-wrap{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}.kpi-intro{display:block}.kpi-intro p{margin-top:4px}}
-  body.dark-mode .kpi-card{
-    background:linear-gradient(155deg, rgba(36,42,51,.94), color-mix(in srgb, var(--kpi-t, var(--teal-tint)) 40%, transparent) 130%);
-    color:var(--ink-dark);border-color:var(--border);
-  }
-  body.dark-mode .kpi-rail{background:color-mix(in srgb, var(--bg) 94%, #000);}
-  body.dark-mode .kpi-rail.is-stuck{background:color-mix(in srgb, var(--bg) 98%, #000);box-shadow:0 6px 18px rgba(0,0,0,.35);}
-  body.dark-mode .kpi-label{color:#9aa3b0;}
-  body.dark-mode .kpi-unit{color:#8a929d;}
-  body.dark-mode .kpi-value{color:var(--kpi-c, var(--teal));}
-  body.dark-mode .pm-move-btn{background:var(--card);color:var(--ink-dark);}
-  body.dark-mode .field-group{background:rgba(36,42,51,.88);border-color:var(--border);}
-  body.dark-mode .sidebar{background:rgba(30,34,41,.94);border-right-color:var(--border);}
-/* Packaging Manual — PDF-style key/value tables (matches Data Provider layout) */
-  .pm-kv-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:0 0 8px 8px;overflow:hidden;margin:0;}
-  .pm-kv-table tr{border-bottom:1px solid var(--border);}
-  .pm-kv-table tr:last-child{border-bottom:none;}
-  .pm-kv-table th,.pm-kv-table td{padding:9px 12px;text-align:left;vertical-align:middle;font-size:.88rem;}
-  .pm-kv-table th{width:38%;font-weight:700;color:var(--ink-dark);background:rgba(0,0,0,.025);white-space:nowrap;}
-  .pm-kv-table td{font-weight:600;color:var(--ink-dark);}
-  .pm-kv-table input,.pm-kv-table select,.pm-kv-table textarea{
-    width:100%;border:1px solid transparent;background:transparent;padding:4px 6px;border-radius:4px;font:inherit;font-size:.88rem;font-weight:600;color:var(--ink-dark);
-  }
-  .pm-kv-table input:hover,.pm-kv-table select:hover,.pm-kv-table textarea:hover,
-  .pm-kv-table input:focus,.pm-kv-table select:focus,.pm-kv-table textarea:focus{
-    border-color:var(--border);background:rgba(0,0,0,.03);outline:none;
-  }
-  .field-group.pm-section{padding:0;overflow:hidden;border-top:none;}
-  .field-group.pm-section > h3{
-    margin:0;padding:10px 14px;font-size:.82rem;letter-spacing:.04em;color:#fff;font-weight:800;
-    background:var(--accent);border-radius:0;
-  }
-  .field-group.pm-section > .hint,
-  .field-group.pm-section > .pm-inline-custom-fields,
-  .field-group.pm-section > .field-grid,
-  .field-group.pm-section > .pm-kv-table,
-  .field-group.pm-section > .split-media,
-  .field-group.pm-section > p{padding-left:14px;padding-right:14px;}
-  .field-group.pm-section > .hint{margin-top:10px;}
-  .field-group.pm-section > .field-grid{padding-bottom:14px;padding-top:10px;}
-  .field-group.pm-section > .pm-kv-table{margin:0;border-left:none;border-right:none;border-bottom:none;border-radius:0;}
-  body.dark-mode .pm-kv-table th{background:rgba(255,255,255,.04);color:#d0d5dc;}
-  body.dark-mode .pm-kv-table td{color:#e8ecf1;}
-  body.dark-mode .pm-kv-table input,body.dark-mode .pm-kv-table select,body.dark-mode .pm-kv-table textarea{color:#e8ecf1;}
-  body.dark-mode .pm-kv-table input:hover,body.dark-mode .pm-kv-table select:hover,
-  body.dark-mode .pm-kv-table input:focus,body.dark-mode .pm-kv-table select:focus{background:rgba(255,255,255,.06);border-color:#3a424e;}
-
-  /* Packaging Manual in-table editor */
-  .pm-editable-h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .pm-editable-h3 .pm-title{cursor:text;border-radius:4px;padding:1px 4px;margin:-1px -4px;outline:none;}
-  .pm-editable-h3 .pm-title:hover{box-shadow:inset 0 -1px 0 currentColor;}
-  .pm-editable-h3 .pm-title:focus{box-shadow:0 0 0 2px currentColor;}
-  .pm-sec-tools{margin-left:auto;display:inline-flex;gap:4px;flex-wrap:wrap;}
-  .pm-tool{border:1px solid var(--border);background:#fff;color:var(--ink-dark);border-radius:5px;padding:2px 7px;font:inherit;font-size:.72rem;font-weight:800;letter-spacing:0;text-transform:none;cursor:pointer;line-height:1.4;}
-  .pm-tool:hover:not(:disabled){border-color:var(--teal);color:var(--teal-dark);}
-  .pm-tool:disabled{opacity:.4;cursor:default;}
-  .pm-tool-danger:hover:not(:disabled){border-color:#c0392b;color:#c0392b;}
-  .pm-kv-table th[contenteditable]{cursor:text;outline:none;}
-  .pm-kv-table th[contenteditable]:hover{box-shadow:inset 0 0 0 1px var(--border);}
-  .pm-kv-table th[contenteditable]:focus{box-shadow:inset 0 0 0 2px var(--teal);background:#fff;}
-  .pm-kv-table td.pm-row-tools{width:1%;white-space:nowrap;text-align:right;opacity:0;transition:opacity .15s;padding-left:4px;}
-  .pm-kv-table tr:hover td.pm-row-tools,.pm-kv-table td.pm-row-tools:focus-within{opacity:1;}
-  .pm-kv-table td.pm-row-tools .pm-tool{margin-left:2px;}
-  .pm-kv-table tr.pm-row-hidden{display:none;}
-  .pm-kv-table tr.pm-custom-row th{color:var(--magenta-dark);}
-  .pm-extra-kv{margin:8px 0 12px;}
-  body.dark-mode .pm-tool{background:var(--card);color:var(--ink-dark);}
-  body.dark-mode .pm-kv-table th[contenteditable]:focus{background:rgba(255,255,255,.06);}
+  .kpi-intro p{margin:0;color:#8a8a8a;font-size:.76rem;font-style:italic;}
+  .kpi-card{position:relative;overflow:hidden;min-height:110px;border:1px solid var(--border);border-top:4px solid var(--kpi);border-radius:12px;background:rgba(255,255,255,.92);padding:14px 14px 12px;box-shadow:0 5px 18px rgba(40,60,70,.08);}
+  .kpi-card:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;right:-36px;bottom:-45px;background:var(--kpi);opacity:.11;}
+  .kpi-card.teal{--kpi:var(--teal);}.kpi-card.magenta{--kpi:var(--magenta);}.kpi-card.lime{--kpi:var(--lime);}.kpi-card.gold{--kpi:var(--gold);}
+  .kpi-label{display:block;color:#72787c;font-size:.69rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800;}
+  .kpi-value{display:block;margin-top:12px;color:var(--ink-dark);font-size:1.45rem;line-height:1;font-weight:900;letter-spacing:-.03em;}
+  .kpi-unit{display:block;margin-top:8px;color:#92999d;font-size:.7rem;font-weight:700;}
+  @media(max-width:1050px){.kpi-rail{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  @media(max-width:620px){.kpi-rail{grid-template-columns:repeat(2,minmax(0,1fr));}.kpi-intro{display:block}.kpi-intro p{margin-top:4px}.kpi-card:last-child{grid-column:1/-1;}}
+  body.dark-mode .kpi-card,body.dark-mode .pm-move-btn{background:var(--card);color:var(--ink-dark);}
+  body.dark-mode .pm-inline-custom-section{background:var(--magenta-tint);}
 </style>
 </head>
 <body>
@@ -475,52 +372,14 @@
   <!-- =================== TAB: SPEC SHEET =================== -->
   <div class="tab-panel active" id="tab-sheet">
   <div id="report">
-    <section class="kpi-rail" aria-label="Live packaging summary" id="kpiRail">
-      <div class="kpi-intro">
-        <div>
-          <h2>Live packaging summary</h2>
-          <p>Updates instantly as the spec sheet changes — click a card to edit, or add your own</p>
-        </div>
-        <div class="kpi-intro-actions">
-          <button type="button" class="btn btn-ghost btn-sm" id="kpiAddBtn" title="Add a new summary card">＋ Add card</button>
-          <button type="button" class="btn btn-ghost btn-sm" id="kpiManageBtn" title="Manage summary cards">⚙ Manage</button>
-        </div>
-      </div>
-      <div class="kpi-cards-wrap" id="kpiCardsWrap"></div>
+    <section class="kpi-rail" aria-label="Live packaging summary">
+      <div class="kpi-intro"><h2>Live packaging summary</h2><p>Updates instantly as the spec sheet changes</p></div>
+      <article class="kpi-card teal"><span class="kpi-label">Units / Layer</span><strong class="kpi-value" id="kpiUnitsPerLayer">—</strong><span class="kpi-unit">units</span></article>
+      <article class="kpi-card magenta"><span class="kpi-label">Units / Pallet</span><strong class="kpi-value" id="kpiUnitsPerPallet">—</strong><span class="kpi-unit">units</span></article>
+      <article class="kpi-card lime"><span class="kpi-label">Number of Layers</span><strong class="kpi-value" id="kpiLayers">—</strong><span class="kpi-unit">layers / pallet</span></article>
+      <article class="kpi-card gold"><span class="kpi-label">Pallet Height</span><strong class="kpi-value" id="kpiPalletHeight">—</strong><span class="kpi-unit">mm</span></article>
+      <article class="kpi-card teal"><span class="kpi-label">Pallet Weight</span><strong class="kpi-value" id="kpiPalletWeight">—</strong><span class="kpi-unit">kg</span></article>
     </section>
-
-    <!-- KPI card editor panel -->
-    <div id="kpiEditorPanel" class="kpi-editor-panel hidden" aria-hidden="true">
-      <div class="kpi-editor-card">
-        <div class="kpi-editor-head">
-          <strong id="kpiEditorTitle">Edit summary card</strong>
-          <button type="button" class="btn btn-ghost btn-sm" id="kpiEditorClose">✕</button>
-        </div>
-        <div class="field-grid two-col" style="gap:12px;">
-          <label class="field">Label<input type="text" id="kpiEditLabel" placeholder="e.g. Units / Layer"></label>
-          <label class="field">Unit<input type="text" id="kpiEditUnit" placeholder="e.g. units, mm, kg"></label>
-          <label class="field">Metric / value source
-            <select id="kpiEditMetric"></select>
-          </label>
-          <label class="field">Colour
-            <select id="kpiEditColor">
-              <option value="teal">Teal</option>
-              <option value="magenta">Magenta</option>
-              <option value="lime">Lime</option>
-              <option value="gold">Gold</option>
-            </select>
-          </label>
-        </div>
-        <div class="kpi-editor-actions">
-          <button type="button" class="btn btn-ghost btn-sm" id="kpiEditDelete" style="color:var(--red);">🗑 Remove card</button>
-          <button type="button" class="btn btn-ghost btn-sm" id="kpiEditMoveUp" title="Move left / earlier">↑ Move up</button>
-          <button type="button" class="btn btn-ghost btn-sm" id="kpiEditMoveDown" title="Move right / later">↓ Move down</button>
-          <span style="flex:1;"></span>
-          <button type="button" class="btn btn-ghost btn-sm" id="kpiEditCancel">Cancel</button>
-          <button type="button" class="btn btn-teal btn-sm" id="kpiEditSave">✓ Save</button>
-        </div>
-      </div>
-    </div>
 
     <div class="section-banner">Required Information</div>
     <div class="field-grid four-col">
@@ -609,8 +468,6 @@
 
       <div class="field-group group-gold calc-inputs">
         <h3>Inputs <span class="required-pill">Kindly enter the required data</span></h3>
-        <div class="split-media" style="gap:14px;align-items:start;">
-          <div>
         <label class="field">Unit Max Diameter (mm)<input id="unitMaxDiameter" type="number" step="0.01" value="65.28"></label>
         <label class="field" id="boxLengthLabel">Box Length (mm)<input id="boxLength" type="number" step="0.01" value="300"></label>
         <label class="field" id="boxWidthLabel">Box Width (mm)<input id="boxWidth" type="number" step="0.01" value="200"></label>
@@ -632,20 +489,6 @@
           </span>
           <span class="hint" id="layersPerPalletHint" style="margin:2px 0 0;font-weight:600;">Auto-filled to the max that fits Height/Weight Clearance</span>
         </label>
-          </div>
-          <div class="media-col" style="max-width:200px;">
-            <p class="hint" style="margin:0 0 6px;font-weight:700;color:var(--gold-dark,#8a6a10);">Product photo</p>
-            <label class="photo-zone" id="productPhotoZone" style="padding:12px;">
-              <span id="productPhotoZoneLabel">📷 Attach product photo</span>
-              <input type="file" id="productPhotoInput" accept="image/*">
-            </label>
-            <div class="photo-preview-wrap hidden" id="productPhotoPreviewWrap">
-              <img id="productPhotoPreview" alt="Product photo preview" style="max-height:140px;max-width:180px;">
-              <div><button type="button" class="btn btn-ghost btn-sm" id="removeProductPhoto">Remove</button></div>
-            </div>
-            <p class="hint" style="margin-top:6px;">Also fills the product image on the Packaging Manual and wraps the 3D units.</p>
-          </div>
-        </div>
       </div>
 
       <div class="field-group group-teal calc-outputs">
@@ -792,7 +635,6 @@
         <div class="out-row"><span class="out-label" id="cpTotalLabel">Total Circles → Units/Layer</span><span class="out-value" id="cpTotal" style="font-size:1.05rem;color:var(--teal-dark);">—</span></div>
         <div class="bom-toolbar" style="justify-content:flex-start;margin-top:14px;">
           <button type="button" class="btn btn-ghost btn-sm" id="cpDownloadSvg">⬇ Download Layout SVG</button>
-          <button type="button" class="btn btn-ghost btn-sm" id="cpDownloadPng">⬇ Download Layout PNG</button>
         </div>
       </div>
       <div class="field-group group-lime pack-preview">
@@ -830,8 +672,6 @@
   <div class="actions">
     <button type="button" class="btn btn-teal" id="exportExcel">⬇ Export to Excel</button>
     <button type="button" class="btn btn-magenta" id="exportPdf">⬇ Export to PDF</button>
-    <button type="button" class="btn btn-gold" id="saveNewProductSpecBtn">💾 Save New Product</button>
-    <button type="button" class="btn btn-ghost" id="updateProductSpecBtn" title="Overwrite the currently loaded product">↻ Update Product</button>
   </div>
   <p class="status" id="statusMsg"></p>
   </div>
@@ -921,10 +761,6 @@
       </div>
     </div>
 
-    <p class="hint" style="margin-top:18px;">
-      Custom Packaging Manual sections are now edited directly on the <strong>Packaging Manual</strong> tab
-      (toolbar → “＋ Add section” and the “Sections &amp; fields on this Manual” panel).
-    </p>
   </div>
 
   <!-- =================== TAB: FORMULAS =================== -->
@@ -1097,15 +933,16 @@
     </p>
 
     <div class="field-group group-teal" style="margin-bottom:14px;">
-      <h3>Product Photo</h3>
-      <p class="hint" style="margin-top:-4px;">
-        Managed on the <strong>Spec Sheet</strong> next to the calculation inputs. When set, it wraps onto the units here
-        and is copied automatically into the Packaging Manual product image.
-      </p>
-      <div class="photo-preview-wrap hidden" id="productPhoto3dPreviewWrap">
-        <img id="productPhoto3dPreview" alt="Product photo used in 3D" style="max-height:140px;">
+      <h3>Product Photo (optional)</h3>
+      <p class="hint" style="margin-top:-4px;">Upload a photo of the actual product to wrap onto the units in the 3D model, instead of a plain cylinder. The cylinder's size still comes from Unit Max Diameter / Unit Height.</p>
+      <label class="photo-zone" id="productPhotoZone">
+        <span id="productPhotoZoneLabel">📷 Click to attach a product photo</span>
+        <input type="file" id="productPhotoInput" accept="image/*">
+      </label>
+      <div class="photo-preview-wrap hidden" id="productPhotoPreviewWrap">
+        <img id="productPhotoPreview" alt="Product photo preview" style="max-height:140px;">
+        <div><button type="button" class="btn btn-ghost btn-sm" id="removeProductPhoto">Remove photo</button></div>
       </div>
-      <p class="hint" id="productPhoto3dHint" style="margin-top:6px;">No product photo attached yet — add one on the Spec Sheet tab.</p>
     </div>
 
     <div class="threeD-toolbar">
@@ -1130,96 +967,109 @@
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
       <button type="button" class="btn btn-teal btn-sm" id="pmSyncBtn">🔄 Sync from Spec Sheet</button>
       <button type="button" class="btn btn-ghost btn-sm" id="pmLoadStandardBtn">📋 Load Standard Pallet Construction Content</button>
-      <button type="button" class="btn btn-ghost btn-sm" id="pmAddSectionBtn">＋ Add section</button>
       <button type="button" class="btn btn-magenta" id="pmExportPdfBtn" style="margin-left:auto;">⬇ Export Manual to PDF</button>
       <button type="button" class="btn btn-teal" id="pmExportWordBtn">⬇ Export Manual to Word</button>
     </div>
 
-    <div class="field-group group-magenta" id="pmSectionsEditorWrap" style="margin-bottom:18px;">
-      <h3 style="margin:0 0 8px;">Sections &amp; fields on this Manual</h3>
-      <p class="hint" style="margin-top:0;"><strong>Tip:</strong> you can now edit right inside the tables below — click any section title or field name to rename it, hover a field for ↑ ↓ ✕, and use the buttons on each section bar to move it, add fields, or delete it. The list below shows the extra sections/fields you've added. Changes apply to this tab and to the PDF/Word export.</p>
-      <div id="pmCustomSectionsAdmin"></div>
-    </div>
+    <details class="field-group group-magenta pm-manual-editor" id="pmManualEditor" open>
+      <summary>Customize Packaging Manual</summary>
+      <p class="hint">Add fields to any section, move fields between sections, rename your added sections, or use the arrows on the sections to change their order. These changes stay saved on this device.</p>
+      <div class="pm-editor-controls">
+        <label class="field">New section title
+          <input id="pmNewSectionTitle" type="text" placeholder="For example: Storage Requirements">
+        </label>
+        <button type="button" class="btn btn-ghost btn-sm" id="pmAddSectionBtn">＋ Add section</button>
+        <label class="field">New field label
+          <input id="pmNewFieldLabel" type="text" placeholder="For example: Maximum stacking height">
+        </label>
+        <label class="field">Add field to
+          <select id="pmFieldTarget"></select>
+        </label>
+        <button type="button" class="btn btn-teal btn-sm" id="pmAddFieldBtn">＋ Add field</button>
+      </div>
+      <div id="pmFieldAdminList" class="pm-field-admin-list"></div>
+    </details>
 
-    <div data-pm-key="header" class="field-group group-gold pm-section">
-      <h3>CUSTOMER DATA</h3>
+    <div class="pm-sections-container" id="pmSectionsContainer">
+    <div class="field-group group-gold" id="pmSectionHeader">
+      <h3>Header</h3>
       <div class="pm-inline-custom-fields" id="pmCustomFields-header"></div>
-      <table class="pm-kv-table">
-        <tr><th>Product Name</th><td><input id="pmProductName" type="text"></td></tr>
-        <tr><th>Product Code</th><td><input id="pmProductCode" type="text"></td></tr>
-        <tr><th>Customer</th><td><input id="pmCustomer" type="text"></td></tr>
-        <tr><th>SKU</th><td><input id="pmSKU" type="text"></td></tr>
-        <tr><th>Issue Date</th><td><input id="pmIssueDate" type="date"></td></tr>
-        <tr><th>Revised / Approved Date</th><td><input id="pmRevisedDate" type="text" placeholder="N/A"></td></tr>
-      </table>
+      <div class="field-grid two-col">
+        <label class="field">Product Name<input id="pmProductName" type="text"></label>
+        <label class="field">Product Code<input id="pmProductCode" type="text"></label>
+        <label class="field">Customer<input id="pmCustomer" type="text"></label>
+        <label class="field">SKU<input id="pmSKU" type="text"></label>
+        <label class="field">Issue Date<input id="pmIssueDate" type="date"></label>
+        <label class="field">Revised / Approved Date<input id="pmRevisedDate" type="text" placeholder="N/A"></label>
+      </div>
     </div>
 
-    <div data-pm-key="layerSetup" class="field-group group-teal pm-section">
-      <h3>1. PALLET LAYER SETUP</h3>
+    <div class="field-group group-teal" id="pmSectionLayerSetup">
+      <h3>1. Pallet Layer Setup</h3>
       <div class="pm-inline-custom-fields" id="pmCustomFields-layerSetup"></div>
-      <table class="pm-kv-table">
-        <tr><th>Pallet Size (mm)</th><td><input id="pmPalletSize" type="text" placeholder="auto — e.g. 1420 x 1120 x 150"></td></tr>
-        <tr><th>Product Dimension (mm)</th><td><input id="pmProductDimension" type="text" placeholder="auto"></td></tr>
-        <tr><th>Usable Area (mm)</th><td><input id="pmUsableArea" type="text" placeholder="auto"></td></tr>
-        <tr><th>Layout</th><td><input id="pmLayout" type="text" placeholder="auto"></td></tr>
-        <tr><th>Edge Clearance</th><td><input id="pmEdgeClearance" type="text" placeholder="auto"></td></tr>
-        <tr><th>Quantity per Layer</th><td><input id="pmQtyPerLayer" type="text" placeholder="auto"></td></tr>
-      </table>
-      <p class="hint" style="margin-top:6px;padding-bottom:10px;">The layout diagram is pulled automatically from the Spec Sheet tab's Layout Preview (or its reference photo, if the packing tool is disabled) at export time.</p>
+      <div class="field-grid two-col">
+        <label class="field">Pallet Size (mm)<input id="pmPalletSize" type="text" placeholder="auto — e.g. 1420 x 1120 x 150"></label>
+        <label class="field">Product Dimension (mm)<input id="pmProductDimension" type="text" placeholder="auto"></label>
+        <label class="field">Usable Area (mm)<input id="pmUsableArea" type="text" placeholder="auto"></label>
+        <label class="field">Layout<input id="pmLayout" type="text" placeholder="auto"></label>
+        <label class="field">Edge Clearance<input id="pmEdgeClearance" type="text" placeholder="auto"></label>
+        <label class="field">Quantity per Layer<input id="pmQtyPerLayer" type="text" placeholder="auto"></label>
+      </div>
+      <p class="hint" style="margin-top:6px;">The layout diagram is pulled automatically from the Spec Sheet tab's Layout Preview (or its reference photo, if the packing tool is disabled) at export time.</p>
     </div>
 
-    <div data-pm-key="palletSetup" class="field-group group-magenta pm-section">
-      <h3>2. PALLET SETUP</h3>
+    <div class="field-group group-magenta" id="pmSectionPalletSetup">
+      <h3>2. Pallet Setup</h3>
       <div class="pm-inline-custom-fields" id="pmCustomFields-palletSetup"></div>
-      <table class="pm-kv-table">
-        <tr><th>Pallet Type</th><td><input id="pmPalletTypeName" type="text" placeholder="auto — editable"></td></tr>
-        <tr><th>Units / Layer</th><td><input id="pmUnitsLayer" type="text" placeholder="auto"></td></tr>
-        <tr><th>Layer / Pallet</th><td><input id="pmLayerPallet" type="text" placeholder="auto"></td></tr>
-        <tr><th>Units / Pallet</th><td><input id="pmUnitsPallet" type="text" placeholder="auto"></td></tr>
-        <tr><th>Pallet Height (mm)</th><td><input id="pmPalletHeight" type="text" placeholder="auto"></td></tr>
-        <tr><th>Plastic Roll</th><td><input id="pmPlasticRoll" type="text" value="120 cm / 50 Micron"></td></tr>
-        <tr><th>Pallet Separators Type</th><td><select id="pmSeparatorsType"></select></td></tr>
-        <tr><th>Pallet Separators Size / Qty</th><td><input id="pmSeparatorsSizeQty" type="text" placeholder="auto — editable"></td></tr>
-        <tr><th>Pallet Cover</th><td><input id="pmPalletCover" type="text" placeholder="auto — editable"></td></tr>
-        <tr><th>Frame</th><td><input id="pmFrame" type="text" placeholder="e.g. US Size Fumigated wood"></td></tr>
-        <tr><th>Sealing</th><td><select id="pmSealing"></select></td></tr>
-        <tr><th>Strap (m)</th><td><input id="pmStrapM" type="text" placeholder="auto — editable"></td></tr>
-        <tr><th>Pallet Label Color</th><td><select id="pmLabelColor"></select></td></tr>
-        <tr><th>Pallet Label Dimensions</th><td><input id="pmLabelDims" type="text" value="7*15 cm"></td></tr>
-        <tr><th>Customer Special Request (CSR)</th><td><input id="pmCSR" type="text" value="To be filled by Customer"></td></tr>
-      </table>
+      <div class="field-grid two-col">
+        <label class="field">Pallet Type<input id="pmPalletTypeName" type="text" placeholder="auto — editable"></label>
+        <label class="field">Units / Layer<input id="pmUnitsLayer" type="text" placeholder="auto"></label>
+        <label class="field">Layer / Pallet<input id="pmLayerPallet" type="text" placeholder="auto"></label>
+        <label class="field">Units / Pallet<input id="pmUnitsPallet" type="text" placeholder="auto"></label>
+        <label class="field">Pallet Height (mm)<input id="pmPalletHeight" type="text" placeholder="auto"></label>
+        <label class="field">Plastic Roll<input id="pmPlasticRoll" type="text" value="120 cm / 50 Micron"></label>
+        <label class="field">Pallet Separators Type<select id="pmSeparatorsType"></select></label>
+        <label class="field">Pallet Separators Size / Qty<input id="pmSeparatorsSizeQty" type="text" placeholder="auto — editable"></label>
+        <label class="field">Pallet Cover<input id="pmPalletCover" type="text" placeholder="auto — editable"></label>
+        <label class="field">Frame<input id="pmFrame" type="text" placeholder="e.g. US Size Fumigated wood"></label>
+        <label class="field">Sealing<select id="pmSealing"></select></label>
+        <label class="field">Strap (m)<input id="pmStrapM" type="text" placeholder="auto — editable"></label>
+        <label class="field">Pallet Label Color<select id="pmLabelColor"></select></label>
+        <label class="field">Pallet Label Dimensions<input id="pmLabelDims" type="text" value="7*15 cm"></label>
+        <label class="field">Customer Special Request (CSR)<input id="pmCSR" type="text" value="To be filled by Customer"></label>
+      </div>
     </div>
 
-    <div data-pm-key="loading" class="field-group group-lime pm-section">
-      <h3>3. LOADING DATA / PACKAGING MODIFICATIONS</h3>
+    <div class="field-group group-lime" id="pmSectionLoading">
+      <h3>3. Loading Data</h3>
       <div class="pm-inline-custom-fields" id="pmCustomFields-loading"></div>
-      <table class="pm-kv-table">
-        <tr><th>Container Type</th><td><input id="pmContType" type="text" value="40 ft"></td></tr>
-        <tr><th>No. Pallets / Container / Unit</th><td><input id="pmPalletsPerCont" type="text" placeholder="auto"></td></tr>
-        <tr><th>Pallet Net Weight (kg)</th><td><input id="pmPalletNetWeight" type="text" placeholder="auto"></td></tr>
-        <tr><th>Pallet Gross Weight (kg)</th><td><input id="pmPalletGrossWeight" type="text"></td></tr>
-        <tr><th>No. of Units / Container / Unit</th><td><input id="pmUnitsPerCont" type="text" placeholder="auto"></td></tr>
-        <tr><th>Container Net Weight / Unit (Ton)</th><td><input id="pmContNetWeight" type="text" placeholder="auto"></td></tr>
-        <tr><th>Container Gross Weight / Unit (Ton)</th><td><input id="pmContGrossWeight" type="text"></td></tr>
-        <tr><th>No. of Cushions</th><td><input id="pmCushions" type="text" value="2"></td></tr>
-      </table>
+      <div class="field-grid two-col">
+        <label class="field">Container Type<input id="pmContType" type="text" value="40 ft"></label>
+        <label class="field">No. Pallets / Container / Unit<input id="pmPalletsPerCont" type="text" placeholder="auto"></label>
+        <label class="field">Pallet Net Weight (kg)<input id="pmPalletNetWeight" type="text" placeholder="auto"></label>
+        <label class="field">Pallet Gross Weight (kg)<input id="pmPalletGrossWeight" type="text"></label>
+        <label class="field">No. of Units / Container / Unit<input id="pmUnitsPerCont" type="text" placeholder="auto"></label>
+        <label class="field">Container Net Weight / Unit (Ton)<input id="pmContNetWeight" type="text" placeholder="auto"></label>
+        <label class="field">Container Gross Weight / Unit (Ton)<input id="pmContGrossWeight" type="text"></label>
+        <label class="field">No. of Cushions<input id="pmCushions" type="text" value="2"></label>
+      </div>
     </div>
 
-    <div data-pm-key="product" class="field-group group-gold pm-section">
-      <h3>4. PRODUCT DATA / SKU GUIDELINES</h3>
+    <div class="field-group group-gold" id="pmSectionProduct">
+      <h3>4. Product Data</h3>
       <div class="pm-inline-custom-fields" id="pmCustomFields-product"></div>
-      <div class="split-media" style="padding:12px 14px 14px;">
-      <table class="pm-kv-table" style="border:1px solid var(--border);border-radius:6px;">
-        <tr><th>Brimful Capacity (ml)</th><td><input id="pmBrimful" type="text"></td></tr>
-        <tr><th>Weight (gm)</th><td><input id="pmWeight" type="text" placeholder="auto"></td></tr>
-        <tr><th>Height (mm)</th><td><input id="pmHeight" type="text" placeholder="auto"></td></tr>
-        <tr><th>Diameter (mm)</th><td><input id="pmDiameter" type="text" placeholder="auto"></td></tr>
-        <tr><th>Colour</th><td><select id="pmColour"></select></td></tr>
-        <tr><th>Finish</th><td><select id="pmFinish"></select></td></tr>
-        <tr><th>Labelling</th><td><input id="pmLabelling" type="text" value="N/A"></td></tr>
-        <tr><th>Printing</th><td><input id="pmPrinting" type="text" value="N/A"></td></tr>
-        <tr><th>TD Reference / Date</th><td><input id="pmTDRef" type="date"></td></tr>
-      </table>
+      <div class="split-media">
+      <div class="field-grid two-col">
+        <label class="field">Brimful Capacity (ml)<input id="pmBrimful" type="text"></label>
+        <label class="field">Weight (gm)<input id="pmWeight" type="text" placeholder="auto"></label>
+        <label class="field">Height (mm)<input id="pmHeight" type="text" placeholder="auto"></label>
+        <label class="field">Diameter (mm)<input id="pmDiameter" type="text" placeholder="auto"></label>
+        <label class="field">Colour<select id="pmColour"></select></label>
+        <label class="field">Finish<select id="pmFinish"></select></label>
+        <label class="field">Labelling<input id="pmLabelling" type="text" value="N/A"></label>
+        <label class="field">Printing<input id="pmPrinting" type="text" value="N/A"></label>
+        <label class="field">TD Reference / Date<input id="pmTDRef" type="date"></label>
+      </div>
       <div class="media-col">
         <label class="photo-zone" id="pmProduct2DZone">
           <span id="pmProduct2DZoneLabel">📷 Attach product 2D technical drawing</span>
@@ -1229,38 +1079,40 @@
           <img id="pmProduct2DPreview" alt="Product 2D drawing preview" style="max-height:220px;">
           <div><button type="button" class="btn btn-ghost btn-sm" id="pmRemoveProduct2D">Remove</button></div>
         </div>
-        <p class="hint" style="margin-top:6px;">Auto-filled from the Product Photo on the Spec Sheet (you can still replace it with a dedicated 2D drawing here).</p>
+        <p class="hint" style="margin-top:6px;">Falls back to the Product Photo from the 3D Model tab if no dedicated 2D drawing is attached here.</p>
       </div>
       </div>
     </div>
 
-    <div data-pm-key="process" class="field-group group-teal pm-section">
-      <h3>5. PRODUCT PRODUCTION PROCESS / CODES</h3>
+    <div class="field-group group-teal" id="pmSectionProcess">
+      <h3>5. Product Production Process / Codes</h3>
       <div class="pm-inline-custom-fields" id="pmCustomFields-process"></div>
-      <table class="pm-kv-table">
-        <tr><th>Online Process / Color</th><td><input id="pmOnlineProcess" type="text" placeholder="auto"></td></tr>
-        <tr><th>Spraying Process</th><td><input id="pmSprayingProcess" type="text" value="N/A"></td></tr>
-        <tr><th>Printed Process</th><td><input id="pmPrintedProcess" type="text" value="N/A"></td></tr>
-        <tr><th>Offline Packing</th><td><input id="pmOfflinePacking" type="text" value="N/A"></td></tr>
-      </table>
+      <div class="field-grid two-col">
+        <label class="field">Online Process / Color<input id="pmOnlineProcess" type="text" placeholder="auto"></label>
+        <label class="field">Spraying Process<input id="pmSprayingProcess" type="text" value="N/A"></label>
+        <label class="field">Printed Process<input id="pmPrintedProcess" type="text" value="N/A"></label>
+        <label class="field">Offline Packing<input id="pmOfflinePacking" type="text" value="N/A"></label>
+      </div>
     </div>
 
-    <div data-pm-key="material" class="field-group group-magenta pm-section">
-      <h3>6. PACKAGING MATERIAL — WOODEN PALLET</h3>
+    <div class="field-group group-magenta" id="pmSectionMaterial">
+      <h3>6. Packaging Material Specification — Wooden Pallet</h3>
       <div class="pm-inline-custom-fields" id="pmCustomFields-material"></div>
-      <p class="hint" style="margin-top:10px;">Pallet Name mirrors Pallet Type from Section 2. Type/Code/Size/Material auto-fill from the preset assigned to that name in <strong>Manage Options → Pallet & Frame Construction Presets</strong> — still editable here per-product if this one needs to differ.</p>
-      <table class="pm-kv-table">
-        <tr><th>Pallet Name</th><td><input id="pmWoodPalletName" type="text" list="pmPalletNameList" value="USA Pallet Type A"><datalist id="pmPalletNameList"></datalist></td></tr>
-        <tr><th>Pallet Type</th><td><select id="pmWoodPalletType"></select></td></tr>
-        <tr><th>Pallet Code</th><td><select id="pmWoodPalletCode"></select></td></tr>
-        <tr><th>Pallet Size</th><td><select id="pmWoodPalletSize"></select></td></tr>
-        <tr><th>Pallet Material</th><td><select id="pmWoodPalletMaterial"></select></td></tr>
-        <tr><th>Reference Document</th><td><input id="pmWoodPalletRefDoc" type="text" value="OpEx-2025-005, Ver: 02, Date: 19-11-2025"></td></tr>
-      </table>
+      <p class="hint" style="margin-top:-4px;">Pallet Name mirrors Pallet Type from Section 2. Type/Code/Size/Material auto-fill from the preset assigned to that name in <strong>Manage Options → Pallet & Frame Construction Presets</strong> — still editable here per-product if this one needs to differ.</p>
+      <div class="field-grid two-col">
+        <label class="field">Pallet Name<input id="pmWoodPalletName" type="text" list="pmPalletNameList" value="USA Pallet Type A"></label>
+        <datalist id="pmPalletNameList"></datalist>
+        <label class="field">Pallet Type<select id="pmWoodPalletType"></select></label>
+        <label class="field">Pallet Code<select id="pmWoodPalletCode"></select></label>
+        <label class="field">Pallet Size<select id="pmWoodPalletSize"></select></label>
+        <label class="field">Pallet Material<select id="pmWoodPalletMaterial"></select></label>
+        <label class="field">Reference Document<input id="pmWoodPalletRefDoc" type="text" value="OpEx-2025-005, Ver: 02, Date: 19-11-2025"></label>
+      </div>
     </div>
 
-    <div data-pm-key="deck" class="field-group group-lime">
+    <div class="field-group group-lime" id="pmSectionDesign">
       <h3>Pallet Design &amp; Dimensions — Deck Boards / Blocks</h3>
+      <div class="pm-inline-custom-fields" id="pmCustomFields-design"></div>
       <p class="hint" style="margin-top:-4px;">Swaps automatically with the Pallet Name preset above (table, compliance text and photo). Manage the presets themselves in Manage Options — edits here apply to this product only.</p>
       <div class="split-media">
         <div>
@@ -1288,46 +1140,40 @@
       <textarea id="pmComplianceText" rows="6" style="width:100%;font:inherit;padding:10px 12px;border:1px solid #d8dde3;border-radius:8px;resize:vertical;"></textarea>
     </div>
 
-    <div data-pm-key="frame" class="field-group group-teal" id="pmFrameSectionGroup">
+    <div class="field-group group-teal" id="pmFrameSectionGroup">
       <h3>Wooden Frame <span class="pm-section-disabled-note">(Top Frame Wooden = No — not applicable to this product)</span></h3>
       <p class="hint" style="margin-top:-4px;">Frame Type drives its own preset (shape/edges/material/dimensions), managed in <strong>Manage Options → Pallet & Frame Construction Presets</strong>, independent of Pallet Name.</p>
       <div class="pm-inline-custom-fields" id="pmCustomFields-frame"></div>
-      <div class="split-media">
-        <div>
-          <table class="pm-kv-table">
-            <tr><th>Frame Type</th><td><input id="pmFrameTypeName" type="text" list="pmFrameTypeList" value="US Size"><datalist id="pmFrameTypeList"></datalist></td></tr>
-            <tr><th>Shape</th><td><input id="pmFrameShape" type="text" value="Rectangular"></td></tr>
-            <tr><th>Edges</th><td><input id="pmFrameEdges" type="text" value="Rounded"></td></tr>
-            <tr><th>Material</th><td><input id="pmFrameMaterial" type="text" value="Solid wood"></td></tr>
-            <tr><th>Member Width</th><td><input id="pmFrameMemberWidth" type="text" value="75 mm ± 0.3 mm"></td></tr>
-            <tr><th>Member Thickness</th><td><input id="pmFrameMemberThickness" type="text" value="20 mm ± 0.2 mm"></td></tr>
-            <tr><th>Moisture Content</th><td><input id="pmFrameMoisture" type="text" value="≤16%"></td></tr>
-          </table>
-        </div>
-        <div class="media-col" style="max-width:180px;">
-          <label class="photo-zone" id="pmFramePhotoZone" style="padding:12px;">
-            <span id="pmFramePhotoZoneLabel">📷 Frame photo</span>
-            <input type="file" id="pmFramePhotoInput" accept="image/*">
-          </label>
-          <div class="photo-preview-wrap hidden" id="pmFramePhotoPreviewWrap">
-            <img id="pmFramePhotoPreview" alt="Wooden frame photo preview" style="max-height:120px;max-width:160px;">
-            <div><button type="button" class="btn btn-ghost btn-sm" id="pmFramePhotoRemove">Remove</button></div>
-          </div>
-          <p class="hint" style="margin-top:6px;">Small photo sits beside the fields in the PDF, as in the Manual template.</p>
-        </div>
+      <div class="field-grid two-col">
+        <label class="field">Frame Type<input id="pmFrameTypeName" type="text" list="pmFrameTypeList" value="US Size"></label>
+        <datalist id="pmFrameTypeList"></datalist>
+        <label class="field">Shape<input id="pmFrameShape" type="text" value="Rectangular"></label>
+        <label class="field">Edges<input id="pmFrameEdges" type="text" value="Rounded"></label>
+        <label class="field">Material<input id="pmFrameMaterial" type="text" value="Solid wood"></label>
+        <label class="field">Member Width (mm)<input id="pmFrameMemberWidth" type="text" value="75 mm ± 0.3 mm"></label>
+        <label class="field">Member Thickness (mm)<input id="pmFrameMemberThickness" type="text" value="20 mm ± 0.2 mm"></label>
+        <label class="field">Moisture Content<input id="pmFrameMoisture" type="text" value="≤16%"></label>
       </div>
-      <p class="hint" style="margin-top:12px;">Frame Outer Dimensions (corresponding to pallet standards):</p>
+      <p class="hint" style="margin-top:10px;">Frame Outer Dimensions (corresponding to pallet standards):</p>
       <table class="bom-table">
         <thead><tr><th>Reference Pallet Standard</th><th>Frame Length (mm)</th><th>Frame Width (mm)</th><th>Treatment Required</th><th></th></tr></thead>
         <tbody id="pmFrameDimsBody"></tbody>
       </table>
       <button type="button" class="btn btn-ghost btn-sm" id="pmAddFrameRowBtn" style="margin-top:8px;">+ Add Row</button>
+      <p class="hint" style="margin-top:12px;">Wooden frame photo (from the Frame Type preset — editable per-product):</p>
+      <label class="photo-zone" id="pmFramePhotoZone">
+        <span id="pmFramePhotoZoneLabel">📷 Attach wooden frame photo</span>
+        <input type="file" id="pmFramePhotoInput" accept="image/*">
+      </label>
+      <div class="photo-preview-wrap hidden" id="pmFramePhotoPreviewWrap">
+        <img id="pmFramePhotoPreview" alt="Wooden frame photo preview" style="max-height:200px;">
+        <div><button type="button" class="btn btn-ghost btn-sm" id="pmFramePhotoRemove">Remove</button></div>
+      </div>
     </div>
 
-    <div id="pmCustomSectionsWrap"></div>
-
-    <div class="field-group group-magenta">
+    <div class="field-group group-magenta" id="pmSectionFooter">
       <h3>Footer Logos</h3>
+      <div class="pm-inline-custom-fields" id="pmCustomFields-footer"></div>
       <p class="hint" style="margin-top:-4px;">
         The Kandil logo is built into the header. Third-party marks (a partner/secondary logo, and certification badges like ISO, FSSC, Sedex, BSCI, ecovadis, UN Global Compact)
         appear in the <strong>footer</strong> of every PDF page instead, keeping the header clean — attach your own licensed image files below and they'll be reused for every manual on this device.
@@ -1354,6 +1200,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
 
     <p class="status" id="pmStatusMsg"></p>
@@ -1835,81 +1682,305 @@ function allCustomPmKeys(exceptKey){
   return keys;
 }
 
-/* Renders every custom section as a field-group on the Packaging Manual
-   tab, right after the built-in sections. */
-function renderCustomPmSections(){
-  const wrap = $("pmCustomSectionsWrap");
-  if(!wrap) return;
-  const slots = ["header","layerSetup","palletSetup","loading","product","process","material","frame"];
-  slots.forEach(slot=>{ const el = $("pmCustomFields-"+slot); if(el) el.innerHTML = ""; });
-  wrap.innerHTML = "";
-  CUSTOM_PM_SECTIONS.forEach(sec=>{
-    const fields = (sec.fields||[]).map(f=>`<label class="field">${escapeHtml(f.label)}<input id="${escapeAttr(f.key)}" type="text" data-custom-pm="1"></label>`).join("");
-    if(!fields) return;
-    const slot = sec.slot || "custom";
-    if(slot !== "custom" && $("pmCustomFields-"+slot)){
-      $("pmCustomFields-"+slot).insertAdjacentHTML("beforeend", `<div class="pm-inline-custom-section"><span class="pm-inline-custom-section-title">${escapeHtml(sec.title || "Custom fields")}</span><div class="field-grid two-col">${fields}</div></div>`);
-    } else {
-      wrap.insertAdjacentHTML("beforeend", `<div class="field-group group-magenta"><h3>${escapeHtml(sec.title || "Custom Section")}</h3><div class="field-grid two-col">${fields}</div></div>`);
+const PM_MANUAL_SECTION_ORDER_KEY = "kandilPmManualSectionOrder_v1";
+const PM_BUILTIN_SECTIONS = [
+  {id:"pmSectionHeader", slot:"header", title:"Header"},
+  {id:"pmSectionLayerSetup", slot:"layerSetup", title:"1. Pallet Layer Setup"},
+  {id:"pmSectionPalletSetup", slot:"palletSetup", title:"2. Pallet Setup"},
+  {id:"pmSectionLoading", slot:"loading", title:"3. Loading Data"},
+  {id:"pmSectionProduct", slot:"product", title:"4. Product Data"},
+  {id:"pmSectionProcess", slot:"process", title:"5. Product Production Process / Codes"},
+  {id:"pmSectionMaterial", slot:"material", title:"6. Packaging Material Specification — Wooden Pallet"},
+  {id:"pmSectionDesign", slot:"design", title:"Pallet Design & Dimensions / Compliance"},
+  {id:"pmFrameSectionGroup", slot:"frame", title:"Wooden Frame"},
+  {id:"pmSectionFooter", slot:"footer", title:"Footer Logos"}
+];
+const PM_CUSTOM_FIELD_SLOTS = PM_BUILTIN_SECTIONS.map(section=>section.slot);
+
+function pmSectionTitle(sec){ return sec.title || "Custom Section"; }
+function pmBuiltInSlotTitle(slot){
+  const section = PM_BUILTIN_SECTIONS.find(item=>item.slot===slot);
+  return section ? section.title : "Packaging Manual";
+}
+function pmTargetOptions(selected){
+  const builtins = PM_BUILTIN_SECTIONS.map(section=>[
+    "slot:"+section.slot, section.title
+  ]);
+  const customSections = CUSTOM_PM_SECTIONS
+    .filter(section=>(section.slot||"custom")==="custom")
+    .map(section=>["section:"+section.id, pmSectionTitle(section)]);
+  return builtins.concat(customSections).map(([value,label])=>
+    `<option value="${escapeAttr(value)}" ${value===selected?"selected":""}>${escapeHtml(label)}</option>`
+  ).join("");
+}
+function pmFieldTargetForSection(sec){
+  return (sec.slot||"custom")==="custom" ? "section:"+sec.id : "slot:"+sec.slot;
+}
+function pmRecordForTarget(target, create){
+  if(String(target).startsWith("slot:")){
+    const slot = String(target).slice(5);
+    let bucket = CUSTOM_PM_SECTIONS.find(sec=>sec.bucketSlot===slot);
+    if(!bucket && create){
+      bucket = {id:"bucket_"+slot, title:"Additional fields", slot, bucketSlot:slot, fields:[]};
+      CUSTOM_PM_SECTIONS.push(bucket);
     }
+    return bucket || null;
+  }
+  if(String(target).startsWith("section:")){
+    return CUSTOM_PM_SECTIONS.find(sec=>sec.id===String(target).slice(8) && (sec.slot||"custom")==="custom") || null;
+  }
+  return null;
+}
+
+function setupPmManualSections(){
+  const host = $("pmSectionsContainer");
+  if(!host) return;
+  PM_BUILTIN_SECTIONS.forEach(section=>{
+    const group = $(section.id);
+    if(!group) return;
+    group.dataset.pmSectionKey = "builtin:"+section.slot;
+    group.dataset.pmSlot = section.slot;
+    const heading = group.querySelector(":scope > h3");
+    if(!heading || heading.querySelector(".pm-section-tools")) return;
+    const tools = document.createElement("span");
+    tools.className = "pm-section-tools";
+    tools.innerHTML = `
+      <button type="button" class="pm-move-btn pm-section-up" aria-label="Move ${escapeAttr(section.title)} up" title="Move section up">↑</button>
+      <button type="button" class="pm-move-btn pm-section-down" aria-label="Move ${escapeAttr(section.title)} down" title="Move section down">↓</button>
+      <button type="button" class="btn btn-ghost btn-sm pm-section-add-field">＋ Add field</button>`;
+    heading.appendChild(tools);
+    tools.querySelector(".pm-section-up").addEventListener("click",()=>movePmManualSection(group.dataset.pmSectionKey,-1));
+    tools.querySelector(".pm-section-down").addEventListener("click",()=>movePmManualSection(group.dataset.pmSectionKey,1));
+    tools.querySelector(".pm-section-add-field").addEventListener("click",()=>focusPmFieldEditor("slot:"+section.slot));
   });
+  applyPmManualSectionOrder();
+}
+
+function pmManualSectionNodes(){
+  const host = $("pmSectionsContainer");
+  return host ? Array.from(host.children).filter(node=>node.dataset.pmSectionKey) : [];
+}
+function savePmManualSectionOrder(nodes){
+  saveJSON(PM_MANUAL_SECTION_ORDER_KEY, nodes.map(node=>node.dataset.pmSectionKey));
+}
+function updatePmSectionMoveButtons(){
+  const nodes = pmManualSectionNodes();
+  nodes.forEach((node,index)=>{
+    const up = node.querySelector(":scope > h3 .pm-section-up");
+    const down = node.querySelector(":scope > h3 .pm-section-down");
+    if(up) up.disabled = index===0;
+    if(down) down.disabled = index===nodes.length-1;
+  });
+}
+function applyPmManualSectionOrder(){
+  const host = $("pmSectionsContainer");
+  if(!host) return;
+  const nodes = pmManualSectionNodes();
+  const byKey = new Map(nodes.map(node=>[node.dataset.pmSectionKey,node]));
+  const saved = loadJSON(PM_MANUAL_SECTION_ORDER_KEY);
+  const keys = Array.isArray(saved) ? saved.filter((key,index)=>byKey.has(key) && saved.indexOf(key)===index) : [];
+  nodes.forEach(node=>{ if(!keys.includes(node.dataset.pmSectionKey)) keys.push(node.dataset.pmSectionKey); });
+  keys.forEach(key=>{ const node=byKey.get(key); if(node) host.appendChild(node); });
+  savePmManualSectionOrder(pmManualSectionNodes());
+  updatePmSectionMoveButtons();
+}
+function movePmManualSection(key, delta){
+  const nodes = pmManualSectionNodes();
+  const index = nodes.findIndex(node=>node.dataset.pmSectionKey===key);
+  const target = index+delta;
+  if(index<0 || target<0 || target>=nodes.length) return;
+  [nodes[index],nodes[target]]=[nodes[target],nodes[index]];
+  const host = $("pmSectionsContainer");
+  nodes.forEach(node=>host.appendChild(node));
+  savePmManualSectionOrder(nodes);
+  updatePmSectionMoveButtons();
+}
+function focusPmFieldEditor(target){
+  const editor = $("pmManualEditor");
+  if(editor) editor.open = true;
+  const select = $("pmFieldTarget");
+  if(select && Array.from(select.options).some(option=>option.value===target)) select.value=target;
+  $("pmNewFieldLabel").focus();
+  editor && editor.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+/* Render custom fields inside their selected built-in section, and custom
+   sections as movable section cards in the Packaging Manual itself. */
+function renderCustomPmSections(){
+  const host = $("pmSectionsContainer");
+  if(!host) return;
+  PM_CUSTOM_FIELD_SLOTS.forEach(slot=>{
+    const el = $("pmCustomFields-"+slot);
+    if(el) el.innerHTML = "";
+  });
+  Array.from(host.children).forEach(node=>{
+    if(node.dataset.pmSectionKey && node.dataset.pmSectionKey.startsWith("custom:")) node.remove();
+  });
+  CUSTOM_PM_SECTIONS.forEach(sec=>{
+    const fields = sec.fields || [];
+    const slot = sec.bucketSlot || sec.slot || "custom";
+    if(slot!=="custom" && $("pmCustomFields-"+slot)){
+      if(!fields.length) return;
+      const fieldMarkup = fields.map(field=>`
+        <label class="field">${escapeHtml(field.label)}
+          <input id="${escapeAttr(field.key)}" type="text" data-custom-pm="1">
+        </label>`).join("");
+      $("pmCustomFields-"+slot).insertAdjacentHTML("beforeend", `
+        <div class="pm-inline-custom-section">
+          <span class="pm-inline-custom-section-title">${escapeHtml(pmSectionTitle(sec))}</span>
+          <div class="field-grid two-col">${fieldMarkup}</div>
+        </div>`);
+      return;
+    }
+    const fieldMarkup = fields.map(field=>`
+      <label class="field">${escapeHtml(field.label)}
+        <input id="${escapeAttr(field.key)}" type="text" data-custom-pm="1">
+      </label>`).join("");
+    const card = document.createElement("div");
+    card.className = "field-group group-magenta";
+    card.dataset.pmSectionKey = "custom:"+sec.id;
+    card.dataset.pmSlot = "custom";
+    card.innerHTML = `
+      <h3>${escapeHtml(pmSectionTitle(sec))}
+        <span class="pm-section-tools">
+          <button type="button" class="pm-move-btn pm-section-up" aria-label="Move ${escapeAttr(pmSectionTitle(sec))} up" title="Move section up">↑</button>
+          <button type="button" class="pm-move-btn pm-section-down" aria-label="Move ${escapeAttr(pmSectionTitle(sec))} down" title="Move section down">↓</button>
+          <button type="button" class="btn btn-ghost btn-sm pm-section-add-field">＋ Add field</button>
+        </span>
+      </h3>
+      <div class="field-grid two-col">${fieldMarkup || '<p class="hint pm-empty-section">No fields in this section yet. Use “＋ Add field” here or in the editor above.</p>'}</div>`;
+    card.querySelector(".pm-section-up").addEventListener("click",()=>movePmManualSection(card.dataset.pmSectionKey,-1));
+    card.querySelector(".pm-section-down").addEventListener("click",()=>movePmManualSection(card.dataset.pmSectionKey,1));
+    card.querySelector(".pm-section-add-field").addEventListener("click",()=>focusPmFieldEditor("section:"+sec.id));
+    host.appendChild(card);
+  });
+  applyPmManualSectionOrder();
+  renderPmCustomSectionsAdmin();
 }
 function gatherCustomPmValues(){
   const out = [];
-  CUSTOM_PM_SECTIONS.forEach(sec => (sec.fields||[]).forEach(f=>{
-    out.push({key:f.key, value: strFromField(f.key)});
+  CUSTOM_PM_SECTIONS.forEach(sec => (sec.fields||[]).forEach(field=>{
+    out.push({key:field.key, value:strFromField(field.key)});
   }));
   return out;
 }
 function applyCustomPmValues(values){
-  const map = {}; (values||[]).forEach(v=>{ map[v.key]=v.value; });
-  CUSTOM_PM_SECTIONS.forEach(sec => (sec.fields||[]).forEach(f=>{
-    const el = $(f.key); if(el) el.value = map[f.key] != null ? map[f.key] : "";
+  const map = {};
+  (values||[]).forEach(value=>{ map[value.key]=value.value; });
+  CUSTOM_PM_SECTIONS.forEach(sec => (sec.fields||[]).forEach(field=>{
+    const el = $(field.key);
+    if(el) el.value = map[field.key] != null ? map[field.key] : "";
   }));
 }
-
-/* Manage Options admin panel — add/rename/delete sections and fields. */
-function pmSectionTitle(sec){ return sec.title || "Custom Section"; }
-function pmSectionOptions(selected){
-  const options = [["custom","Custom section (bottom)"],["header","Header"],["layerSetup","1. Pallet Layer Setup"],["palletSetup","2. Pallet Setup"],["loading","3. Loading Data"],["product","4. Product Data"],["process","5. Production Process / Codes"],["material","6. Wooden Pallet Material"],["frame","Wooden Frame"]];
-  return options.map(([value,label])=>`<option value="${value}" ${value===(selected||"custom")?"selected":""}>${label}</option>`).join("");
+function refreshPmManualEditor(values){
+  renderCustomPmSections();
+  applyCustomPmValues(values);
+  saveLastFormValues();
+}
+function createCustomPmField(label, target){
+  const section = pmRecordForTarget(target,true);
+  if(!section) return false;
+  section.fields = section.fields || [];
+  const key = slugifyPmKey(label,allCustomPmKeys());
+  section.fields.push({
+    id:"f_"+Date.now()+"_"+Math.floor(Math.random()*1000),
+    key,
+    label
+  });
+  persistCustomPmSections();
+  return key;
 }
 function renderPmCustomSectionsAdmin(){
-  const wrap = $("pmCustomSectionsAdmin");
-  if(!wrap) return;
-  if(!CUSTOM_PM_SECTIONS.length){ wrap.innerHTML = '<p class="opt-empty">No custom sections yet — add one above.</p>'; return; }
-  wrap.innerHTML = CUSTOM_PM_SECTIONS.map((sec, index) => `
-    <div class="product-card" data-sec="${sec.id}" style="flex-direction:column;align-items:stretch;gap:10px;">
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <input type="text" class="pmsec-title" data-sec="${sec.id}" value="${escapeAttr(pmSectionTitle(sec))}" style="flex:1;min-width:160px;font:inherit;padding:8px 10px;border:1px solid #d8dde3;border-radius:8px;">
-        <div class="pm-section-admin-tools"><button type="button" class="pm-move-btn pmsec-up" data-sec="${sec.id}" ${index===0?"disabled":""}>↑</button><button type="button" class="pm-move-btn pmsec-down" data-sec="${sec.id}" ${index===CUSTOM_PM_SECTIONS.length-1?"disabled":""}>↓</button></div>
-        <button type="button" class="btn btn-ghost btn-sm pmsec-addfield" data-sec="${sec.id}">＋ Add field</button>
-        <button type="button" class="btn btn-ghost btn-sm pmsec-delete" data-sec="${sec.id}">🗑 Delete section</button>
-      </div>
-      <label class="field" style="margin:0;">Place fields in<select class="pmsec-slot" data-sec="${sec.id}">${pmSectionOptions(sec.slot)}</select></label>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        ${(sec.fields||[]).map((f, fieldIndex)=>`
-          <div style="display:flex;gap:8px;align-items:center;">
-            <input type="text" class="pmsec-field-label" data-sec="${sec.id}" data-field="${f.id}" value="${escapeAttr(f.label)}" style="flex:1;font:inherit;padding:6px 8px;border:1px solid #d8dde3;border-radius:6px;">
-            <button type="button" class="pm-move-btn pmfield-up" data-sec="${sec.id}" data-field="${f.id}" ${fieldIndex===0?"disabled":""}>↑</button>
-            <button type="button" class="pm-move-btn pmfield-down" data-sec="${sec.id}" data-field="${f.id}" ${fieldIndex===(sec.fields||[]).length-1?"disabled":""}>↓</button>
-            <button type="button" class="bom-remove pmsec-field-delete" data-sec="${sec.id}" data-field="${f.id}" title="Delete this field">✕</button>
-          </div>`).join("") || '<p class="opt-empty" style="margin:0;">No fields yet — click “Add field”.</p>'}
-      </div>
+  const target = $("pmFieldTarget");
+  const list = $("pmFieldAdminList");
+  if(target){
+    const selected = target.value || "slot:header";
+    target.innerHTML = pmTargetOptions(selected);
+    if(Array.from(target.options).some(option=>option.value===selected)) target.value=selected;
+  }
+  if(!list) return;
+  const customSections = CUSTOM_PM_SECTIONS.filter(sec=>(sec.slot||"custom")==="custom");
+  const sectionAdmin = customSections.map(sec=>`
+    <div class="pm-admin-section-row">
+      <label class="field">Section title
+        <input type="text" class="pmsec-title" data-sec="${escapeAttr(sec.id)}" value="${escapeAttr(pmSectionTitle(sec))}">
+      </label>
+      <button type="button" class="btn btn-ghost btn-sm pmsec-delete" data-sec="${escapeAttr(sec.id)}">Delete section</button>
     </div>`).join("");
+  const fieldEntries = CUSTOM_PM_SECTIONS.flatMap(sec=>(sec.fields||[]).map((field,index)=>({sec,field,index})));
+  const fieldAdmin = fieldEntries.map(({sec,field,index})=>`
+    <div class="pm-admin-field-row">
+      <input type="text" class="pmsec-field-label" data-sec="${escapeAttr(sec.id)}" data-field="${escapeAttr(field.id)}" value="${escapeAttr(field.label)}" aria-label="Field label">
+      <select class="pm-field-destination" data-sec="${escapeAttr(sec.id)}" data-field="${escapeAttr(field.id)}" aria-label="Field section">
+        ${pmTargetOptions(pmFieldTargetForSection(sec))}
+      </select>
+      <button type="button" class="pm-move-btn pmfield-up" data-sec="${escapeAttr(sec.id)}" data-field="${escapeAttr(field.id)}" ${index===0?"disabled":""} aria-label="Move field up">↑</button>
+      <button type="button" class="pm-move-btn pmfield-down" data-sec="${escapeAttr(sec.id)}" data-field="${escapeAttr(field.id)}" ${index===(sec.fields||[]).length-1?"disabled":""} aria-label="Move field down">↓</button>
+      <button type="button" class="bom-remove pmsec-field-delete" data-sec="${escapeAttr(sec.id)}" data-field="${escapeAttr(field.id)}" aria-label="Delete field">✕</button>
+    </div>`).join("");
+  list.innerHTML = (sectionAdmin ? `<div class="pm-admin-sections">${sectionAdmin}</div>` : "")
+    + (fieldAdmin ? `<div class="pm-admin-fields">${fieldAdmin}</div>` : '<p class="hint pm-editor-empty">No added fields yet. Use “＋ Add field” above or in a section.</p>');
 
-  wrap.querySelectorAll(".pmsec-title").forEach(inp=>{ inp.addEventListener("change", ()=>{ const sec=CUSTOM_PM_SECTIONS.find(s=>s.id===inp.dataset.sec); if(sec && inp.value.trim()){ sec.title=inp.value.trim(); persistCustomPmSections(); renderCustomPmSections(); } }); });
-  wrap.querySelectorAll(".pmsec-slot").forEach(select=>{ select.addEventListener("change", ()=>{ const sec=CUSTOM_PM_SECTIONS.find(s=>s.id===select.dataset.sec); if(sec){ sec.slot=select.value; persistCustomPmSections(); renderCustomPmSections(); } }); });
-  wrap.querySelectorAll(".pmsec-field-label").forEach(inp=>{ inp.addEventListener("change", ()=>{ const sec=CUSTOM_PM_SECTIONS.find(s=>s.id===inp.dataset.sec); const f=sec && (sec.fields||[]).find(x=>x.id===inp.dataset.field); if(f && inp.value.trim()){ f.label=inp.value.trim(); persistCustomPmSections(); renderCustomPmSections(); } }); });
-  const moveSection=(id,delta)=>{ const index=CUSTOM_PM_SECTIONS.findIndex(s=>s.id===id), target=index+delta; if(index<0||target<0||target>=CUSTOM_PM_SECTIONS.length) return; [CUSTOM_PM_SECTIONS[index],CUSTOM_PM_SECTIONS[target]]=[CUSTOM_PM_SECTIONS[target],CUSTOM_PM_SECTIONS[index]]; persistCustomPmSections(); renderPmCustomSectionsAdmin(); renderCustomPmSections(); };
-  wrap.querySelectorAll(".pmsec-up").forEach(btn=>btn.addEventListener("click",()=>moveSection(btn.dataset.sec,-1)));
-  wrap.querySelectorAll(".pmsec-down").forEach(btn=>btn.addEventListener("click",()=>moveSection(btn.dataset.sec,1)));
-  const moveField=(secId,fieldId,delta)=>{ const sec=CUSTOM_PM_SECTIONS.find(s=>s.id===secId); if(!sec) return; const index=(sec.fields||[]).findIndex(f=>f.id===fieldId), target=index+delta; if(index<0||target<0||target>=sec.fields.length) return; [sec.fields[index],sec.fields[target]]=[sec.fields[target],sec.fields[index]]; persistCustomPmSections(); renderPmCustomSectionsAdmin(); renderCustomPmSections(); };
-  wrap.querySelectorAll(".pmfield-up").forEach(btn=>btn.addEventListener("click",()=>moveField(btn.dataset.sec,btn.dataset.field,-1)));
-  wrap.querySelectorAll(".pmfield-down").forEach(btn=>btn.addEventListener("click",()=>moveField(btn.dataset.sec,btn.dataset.field,1)));
-  wrap.querySelectorAll(".pmsec-addfield").forEach(btn=>{ btn.addEventListener("click",()=>{ const sec=CUSTOM_PM_SECTIONS.find(s=>s.id===btn.dataset.sec); if(!sec) return; const label=(prompt("Label for the new field:","New Field")||"").trim(); if(!label) return; const key=slugifyPmKey(label,allCustomPmKeys()); sec.fields=sec.fields||[]; sec.fields.push({id:"f_"+Date.now()+"_"+Math.floor(Math.random()*1000),key,label}); persistCustomPmSections(); renderPmCustomSectionsAdmin(); renderCustomPmSections(); setStatus(`Field "${label}" added ✓`); }); });
-  wrap.querySelectorAll(".pmsec-field-delete").forEach(btn=>{ btn.addEventListener("click",()=>{ const sec=CUSTOM_PM_SECTIONS.find(s=>s.id===btn.dataset.sec); if(!sec) return; if(!confirm("Delete this field? Any values already entered for it will be lost.")) return; sec.fields=(sec.fields||[]).filter(f=>f.id!==btn.dataset.field); persistCustomPmSections(); renderPmCustomSectionsAdmin(); renderCustomPmSections(); }); });
-  wrap.querySelectorAll(".pmsec-delete").forEach(btn=>{ btn.addEventListener("click",()=>{ if(!confirm("Delete this entire section, including all its fields and any values entered?")) return; CUSTOM_PM_SECTIONS=CUSTOM_PM_SECTIONS.filter(s=>s.id!==btn.dataset.sec); persistCustomPmSections(); renderPmCustomSectionsAdmin(); renderCustomPmSections(); setStatus("Section deleted ✓"); }); });
+  list.querySelectorAll(".pmsec-title").forEach(input=>input.addEventListener("change",()=>{
+    const sec=CUSTOM_PM_SECTIONS.find(item=>item.id===input.dataset.sec);
+    if(!sec || !input.value.trim()) return;
+    const values=gatherCustomPmValues();
+    sec.title=input.value.trim();
+    persistCustomPmSections();
+    refreshPmManualEditor(values);
+  }));
+  list.querySelectorAll(".pmsec-delete").forEach(button=>button.addEventListener("click",()=>{
+    const sec=CUSTOM_PM_SECTIONS.find(item=>item.id===button.dataset.sec);
+    if(!sec || !confirm("Delete this section and all its added fields? Their saved values will be removed.")) return;
+    const values=gatherCustomPmValues();
+    CUSTOM_PM_SECTIONS=CUSTOM_PM_SECTIONS.filter(item=>item.id!==sec.id);
+    persistCustomPmSections();
+    refreshPmManualEditor(values.filter(value=>(sec.fields||[]).every(field=>field.key!==value.key)));
+    setStatus("Section deleted ✓");
+  }));
+  list.querySelectorAll(".pmsec-field-label").forEach(input=>input.addEventListener("change",()=>{
+    const sec=CUSTOM_PM_SECTIONS.find(item=>item.id===input.dataset.sec);
+    const field=sec && (sec.fields||[]).find(item=>item.id===input.dataset.field);
+    if(!field || !input.value.trim()) return;
+    const values=gatherCustomPmValues();
+    field.label=input.value.trim();
+    persistCustomPmSections();
+    refreshPmManualEditor(values);
+  }));
+  list.querySelectorAll(".pm-field-destination").forEach(select=>select.addEventListener("change",()=>{
+    const source=CUSTOM_PM_SECTIONS.find(item=>item.id===select.dataset.sec);
+    const field=source && (source.fields||[]).find(item=>item.id===select.dataset.field);
+    if(!source || !field) return;
+    const destination=pmRecordForTarget(select.value,true);
+    if(!destination || destination===source) return;
+    const values=gatherCustomPmValues();
+    source.fields=source.fields.filter(item=>item.id!==field.id);
+    destination.fields=destination.fields||[];
+    destination.fields.push(field);
+    persistCustomPmSections();
+    refreshPmManualEditor(values);
+  }));
+  const moveField=(sectionId,fieldId,delta)=>{
+    const sec=CUSTOM_PM_SECTIONS.find(item=>item.id===sectionId);
+    if(!sec) return;
+    const index=(sec.fields||[]).findIndex(item=>item.id===fieldId), next=index+delta;
+    if(index<0 || next<0 || next>=sec.fields.length) return;
+    const values=gatherCustomPmValues();
+    [sec.fields[index],sec.fields[next]]=[sec.fields[next],sec.fields[index]];
+    persistCustomPmSections();
+    refreshPmManualEditor(values);
+  };
+  list.querySelectorAll(".pmfield-up").forEach(button=>button.addEventListener("click",()=>moveField(button.dataset.sec,button.dataset.field,-1)));
+  list.querySelectorAll(".pmfield-down").forEach(button=>button.addEventListener("click",()=>moveField(button.dataset.sec,button.dataset.field,1)));
+  list.querySelectorAll(".pmsec-field-delete").forEach(button=>button.addEventListener("click",()=>{
+    const sec=CUSTOM_PM_SECTIONS.find(item=>item.id===button.dataset.sec);
+    const field=sec && (sec.fields||[]).find(item=>item.id===button.dataset.field);
+    if(!sec || !field || !confirm("Delete this field and its saved value?")) return;
+    const values=gatherCustomPmValues().filter(value=>value.key!==field.key);
+    sec.fields=sec.fields.filter(item=>item.id!==field.id);
+    persistCustomPmSections();
+    refreshPmManualEditor(values);
+  }));
 }
 let reqFieldEditingId = null;
 function openReqFieldForm(id){
@@ -2000,243 +2071,6 @@ const EQN_FUNCTION_HELP = [
    plus any custom field results — this is the live "named range" lookup table
    that formulas read from. */
 let LAST_CALC = {};
-
-/* =====================================================================
-   Configurable KPI summary cards — add / edit / remove / reorder.
-   Metrics pull from LAST_CALC + core outputs after every recalc.
-===================================================================== */
-const KPI_CARDS_KEY = "kandilKpiCards_v1";
-const KPI_COLORS = ["teal","magenta","lime","gold"];
-const DEFAULT_KPI_CARDS = [
-  {id:"kpi_units_layer",  label:"Units / Layer",    metric:"unitsPerLayer",     unit:"units",           color:"teal"},
-  {id:"kpi_units_pallet", label:"Units / Pallet",   metric:"unitsPerPallet",    unit:"units",           color:"magenta"},
-  {id:"kpi_layers",       label:"Number of Layers", metric:"layersPerPallet",   unit:"layers / pallet", color:"lime"},
-  {id:"kpi_height",       label:"Pallet Height",    metric:"palletHeight",      unit:"mm",              color:"gold"},
-  {id:"kpi_weight",       label:"Pallet Weight",    metric:"palletWeight",      unit:"kg",              color:"teal"}
-];
-function loadKpiCards(){
-  const saved = loadJSON(KPI_CARDS_KEY);
-  if(Array.isArray(saved) && saved.length) return saved.map(c=>({
-    id: c.id || ("kpi_"+Date.now()+"_"+Math.floor(Math.random()*999)),
-    label: c.label || "Metric",
-    metric: c.metric || "unitsPerLayer",
-    unit: c.unit != null ? c.unit : "",
-    color: KPI_COLORS.includes(c.color) ? c.color : "teal"
-  }));
-  return JSON.parse(JSON.stringify(DEFAULT_KPI_CARDS));
-}
-let KPI_CARDS = loadKpiCards();
-function persistKpiCards(){ saveJSON(KPI_CARDS_KEY, KPI_CARDS); }
-
-function kpiMetricCatalog(){
-  const builtIn = [
-    {key:"unitsPerLayer", label:"Units / Layer", unit:"units"},
-    {key:"unitsPerPallet", label:"Units / Pallet", unit:"units"},
-    {key:"unitsPerContainer", label:"Units / Container", unit:"units"},
-    {key:"layersPerPallet", label:"Layers / Pallet", unit:"layers"},
-    {key:"palletWeight", label:"Pallet Weight", unit:"kg"},
-    {key:"palletHeight", label:"Pallet Height", unit:"mm"},
-    {key:"totalPalletHeight", label:"Total Pallet Height", unit:"mm"},
-    {key:"containerWeight", label:"Container Weight", unit:"Ton"},
-    {key:"heightClearance", label:"Height Clearance", unit:"mm"},
-    {key:"weightClearance", label:"Weight Clearance", unit:"Ton"},
-    {key:"shrinkSize", label:"Shrink Size", unit:"mm"},
-    {key:"strapLength", label:"Strap Length", unit:"m"},
-    {key:"unitMaxDiameter", label:"Unit Max Diameter", unit:"mm"},
-    {key:"unitHeight", label:"Unit Height", unit:"mm"},
-    {key:"unitWeight", label:"Unit Weight", unit:"gm"},
-    {key:"boxesPerLayer", label:"Boxes / Layer", unit:"boxes"},
-    {key:"palletPerContainer", label:"Pallets / Container", unit:""}
-  ];
-  // Custom calculated fields
-  (CUSTOM_FIELDS||[]).forEach(f=>{
-    if(f && f.key) builtIn.push({key:f.key, label:f.label||f.key, unit:f.unit||""});
-  });
-  // Any extra keys already present in LAST_CALC
-  Object.keys(LAST_CALC||{}).forEach(k=>{
-    if(!builtIn.some(m=>m.key===k) && typeof LAST_CALC[k] === "number"){
-      builtIn.push({key:k, label:k, unit:""});
-    }
-  });
-  return builtIn;
-}
-
-function fmtKpiValue(metric){
-  const v = LAST_CALC ? LAST_CALC[metric] : undefined;
-  if(v == null || v === "" || (typeof v === "number" && !isFinite(v))) return "—";
-  if(typeof v === "number"){
-    const abs = Math.abs(v);
-    const decimals = abs >= 100 ? 0 : abs >= 10 ? 1 : 2;
-    return v.toLocaleString(undefined, {maximumFractionDigits: decimals});
-  }
-  return String(v);
-}
-
-function renderKpiCards(){
-  const wrap = $("kpiCardsWrap");
-  if(!wrap) return;
-  const n = Math.max(1, KPI_CARDS.length);
-  // Responsive column count via CSS grid — set style for exact count when few cards
-  wrap.style.gridTemplateColumns = n <= 5
-    ? `repeat(${Math.min(n,5)},minmax(0,1fr))`
-    : "repeat(auto-fill,minmax(140px,1fr))";
-  wrap.innerHTML = KPI_CARDS.map((c, idx)=>`
-    <article class="kpi-card ${escapeAttr(c.color||"teal")}" data-kpi-id="${escapeAttr(c.id)}" title="Click to edit this card">
-      <span class="kpi-edit-hint">Edit</span>
-      <span class="kpi-label">${escapeHtml(c.label)}</span>
-      <strong class="kpi-value" data-kpi-value>${fmtKpiValue(c.metric)}</strong>
-      <span class="kpi-unit">${escapeHtml(c.unit||"")}</span>
-    </article>
-  `).join("");
-  wrap.querySelectorAll(".kpi-card").forEach(card=>{
-    card.addEventListener("click", ()=> openKpiEditor(card.dataset.kpiId));
-  });
-}
-
-function updateKpiCardValues(){
-  const wrap = $("kpiCardsWrap");
-  if(!wrap) return;
-  // If structure is empty (first load), render full set
-  if(!wrap.children.length){ renderKpiCards(); return; }
-  KPI_CARDS.forEach(c=>{
-    const card = wrap.querySelector(`[data-kpi-id="${CSS.escape(c.id)}"]`);
-    if(!card) return;
-    const valEl = card.querySelector("[data-kpi-value]");
-    if(valEl) valEl.textContent = fmtKpiValue(c.metric);
-  });
-  // If cards were added/removed without re-render
-  if(wrap.children.length !== KPI_CARDS.length) renderKpiCards();
-}
-
-let kpiEditorTargetId = null;
-
-function openKpiEditor(cardId){
-  kpiEditorTargetId = cardId;
-  const card = KPI_CARDS.find(c=>c.id===cardId);
-  if(!card) return;
-  $("kpiEditorTitle").textContent = "Edit summary card";
-  $("kpiEditLabel").value = card.label || "";
-  $("kpiEditUnit").value = card.unit || "";
-  $("kpiEditColor").value = card.color || "teal";
-  const sel = $("kpiEditMetric");
-  const catalog = kpiMetricCatalog();
-  sel.innerHTML = catalog.map(m=>
-    `<option value="${escapeAttr(m.key)}" ${m.key===card.metric?"selected":""}>${escapeHtml(m.label)}${m.unit?(" ("+m.unit+")"):""}</option>`
-  ).join("");
-  if(card.metric && !catalog.some(m=>m.key===card.metric)){
-    sel.innerHTML = `<option value="${escapeAttr(card.metric)}" selected>${escapeHtml(card.metric)}</option>` + sel.innerHTML;
-  }
-  $("kpiEditDelete").style.display = "";
-  $("kpiEditorPanel").classList.remove("hidden");
-  $("kpiEditorPanel").setAttribute("aria-hidden","false");
-}
-
-function openKpiEditorNew(){
-  const color = KPI_COLORS[KPI_CARDS.length % KPI_COLORS.length];
-  const id = "kpi_"+Date.now()+"_"+Math.floor(Math.random()*999);
-  const catalog = kpiMetricCatalog();
-  const first = catalog[0] || {key:"unitsPerLayer", label:"Units / Layer", unit:"units"};
-  KPI_CARDS.push({id, label:first.label, metric:first.key, unit:first.unit||"", color});
-  persistKpiCards();
-  renderKpiCards();
-  openKpiEditor(id);
-  $("kpiEditorTitle").textContent = "New summary card";
-}
-
-function closeKpiEditor(){
-  $("kpiEditorPanel").classList.add("hidden");
-  $("kpiEditorPanel").setAttribute("aria-hidden","true");
-  kpiEditorTargetId = null;
-}
-
-function saveKpiEditor(){
-  if(!kpiEditorTargetId) return;
-  const card = KPI_CARDS.find(c=>c.id===kpiEditorTargetId);
-  if(!card) return;
-  const label = ($("kpiEditLabel").value || "").trim() || "Metric";
-  const unit = ($("kpiEditUnit").value || "").trim();
-  const metric = $("kpiEditMetric").value;
-  const color = $("kpiEditColor").value;
-  card.label = label;
-  card.unit = unit;
-  card.metric = metric;
-  card.color = KPI_COLORS.includes(color) ? color : "teal";
-  // Auto-fill unit from catalog if user left unit empty
-  if(!unit){
-    const meta = kpiMetricCatalog().find(m=>m.key===metric);
-    if(meta && meta.unit) card.unit = meta.unit;
-  }
-  persistKpiCards();
-  renderKpiCards();
-  closeKpiEditor();
-  setStatus("Summary card updated ✓");
-}
-
-function deleteKpiEditor(){
-  if(!kpiEditorTargetId) return;
-  if(KPI_CARDS.length <= 1){
-    setStatus("Keep at least one summary card.", true);
-    return;
-  }
-  if(!confirm("Remove this summary card?")) return;
-  KPI_CARDS = KPI_CARDS.filter(c=>c.id!==kpiEditorTargetId);
-  persistKpiCards();
-  renderKpiCards();
-  closeKpiEditor();
-  setStatus("Summary card removed ✓");
-}
-
-function openKpiManageList(){
-  // Simple manage: show prompt to reorder via sequential edit, or reset
-  const action = prompt(
-    "Manage summary cards:\n\n" +
-    KPI_CARDS.map((c,i)=>`${i+1}. ${c.label} ← ${c.metric}`).join("\n") +
-    "\n\nType a number to edit that card, \"add\" to add a new one, \"reset\" to restore defaults, or cancel.",
-    ""
-  );
-  if(action == null) return;
-  const t = action.trim().toLowerCase();
-  if(t === "add"){ openKpiEditorNew(); return; }
-  if(t === "reset"){
-    if(!confirm("Reset all summary cards to the default five?")) return;
-    KPI_CARDS = JSON.parse(JSON.stringify(DEFAULT_KPI_CARDS));
-    persistKpiCards();
-    renderKpiCards();
-    setStatus("Summary cards reset to defaults ✓");
-    return;
-  }
-  const n = parseInt(action, 10);
-  if(n >= 1 && n <= KPI_CARDS.length) openKpiEditor(KPI_CARDS[n-1].id);
-}
-
-function moveKpiCard(delta){
-  if(!kpiEditorTargetId) return;
-  const index = KPI_CARDS.findIndex(c=>c.id===kpiEditorTargetId);
-  const target = index + delta;
-  if(index < 0 || target < 0 || target >= KPI_CARDS.length) return;
-  [KPI_CARDS[index], KPI_CARDS[target]] = [KPI_CARDS[target], KPI_CARDS[index]];
-  persistKpiCards();
-  renderKpiCards();
-  setStatus("Card order updated ✓");
-}
-function initKpiCardUi(){
-  if($("kpiAddBtn")) $("kpiAddBtn").addEventListener("click", openKpiEditorNew);
-  if($("kpiManageBtn")) $("kpiManageBtn").addEventListener("click", openKpiManageList);
-  if($("kpiEditorClose")) $("kpiEditorClose").addEventListener("click", closeKpiEditor);
-  if($("kpiEditCancel")) $("kpiEditCancel").addEventListener("click", closeKpiEditor);
-  if($("kpiEditSave")) $("kpiEditSave").addEventListener("click", saveKpiEditor);
-  if($("kpiEditDelete")) $("kpiEditDelete").addEventListener("click", deleteKpiEditor);
-  if($("kpiEditMoveUp")) $("kpiEditMoveUp").addEventListener("click", ()=> moveKpiCard(-1));
-  if($("kpiEditMoveDown")) $("kpiEditMoveDown").addEventListener("click", ()=> moveKpiCard(1));
-  if($("kpiEditorPanel")) $("kpiEditorPanel").addEventListener("click", e=>{
-    if(e.target === $("kpiEditorPanel")) closeKpiEditor();
-  });
-  if($("kpiEditMetric")) $("kpiEditMetric").addEventListener("change", ()=>{
-    const meta = kpiMetricCatalog().find(m=>m.key===$("kpiEditMetric").value);
-    if(meta && meta.unit && !$("kpiEditUnit").value) $("kpiEditUnit").value = meta.unit;
-  });
-  renderKpiCards();
-}
 
 const EXCEL_FUNCS = {
   SUM:(...a)=>a.flat(Infinity).reduce((s,v)=>s+(+v||0),0),
@@ -2480,25 +2314,6 @@ function applyPackagingModeUI(isBoxMode){
   setFieldNA("boxesPerLayer", !isBoxMode, 10);
   setFieldNA("boxLength", !isBoxMode, 300);
   setFieldNA("boxWidth", !isBoxMode, 200);
-
-  // Box on FP / Box on HP: layout margins (Offset X/Y) must be zero.
-  // Remember the previous non-zero values so switching away restores them.
-  const offX = $("cpOffX"), offY = $("cpOffY");
-  if(offX && offY){
-    if(isBoxMode){
-      if(offX.dataset.prevMargin == null){
-        offX.dataset.prevMargin = offX.value !== "" ? offX.value : "7.5";
-        offY.dataset.prevMargin = offY.value !== "" ? offY.value : "7.5";
-      }
-      offX.value = 0;
-      offY.value = 0;
-    } else if(offX.dataset.prevMargin != null){
-      offX.value = offX.dataset.prevMargin;
-      offY.value = offY.dataset.prevMargin;
-      delete offX.dataset.prevMargin;
-      delete offY.dataset.prevMargin;
-    }
-  }
 
   if($("boxLengthLabel")) $("boxLengthLabel").classList.toggle("hidden", !isBoxMode);
   if($("boxWidthLabel")) $("boxWidthLabel").classList.toggle("hidden", !isBoxMode);
@@ -2753,6 +2568,16 @@ function recalc(){
   setOut("palletWeight", palletWeight, "Kg");
   setOut("palletHeight", palletHeight, "mm");
   setOut("totalPalletHeight", totalPalletHeight, "mm");
+  // Keep the high-level KPI rail in sync with the same values used by the outputs,
+  // exports, and Packaging Manual so it never becomes a second calculation path.
+  const kpiValues = {
+    kpiUnitsPerLayer: fmt(unitsPerLayer),
+    kpiUnitsPerPallet: fmt(unitsPerPallet),
+    kpiLayers: fmt(layersPerPallet),
+    kpiPalletHeight: fmt(palletHeight),
+    kpiPalletWeight: fmt(palletWeight)
+  };
+  Object.entries(kpiValues).forEach(([id, value])=>{ const el = $(id); if(el) el.textContent = value; });
   setOut("containerWeight", containerWeight, "Ton");
   setOut("heightClearance", heightClearance, "mm");
   setOut("weightClearance", weightClearance, "Ton");
@@ -2819,19 +2644,12 @@ function recalc(){
     value: containerWeight, max: weightAllowance, limitType: "max", unit: "Ton", decimals: 2
   });
 
-  // Full named-range snapshot — for custom formula chips/preview, LAST_CALC, and KPI cards
+  // Full named-range snapshot — for custom formula chips/preview and LAST_CALC
   LAST_CALC = Object.assign({}, ctx, {
-    unitsPerLayer, unitsPerPallet, unitsPerContainer, layersPerPallet,
-    palletWeight, palletHeight, totalPalletHeight, containerWeight,
-    heightClearance, weightClearance, shrinkSize, strapLength,
-    unitMaxDiameter: numFromField("unitMaxDiameter"),
-    unitHeight: numFromField("unitHeight"),
-    unitWeight: numFromField("unitWeight"),
-    boxesPerLayer: numFromField("boxesPerLayer"),
-    palletPerContainer
+    unitsPerLayer, unitsPerPallet, unitsPerContainer, palletWeight, palletHeight,
+    totalPalletHeight, containerWeight, heightClearance, weightClearance, shrinkSize, strapLength
   });
   renderCustomFieldsOutputs();
-  updateKpiCardValues();
   threeDDirty = true;
   refreshChipValues();
 }
@@ -3883,29 +3701,6 @@ $("darkModeToggle") && $("darkModeToggle").addEventListener("click", ()=>{
 });
 try{ applyDarkMode(localStorage.getItem(DARK_KEY) === "1"); }catch(e){}
 
-/* Pin KPI summary cards to the top while scrolling the Spec Sheet */
-(function initStickyKpi(){
-  const rail = document.querySelector(".kpi-rail");
-  if(!rail) return;
-  const sentinel = document.createElement("div");
-  sentinel.setAttribute("aria-hidden","true");
-  sentinel.style.cssText = "height:1px;width:100%;pointer-events:none;margin:0;padding:0;";
-  rail.parentNode.insertBefore(sentinel, rail);
-  function updateStuck(){
-    const top = sentinel.getBoundingClientRect().top;
-    rail.classList.toggle("is-stuck", top < 0);
-  }
-  if(typeof IntersectionObserver !== "undefined"){
-    const io = new IntersectionObserver(([e])=>{
-      rail.classList.toggle("is-stuck", !e.isIntersecting);
-    }, {threshold:0, rootMargin:"0px"});
-    io.observe(sentinel);
-  }
-  window.addEventListener("scroll", updateStuck, {passive:true});
-  window.addEventListener("resize", updateStuck, {passive:true});
-  updateStuck();
-})();
-
 $("cpBoundaryShape").addEventListener("change", ()=>{
   $("cpCornerParamWrap").classList.toggle("hidden", $("cpBoundaryShape").value === "rect");
   recalc();
@@ -3914,29 +3709,13 @@ $("cpBoundaryShape").addEventListener("change", ()=>{
 $("cpEnabled") && $("cpEnabled").addEventListener("change", ()=> recalc());
 
 $("cpDownloadSvg").addEventListener("click", ()=>{
+
   const blob = new Blob([$("cpSvgWrap").innerHTML], {type:"image/svg+xml"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "kandil-layer-packing.svg";
   a.click();
   URL.revokeObjectURL(a.href);
-});
-if($("cpDownloadPng")) $("cpDownloadPng").addEventListener("click", async ()=>{
-  const markup = $("cpSvgWrap") ? $("cpSvgWrap").innerHTML.trim() : "";
-  if(!markup){ setStatus("No layout preview to download yet.", true); return; }
-  setStatus("Rendering layout PNG…");
-  try{
-    const png = await svgMarkupToPngDataUrl(markup, 1600);
-    if(!png || !png.dataUrl){ setStatus("Couldn't render the layout as PNG.", true); return; }
-    const a = document.createElement("a");
-    a.href = png.dataUrl;
-    a.download = "kandil-layer-packing.png";
-    a.click();
-    setStatus("Layout PNG downloaded ✓");
-  }catch(err){
-    console.error(err);
-    setStatus("PNG download failed: " + err.message, true);
-  }
 });
 
 /* Suggest the pallet footprint automatically from the strap-offset table
@@ -4387,30 +4166,18 @@ function makePdfBuilder(doc, drawHeader){
     const h = Math.max(BOX_MIN_H, BOX_MIN_H + (n-1)*LINE_STEP);
     return {labelW, labelLines, valLines, h};
   }
-  /* Table body rows — neutral palette only (label gray / value white).
-     Brand colour is reserved for section headings and table headers.
-     Optional statusColor draws a thin left accent for pass/warn/fail. */
-  function drawFieldBox(x, boxW, label, value, color, tint, labelFs, valueFs, rowH, statusColor){
+  function drawFieldBox(x, boxW, label, value, color, tint, labelFs, valueFs, rowH){
     const m = fieldMetrics(label, value, boxW, labelFs, valueFs);
     const h = rowH || m.h;
     if(!dry){
-      // Neutral body — matches Data Provider + app palette (ink / border / card)
-      doc.setFillColor(246,247,247); doc.rect(x, y, m.labelW, h, "F");
-      doc.setFillColor(255,255,255); doc.rect(x+m.labelW, y, boxW-m.labelW, h, "F");
-      doc.setDrawColor(228,228,228);
-      doc.setLineWidth(0.25);
+      doc.setFillColor(...color); doc.rect(x, y, m.labelW, h, "F");
+      doc.setFillColor(...tint); doc.rect(x+m.labelW, y, boxW-m.labelW, h, "F");
+      doc.setDrawColor(225,225,225);
       doc.rect(x, y, m.labelW, h); doc.rect(x+m.labelW, y, boxW-m.labelW, h);
-      // Optional status accent (thin bar only — body stays neutral)
-      if(statusColor){
-        doc.setFillColor(...statusColor);
-        doc.rect(x, y, 1.2, h, "F");
-      }
-      doc.setTextColor(91,91,92); // --ink
-      doc.setFont("helvetica","bold"); doc.setFontSize(labelFs);
-      doc.text(m.labelLines, x+2.8, y+3.9);
-      doc.setTextColor(51,51,52); // --ink-dark
-      doc.setFont("helvetica","normal"); doc.setFontSize(valueFs);
-      doc.text(m.valLines, x+m.labelW+2.5, y+3.9);
+      doc.setTextColor(...PDF_COLORS.white); doc.setFont("helvetica","bold"); doc.setFontSize(labelFs);
+      doc.text(m.labelLines, x+2, y+3.9);
+      doc.setTextColor(40,40,40); doc.setFont("helvetica","normal"); doc.setFontSize(valueFs);
+      doc.text(m.valLines, x+m.labelW+(boxW-m.labelW)/2, y+3.9, {align:"center"});
     }
     return h;
   }
@@ -4427,51 +4194,32 @@ function makePdfBuilder(doc, drawHeader){
        inline (falls back to normal flowing/paginating behaviour).
        renderFn may be async (it can await image generation, etc). */
     async section(renderFn){
-      /* Measure the whole block first. If it fits on one page, force a page
-         break when remaining space is insufficient so the section is never
-         split. If it is taller than one page, still start on a fresh page
-         when the current page is already partly used — avoids orphaning a
-         previous section's tail and a lonely header at the bottom. */
       const savedY = y;
       dry = true; y = 0;
       await renderFn();
       const totalH = y;
       dry = false; y = savedY;
       const pageContentH = pageH - marginTop - marginBottom;
-      if(totalH > 0){
-        if(totalH <= pageContentH){
-          ensureSpace(totalH);
-        } else if(y > marginTop + 8){
-          newPage();
-        }
-      }
+      if(totalH > 0 && totalH <= pageContentH) ensureSpace(totalH);
       await renderFn();
     },
-    /* Data Provider style: solid brand-colour section bar (teal / magenta / lime / gold).
-       color optional — defaults to teal. */
-    banner(text, color){
-      const h = 10.5;
-      const barH = 7.8;
-      ensureSpace(h);
+    banner(text){
+      const h = 11.5;
+      ensureSpace(9);
       if(!dry){
-        const fill = color || PDF_COLORS.teal;
-        doc.setFillColor(...fill);
-        doc.rect(marginX, y, pageW-marginX*2, barH, "F");
+        doc.setFillColor(...PDF_COLORS.ink);
+        doc.roundedRect(marginX, y, pageW-marginX*2, 8, 1.4, 1.4, "F");
         doc.setTextColor(...PDF_COLORS.white);
-        doc.setFont("helvetica","bold"); doc.setFontSize(9.2);
-        doc.text(String(text||"").toUpperCase(), marginX+4, y+5.2);
+        doc.setFont("helvetica","bolditalic"); doc.setFontSize(10.5);
+        doc.text(text, pageW/2, y+5.6, {align:"center"});
       }
       y += h;
     },
-    /* Body rows always use the neutral palette. color/tint args are ignored
-       (kept so existing call sites stay valid). Only headings are brand-coloured. */
-    field(label, value, color, tint, statusColor, opts){
-      const fullW = pageW - marginX*2;
-      const w = (opts && opts.width) ? opts.width : fullW;
-      const x = (opts && opts.x != null) ? opts.x : marginX;
+    field(label, value, color, tint){
+      const w = pageW - marginX*2;
       const m = fieldMetrics(label, value, w, LABEL_FS, VALUE_FS);
       ensureSpace(m.h);
-      drawFieldBox(x, w, label, value, color, tint, LABEL_FS, VALUE_FS, null, statusColor);
+      drawFieldBox(marginX, w, label, value, color, tint, LABEL_FS, VALUE_FS);
       y += m.h;
     },
     /* Two fields side by side in one row (each ~half width) — used for
@@ -4488,11 +4236,13 @@ function makePdfBuilder(doc, drawHeader){
       drawFieldBox(marginX+halfW+gap, halfW, label2, value2, color2, tint2, LABEL_FS, VALUE_FS, rowH);
       y += rowH;
     },
-    /* Pass/warn/fail: neutral body + thin coloured accent bar only. */
+    /* Same as field(), but colour is chosen from a pass/warn/fail status —
+       this is the red/green (and amber) highlight for limit indicators. */
     statusField(label, value, status){
       const C = PDF_COLORS;
-      const accent = { ok:C.limeDark, warn:C.goldDark, bad:C.red }[status] || C.limeDark;
-      this.field(label, value, null, null, accent);
+      const map = { ok:[C.limeDark, C.limeTint], warn:[C.goldDark, C.goldTint], bad:[C.red, C.redTint] };
+      const [color, tint] = map[status] || map.ok;
+      this.field(label, value, color, tint);
     },
     spacer(h){ y += (h||3); },
     paragraph(text){
@@ -4503,51 +4253,40 @@ function makePdfBuilder(doc, drawHeader){
       ensureSpace(h);
       if(!dry){
         doc.setTextColor(40,40,40);
-        doc.setDrawColor(210,214,218); doc.setFillColor(255,255,255);
+        doc.setDrawColor(225,225,225); doc.setFillColor(250,250,250);
         doc.rect(marginX, y, w, h, "FD");
         doc.text(lines, marginX+3, y+5.1);
       }
       y += h + 3;
     },
-    image(dataUrl, w, h, opts){
+    image(dataUrl, w, h){
       ensureSpace(h+4);
       if(!dry){
         try{
           const fmt = dataUrl.includes("image/png") ? "PNG" : "JPEG";
-          const x = (opts && opts.x != null) ? opts.x : (pageW/2 - w/2);
-          const drawY = (opts && opts.y != null) ? opts.y : y;
-          doc.addImage(dataUrl, fmt, x, drawY, w, h);
+          doc.addImage(dataUrl, fmt, pageW/2 - w/2, y, w, h);
         }catch(e){ /* skip on failure */ }
       }
-      if(!(opts && opts.noAdvance)) y += h + 4;
+      y += h + 4;
     },
-    /* Data Provider style multi-column table: brand-colour header + bordered
-       body rows. Optional 4th arg `headerColor` (RGB array); defaults to teal. */
+    /* Compact data table — header row + striped body rows, column widths as
+       fractions of the content width. Wraps each cell's text to its column
+       so long values grow the row instead of overflowing it, and respects
+       dry-run measuring so it's safe to use inside section(). */
     get dry(){ return dry; },
-    table(headers, colFracs, rows, headerColor){
+    table(headers, colFracs, rows){
       const w = pageW - marginX*2;
       const colW = colFracs.map(f=>f*w);
-      const headFs = 7.4, cellFs = 7.5, lineStep = 3.2, padTop = 3.6, minH = 6.0;
-      const headFill = headerColor || PDF_COLORS.teal;
+      const headFs = 7.2, cellFs = 7.4, lineStep = 3.2, padTop = 3.6, minH = 5.6;
       doc.setFont("helvetica","bold"); doc.setFontSize(headFs);
       const headLinesArr = headers.map((h,i)=> doc.splitTextToSize(String(h||""), colW[i]-3));
       const headH = Math.max(minH, minH + (Math.max(1,...headLinesArr.map(l=>l.length))-1)*lineStep);
-      /* Pre-measure full table height. If the whole table fits on one page,
-         reserve that space now so header + rows stay together. */
-      let tableTotalH = headH;
-      rows.forEach((row)=>{
-        doc.setFont("helvetica","normal"); doc.setFontSize(cellFs);
-        const cellLinesArr = row.map((v,i)=> doc.splitTextToSize(String(v||""), colW[i]-3));
-        tableTotalH += Math.max(minH, minH + (Math.max(1,...cellLinesArr.map(l=>l.length))-1)*lineStep);
-      });
-      const pageContentH = pageH - marginTop - marginBottom;
-      if(tableTotalH > 0 && tableTotalH <= pageContentH) ensureSpace(tableTotalH);
-      else ensureSpace(headH);
+      ensureSpace(headH);
       if(!dry){
         let x = marginX;
-        doc.setFillColor(...headFill); doc.rect(marginX, y, w, headH, "F");
+        doc.setFillColor(...PDF_COLORS.ink); doc.rect(marginX, y, w, headH, "F");
         doc.setTextColor(...PDF_COLORS.white);
-        headLinesArr.forEach((lines,i)=>{ doc.text(lines, x+2.2, y+3.5); x += colW[i]; });
+        headLinesArr.forEach((lines,i)=>{ doc.text(lines, x+2, y+3.2); x += colW[i]; });
       }
       y += headH;
       rows.forEach((row, ri)=>{
@@ -4557,18 +4296,11 @@ function makePdfBuilder(doc, drawHeader){
         ensureSpace(rowH);
         if(!dry){
           let x = marginX;
-          doc.setFillColor(ri%2===0 ? 255 : 248, ri%2===0 ? 255 : 249, ri%2===0 ? 255 : 250);
+          doc.setFillColor(ri%2===0 ? 250 : 255, ri%2===0 ? 250 : 255, ri%2===0 ? 250 : 255);
           doc.rect(marginX, y, w, rowH, "F");
-          doc.setDrawColor(210,214,218); doc.setLineWidth(0.25);
-          doc.rect(marginX, y, w, rowH);
-          // vertical column dividers
-          let vx = marginX;
-          for(let i=0;i<colW.length-1;i++){
-            vx += colW[i];
-            doc.line(vx, y, vx, y+rowH);
-          }
+          doc.setDrawColor(225,225,225); doc.rect(marginX, y, w, rowH);
           doc.setTextColor(40,40,40);
-          cellLinesArr.forEach((lines,i)=>{ doc.text(lines, x+2.2, y+padTop); x += colW[i]; });
+          cellLinesArr.forEach((lines,i)=>{ doc.text(lines, x+2, y+padTop); x += colW[i]; });
         }
         y += rowH;
       });
@@ -4594,14 +4326,14 @@ async function exportToPdf(){
 
     await P.section(async ()=>{
       if(isVisible("sec_req_general")){
-        P.banner("Customer Data / Required Information", C.teal);
+        P.banner("Required Information");
         if(data.codeRequest) P.field("Code Request", data.codeRequest, C.teal, C.tealTint);
         P.field("Customer", data.customer, C.teal, C.tealTint);
         P.field("Product Name", data.productName, C.teal, C.tealTint);
         P.field("Product Code", data.productCode, C.teal, C.tealTint);
       }
       if(isVisible("sec_req_category")){
-        if(!isVisible("sec_req_general")) P.banner("Customer Data / Required Information", C.teal);
+        if(!isVisible("sec_req_general")) P.banner("Required Information");
         P.spacer();
         P.field("Category", data.category, C.lime, C.limeTint);
         P.field("Packaging Category", data.packagingCategory, C.lime, C.limeTint);
@@ -4632,7 +4364,7 @@ async function exportToPdf(){
     if(isVisible("sec_special")){
       await P.section(async ()=>{
         P.spacer(5);
-        P.banner("Special Requirements", C.ink);
+        P.banner("Special Requirements");
         P.field("Customer Label (D.)", data.customerLabel, C.gray, C.grayTint);
         P.field("Shrink Label (D.)", data.shrinkLabel, C.gray, C.grayTint);
       });
@@ -4643,7 +4375,7 @@ async function exportToPdf(){
 
     if(isVisible("sec_calc_inputs")){
       await P.section(async ()=>{
-        P.banner("Calculations — Inputs", C.gold);
+        P.banner("Calculations — Inputs");
         P.fieldPair("Packaging Type", data.packagingType, C.gold, C.goldTint, "Pallet Type", data.palletType, C.gold, C.goldTint);
         P.fieldPair("Container's Type", data.containerType, C.gold, C.goldTint, "Container's Destination", data.containerDestination, C.gold, C.goldTint);
         P.fieldPair("Unit Max Diameter (mm)", fmt(data.unitMaxDiameter), C.gold, C.goldTint, "Box Length (mm)", fmt(data.boxLength), C.gold, C.goldTint);
@@ -4657,7 +4389,7 @@ async function exportToPdf(){
     if(isVisible("sec_calc_outputs")){
       await P.section(async ()=>{
         P.spacer(5);
-        P.banner("Calculations — Outputs", C.teal);
+        P.banner("Calculations — Outputs");
         P.fieldPair("Units / Layer", fmt(data.unitsPerLayer)+" Unit", C.teal, C.tealTint, "Units / Pallet", fmt(data.unitsPerPallet)+" Unit", C.teal, C.tealTint);
         P.fieldPair("Units / Container", fmt(data.unitsPerContainer)+" Unit", C.teal, C.tealTint, "Pallet Weight", fmt(data.palletWeight)+" Kg", C.teal, C.tealTint);
         P.fieldPair("Pallet Height", fmt(data.palletHeight)+" mm", C.teal, C.tealTint, "Total Pallet Height", fmt(data.totalPalletHeight)+" mm", C.teal, C.tealTint);
@@ -4668,7 +4400,7 @@ async function exportToPdf(){
     if(isVisible("sec_indicators")){
       await P.section(async ()=>{
         P.spacer(5);
-        P.banner("Indicators", C.lime);
+        P.banner("Indicators");
         const containerMaxH = containerMaxHeightFor(data.containerType);
         const heightStatus = computeGaugeGeometry({value:data.totalPalletHeight, max:containerMaxH, limitType:"max"}).status;
         const weightAllowance = weightAllowanceTonFor(data.containerType, data.containerDestination.toLowerCase());
@@ -4683,7 +4415,7 @@ async function exportToPdf(){
     if(isVisible("sec_custom_calc") && data.customFields && data.customFields.length){
       await P.section(async ()=>{
         P.spacer(5);
-        P.banner("Custom Calculations", C.teal);
+        P.banner("Custom Calculations");
         data.customFields.forEach(f=>{
           const valStr = isFinite(f.value) ? f.value.toLocaleString(undefined,{maximumFractionDigits:f.decimals||2}) + (f.unit?(" "+f.unit):"") : "—";
           if(f.limitType && f.limitType !== "none" && isFinite(f.value)){
@@ -4699,19 +4431,18 @@ async function exportToPdf(){
     if(isVisible("sec_bom_calc")){
       await P.section(async ()=>{
         P.spacer(6);
-        P.banner("BOM Calculations", C.teal);
+        P.banner("BOM Calculations");
         P.field("Shrink Size", fmt(data.shrinkSize)+" mm", C.teal, C.tealTint);
         P.field("Strap Length", fmt(data.strapLength)+" m", C.teal, C.tealTint);
       });
     }
 
     if(isVisible("sec_bom_table")){
-      P.banner("Bill of Materials (BOM)", C.magenta);
+      P.banner("Bill of Materials (BOM)");
       P.table(
         ["Item","Specifications","UOM","Qty"],
         [0.18, 1 - 0.18 - 0.12 - 0.12, 0.12, 0.12],
-        data.bom.map(row=>[row.item||"", row.spec||"", row.uom||"", isFinite(row.qty) ? row.qty.toLocaleString(undefined,{maximumFractionDigits:3}) : "0"]),
-        C.magenta
+        data.bom.map(row=>[row.item||"", row.spec||"", row.uom||"", isFinite(row.qty) ? row.qty.toLocaleString(undefined,{maximumFractionDigits:3}) : "0"])
       );
     }
 
@@ -4723,7 +4454,7 @@ async function exportToPdf(){
           const png = await svgMarkupToPngDataUrl($("cpSvgWrap").innerHTML, 900);
           if(png){
             P.spacer(6);
-            P.banner(isBoxModeP ? "Boxes / Layer — Rectangle Packing Diagram" : "Units / Layer — Circle Packing Diagram", C.teal);
+            P.banner(isBoxModeP ? "Boxes / Layer — Rectangle Packing Diagram" : "Units / Layer — Circle Packing Diagram");
             const maxW = 150, maxH = 140;
             let w = maxW, h = w * (png.height/png.width);
             if(h > maxH){ h = maxH; w = h * (png.width/png.height); }
@@ -4743,7 +4474,7 @@ async function exportToPdf(){
           const dims = await getImageDataUrlDimensions(data.packingPhotoDataUrl);
           if(dims){
             P.spacer(6);
-            P.banner(isBoxModeP ? "Boxes / Layer — Reference Photo" : "Units / Layer — Reference Photo", C.teal);
+            P.banner(isBoxModeP ? "Boxes / Layer — Reference Photo" : "Units / Layer — Reference Photo");
             const maxW = 150, maxH = 140;
             let w = maxW, h = w * (dims.height/dims.width);
             if(h > maxH){ h = maxH; w = h * (dims.width/dims.height); }
@@ -4766,7 +4497,7 @@ async function exportToPdf(){
     if(data.additionalComments && data.additionalComments.trim()){
       await P.section(async ()=>{
         P.spacer(5);
-        P.banner("Additional Comments", C.ink);
+        P.banner("Additional Comments");
         P.paragraph(data.additionalComments.trim());
       });
     }
@@ -5536,14 +5267,6 @@ async function saveProductToCloud(asNew){
 }
 $("saveProductBtn").addEventListener("click", ()=> saveProductToCloud(true));
 $("updateProductBtn").addEventListener("click", ()=> saveProductToCloud(false));
-if($("saveNewProductSpecBtn")) $("saveNewProductSpecBtn").addEventListener("click", ()=> saveProductToCloud(true));
-if($("updateProductSpecBtn")) $("updateProductSpecBtn").addEventListener("click", ()=>{
-  if(!currentLoadedProductId){
-    setStatus("Load a product first, or use Save New Product.", true);
-    return;
-  }
-  saveProductToCloud(false);
-});
 
 function setSelectVal(id, v){
   const el = $(id); if(!el) return;
@@ -5619,8 +5342,14 @@ function loadProductIntoForm(p){
   applyCustomReqValues(p.customReqValues);
 
   productPhotoDataUrl = p.productPhotoDataUrl || null;
-  applyProductPhotoUi(productPhotoDataUrl ? "📷 Loaded from saved product" : null);
-
+  if(productPhotoDataUrl){
+    $("productPhotoPreview").src = productPhotoDataUrl;
+    $("productPhotoPreviewWrap").classList.remove("hidden");
+    $("productPhotoZoneLabel").textContent = "📷 Loaded from saved product";
+  } else {
+    $("productPhotoPreviewWrap").classList.add("hidden");
+    $("productPhotoZoneLabel").textContent = "📷 Click to attach a product photo";
+  }
   threeDirty = true;
 
   packingPhotoDataUrl = p.packingPhotoDataUrl || null;
@@ -5636,9 +5365,6 @@ function loadProductIntoForm(p){
   if($("usePhotoCountForCalc")) $("usePhotoCountForCalc").checked = !!p.usePhotoCountForCalc;
 
   loadManualData(p.manual || {});
-
-  // If Manual has no dedicated product image, fill it from Spec Sheet photo
-  if(typeof syncProductPhotoToManual === "function") syncProductPhotoToManual(false);
 
   recalc();
   const sheetTab = document.querySelector('.tab-btn[data-tab="sheet"]');
@@ -5845,34 +5571,6 @@ function getThreeTextures(){
    color with a real product image. Cached by data-URL so we don't
    reload the texture on every rebuild unless the photo actually changed. */
 let productPhotoDataUrl = null;
-let pmProduct2DDataUrl = null;
-
-/* Keep Spec Sheet / 3D / Packaging Manual product images in sync. */
-function applyProductPhotoUi(labelText){
-  const has = !!productPhotoDataUrl;
-  // Spec Sheet primary zone
-  if($("productPhotoPreview") && productPhotoDataUrl) $("productPhotoPreview").src = productPhotoDataUrl;
-  if($("productPhotoPreviewWrap")) $("productPhotoPreviewWrap").classList.toggle("hidden", !has);
-  if($("productPhotoZoneLabel")) $("productPhotoZoneLabel").textContent = has
-    ? (labelText || "📷 Product photo attached")
-    : "📷 Attach product photo";
-  // 3D tab mirror
-  if($("productPhoto3dPreview") && productPhotoDataUrl) $("productPhoto3dPreview").src = productPhotoDataUrl;
-  if($("productPhoto3dPreviewWrap")) $("productPhoto3dPreviewWrap").classList.toggle("hidden", !has);
-  if($("productPhoto3dHint")) $("productPhoto3dHint").textContent = has
-    ? "Using the product photo from the Spec Sheet."
-    : "No product photo attached yet — add one on the Spec Sheet tab.";
-}
-function syncProductPhotoToManual(force){
-  // Copy Spec Sheet product photo into Manual product image unless the user
-  // already set a dedicated 2D drawing (unless force=true from Sync button).
-  if(!productPhotoDataUrl) return;
-  if(!force && pmProduct2DDataUrl && pmProduct2DDataUrl !== productPhotoDataUrl) return;
-  pmProduct2DDataUrl = productPhotoDataUrl;
-  if($("pmProduct2DPreview")) $("pmProduct2DPreview").src = pmProduct2DDataUrl;
-  if($("pmProduct2DPreviewWrap")) $("pmProduct2DPreviewWrap").classList.remove("hidden");
-  if($("pmProduct2DZoneLabel")) $("pmProduct2DZoneLabel").textContent = "📷 From Spec Sheet product photo";
-}
 let packingPhotoDataUrl = null;
 let productPhotoTexCache = null;
 function getProductPhotoTexture(){
@@ -6072,24 +5770,22 @@ $("productPhotoInput").addEventListener("change", e=>{
   const reader = new FileReader();
   reader.onload = ()=>{
     productPhotoDataUrl = reader.result;
-    applyProductPhotoUi("📷 " + file.name);
-    // Always push into Packaging Manual product image when set from Spec Sheet
-    syncProductPhotoToManual(true);
+    $("productPhotoPreview").src = productPhotoDataUrl;
+    $("productPhotoPreviewWrap").classList.remove("hidden");
+    $("productPhotoZoneLabel").textContent = "📷 " + file.name;
     threeDirty = true;
-    if(document.querySelector('.tab-btn[data-tab="model3d"]') &&
-       document.querySelector('.tab-btn[data-tab="model3d"]').classList.contains("active")) build3DModel();
-    setStatus("Product photo attached — also applied on Packaging Manual ✓");
+    if(document.querySelector('.tab-btn[data-tab="model3d"]').classList.contains("active")) build3DModel();
   };
   reader.readAsDataURL(file);
 });
 $("removeProductPhoto").addEventListener("click", ()=>{
   productPhotoDataUrl = null;
   productPhotoTexCache = null;
-  if($("productPhotoInput")) $("productPhotoInput").value = "";
-  applyProductPhotoUi();
+  $("productPhotoInput").value = "";
+  $("productPhotoPreviewWrap").classList.add("hidden");
+  $("productPhotoZoneLabel").textContent = "📷 Click to attach a product photo";
   threeDirty = true;
-  if(document.querySelector('.tab-btn[data-tab="model3d"]') &&
-     document.querySelector('.tab-btn[data-tab="model3d"]').classList.contains("active")) build3DModel();
+  if(document.querySelector('.tab-btn[data-tab="model3d"]').classList.contains("active")) build3DModel();
 });
 
 $("packingPhotoInput").addEventListener("change", e=>{
@@ -6153,18 +5849,40 @@ function restoreLastFormValues(){
   if(d.customPmValues) applyCustomPmValues(d.customPmValues);
 }
 renderCustomReqFields();
+setupPmManualSections();
 renderCustomPmSections();
-renderPmCustomSectionsAdmin();
-function addPmCustomSection(){
-  const title = (prompt("Title for the new Packaging Manual section:", "New Section") || "").trim();
+const addPmSectionBtn = $("pmAddSectionBtn");
+if(addPmSectionBtn) addPmSectionBtn.addEventListener("click", ()=>{
+  const title = ($("pmNewSectionTitle").value || "").trim();
   if(!title) return;
-  CUSTOM_PM_SECTIONS.push({id:"s_"+Date.now()+"_"+Math.floor(Math.random()*1000), title, fields:[]});
-  persistCustomPmSections(); renderPmCustomSectionsAdmin(); renderCustomPmSections();
+  const values=gatherCustomPmValues();
+  const id="s_"+Date.now()+"_"+Math.floor(Math.random()*1000);
+  CUSTOM_PM_SECTIONS.push({id, title, slot:"custom", fields:[]});
+  $("pmNewSectionTitle").value="";
+  persistCustomPmSections();
+  refreshPmManualEditor(values);
+  $("pmFieldTarget").value="section:"+id;
   setStatus(`Section "${title}" added ✓`);
-  const admin = $("pmCustomSectionsAdmin");
-  if(admin && typeof admin.scrollIntoView === "function") admin.scrollIntoView({behavior:"smooth", block:"nearest"});
-}
-$("pmAddSectionBtn") && $("pmAddSectionBtn").addEventListener("click", addPmCustomSection);
+});
+const addPmFieldBtn = $("pmAddFieldBtn");
+if(addPmFieldBtn) addPmFieldBtn.addEventListener("click",()=>{
+  const label=($("pmNewFieldLabel").value||"").trim();
+  if(!label){ $("pmNewFieldLabel").focus(); return; }
+  const target=$("pmFieldTarget").value || "slot:header";
+  const values=gatherCustomPmValues();
+  const key=createCustomPmField(label,target);
+  if(!key) return;
+  values.push({key,value:""});
+  $("pmNewFieldLabel").value="";
+  refreshPmManualEditor(values);
+  setStatus(`Field "${label}" added ✓`);
+});
+$("pmNewSectionTitle") && $("pmNewSectionTitle").addEventListener("keydown",event=>{
+  if(event.key==="Enter"){ event.preventDefault(); addPmSectionBtn && addPmSectionBtn.click(); }
+});
+$("pmNewFieldLabel") && $("pmNewFieldLabel").addEventListener("keydown",event=>{
+  if(event.key==="Enter"){ event.preventDefault(); addPmFieldBtn && addPmFieldBtn.click(); }
+});
 restoreLastFormValues();
 renderProductList();
 renderReportVisibility();
@@ -6637,38 +6355,7 @@ function pmSyncFromSpec(){
   const frameBomRow = (data.bom||[]).find(r => (r.item||"").trim().toLowerCase() === "wood frame");
   $("pmFrame").value = frameBomRow ? (frameBomRow.spec || "N/A") : "N/A";
 
-  // Sealing number comes from BOM Quantity of "Plastic Hoods"
-  // e.g. qty 1 → "1 x (Outer Plastic Bag)", qty 2 → "2 x (Outer Plastic Bag)", qty 0 → "None"
-  const hoodBomRow = (data.bom||[]).find(r => {
-    const n = (r.item||"").trim().toLowerCase();
-    return n === "plastic hoods" || n === "plastic hood";
-  });
-  const hoodQty = hoodBomRow ? (parseFloat(hoodBomRow.qty) || 0) : 0;
-  const sealingEl = $("pmSealing");
-  if(sealingEl){
-    let sealingVal;
-    if(hoodQty <= 0) sealingVal = "None";
-    else {
-      const n = Math.round(hoodQty) === hoodQty ? String(Math.round(hoodQty)) : String(hoodQty);
-      sealingVal = n + " x (Outer Plastic Bag)";
-    }
-    // Ensure the option exists in the select, then select it
-    if(sealingEl.tagName === "SELECT"){
-      const exists = Array.from(sealingEl.options).some(o => o.value === sealingVal);
-      if(!exists){
-        const opt = document.createElement("option");
-        opt.value = sealingVal; opt.textContent = sealingVal;
-        sealingEl.appendChild(opt);
-      }
-      sealingEl.value = sealingVal;
-    } else {
-      sealingEl.value = sealingVal;
-    }
-  }
-
   $("pmPalletsPerCont").value = fmt(data.palletPerContainer);
-  // Container Type — always mirror the Spec Sheet selection
-  $("pmContType").value = data.containerType || strFromField("containerType") || "";
 
   // Net weight = product weight only (excludes the pallet's own base/overhead
   // weight constant); Gross weight = full weight including that overhead.
@@ -6691,9 +6378,6 @@ function pmSyncFromSpec(){
   $("pmHeight").value = fmt(data.unitHeight) + " mm";
   $("pmDiameter").value = isBoxMode ? "N/A" : fmt(data.unitMaxDiameter) + " mm";
 
-  // Product photo from Spec Sheet → Packaging Manual product image
-  if(typeof syncProductPhotoToManual === "function") syncProductPhotoToManual(true);
-
   $("pmOnlineProcess").value = $("pmSKU").value || "";
 
   // Pallet Name mirrors Pallet Type — auto-applies its saved construction
@@ -6713,11 +6397,6 @@ function pmSyncFromSpec(){
   pmSetStatus("Synced from Spec Sheet ✓", false);
 }
 $("pmSyncBtn").addEventListener("click", pmSyncFromSpec);
-
-// Keep Manual container type live with Spec Sheet selection
-if($("containerType")) $("containerType").addEventListener("change", ()=>{
-  if($("pmContType")) $("pmContType").value = strFromField("containerType") || "";
-});
 
 // Auto-sync once whenever the Packaging Manual tab is first opened, so it
 // isn't blank the first time — afterward it's manual (via the button) so it
@@ -6796,6 +6475,7 @@ $("pmRemoveCertBadges").addEventListener("click", ()=>{
 
 /* Product 2D technical drawing — per-product (saved/loaded with the rest
    of the product, unlike the header logos which are per-device). */
+let pmProduct2DDataUrl = null;
 $("pmProduct2DInput").addEventListener("change", e=>{
   const file = e.target.files[0];
   if(!file) return;
@@ -6829,39 +6509,20 @@ function pmDrawHeader(doc){
   return 26;
 }
 function pmDrawFooter(doc){
-  // Secondary/partner logo + certification badges sit at the LEFT BOTTOM of
-  // every page. The page layout border is rect(6, 4, 198, 289) → bottom edge
-  // at y = 293. Logo bottoms sit slightly above that line.
-  const layoutBottom = 4 + (297 - 8); // 293 mm — bottom of the page frame
-  const gapAboveLine = 1.8;          // slight clearance above the layout line
-  const logoBottom = layoutBottom - gapAboveLine;
-  const maxH = 11;
-  let x = 10; // left, inside the frame
-  const gap = 5;
-
+  // Both header-logo attachments (secondary/partner logo, certification
+  // badges row) are drawn in the FOOTER, not the header, so every page's
+  // top stays clean with just the Kandil mark and title.
   if(pmSecondaryLogoDataUrl){
-    try{
-      const w = 26, h = maxH;
-      doc.addImage(
-        pmSecondaryLogoDataUrl,
-        pmSecondaryLogoDataUrl.includes("image/png") ? "PNG" : "JPEG",
-        x, logoBottom - h, w, h
-      );
-      x += w + gap;
-    }catch(e){}
+    try{ doc.addImage(pmSecondaryLogoDataUrl, pmSecondaryLogoDataUrl.includes("image/png")?"PNG":"JPEG", 12, 297-16, 24, 12); }catch(e){}
   }
   if(pmCertBadgesDataUrl){
     try{
-      const w = 90, h = Math.min(maxH, w * 0.18);
-      doc.addImage(
-        pmCertBadgesDataUrl,
-        pmCertBadgesDataUrl.includes("image/png") ? "PNG" : "JPEG",
-        x, logoBottom - h, w, h
-      );
+      const w = 100, h = w * 0.18;
+      doc.addImage(pmCertBadgesDataUrl, pmCertBadgesDataUrl.includes("image/png")?"PNG":"JPEG", 105-w/2, 297-16, w, h);
     }catch(e){}
   }
   doc.setFont("helvetica","italic"); doc.setFontSize(8); doc.setTextColor(160,160,160);
-  doc.text("Customer Approval", 210 - 10, logoBottom - 1.5, {align:"right"});
+  doc.text("Customer Approval", 210-12, 297-6, {align:"right"});
 }
 
 async function exportManualToPdf(){
@@ -6879,92 +6540,95 @@ async function exportManualToPdf(){
     const val = (id)=> $(id) ? ($(id).value || "N/A") : "N/A";
     const C = PDF_COLORS;
     const hasFrame = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
+    const drawPdfSection = P.section.bind(P);
+    const queuedPdfSections = [];
+    let activeManualPdfKey = "builtin:header";
+    P.section = async draw=>{ queuedPdfSections.push({key:activeManualPdfKey,draw}); };
 
-    const __pmChunks = {
-      header: async ()=>{
     await P.section(async ()=>{
-      P.banner(PMT("header","Customer Data"), C.gold);
-      P.field(PML("pmProductName","Product Name"), val("pmProductName"), C.gold, C.goldTint);
-      P.field(PML("pmProductCode","Product Code"), val("pmProductCode"), C.gold, C.goldTint);
-      P.field(PML("pmCustomer","Customer"), val("pmCustomer"), C.gold, C.goldTint);
-      P.field(PML("pmSKU","SKU"), val("pmSKU"), C.gold, C.goldTint);
-      P.field(PML("pmIssueDate","Issue Date"), val("pmIssueDate"), C.gold, C.goldTint);
-      P.field(PML("pmRevisedDate","Revised / Approved Date"), val("pmRevisedDate"), C.gold, C.goldTint);
+      P.field("Product Name", val("pmProductName"), C.gold, C.goldTint);
+      P.field("Product Code", val("pmProductCode"), C.gold, C.goldTint);
+      P.field("Customer", val("pmCustomer"), C.gold, C.goldTint);
+      P.field("SKU", val("pmSKU"), C.gold, C.goldTint);
+      P.field("Issue Date", val("pmIssueDate"), C.gold, C.goldTint);
+      P.field("Revised / Approved Date", val("pmRevisedDate"), C.gold, C.goldTint);
     });
-      },
-      layerSetup: async ()=>{
-    // Fields + layout diagram kept in ONE section so they never split across pages.
-    const packingEnabled = $("cpEnabled") && $("cpEnabled").checked;
-    let layerPng = null, layerDims = null;
-    if(packingEnabled && $("cpSvgWrap").innerHTML.trim()){
-      layerPng = await svgMarkupToPngDataUrl($("cpSvgWrap").innerHTML, 1200);
-    } else if(packingPhotoDataUrl){
-      layerDims = await getImageDataUrlDimensions(packingPhotoDataUrl);
-    }
+
+    activeManualPdfKey = "builtin:layerSetup";
     await P.section(async ()=>{
-      P.banner(PMT("layerSetup","1. Pallet Layer Setup"), C.teal);
-      P.field(PML("pmPalletSize","Pallet Size"), val("pmPalletSize"), C.teal, C.tealTint);
-      P.field(PML("pmProductDimension","Product Dimension"), val("pmProductDimension"), C.teal, C.tealTint);
-      P.field(PML("pmUsableArea","Usable Area"), val("pmUsableArea"), C.teal, C.tealTint);
-      P.field(PML("pmLayout","Layout"), val("pmLayout"), C.teal, C.tealTint);
-      P.field(PML("pmEdgeClearance","Edge Clearance"), val("pmEdgeClearance"), C.teal, C.tealTint);
-      P.field(PML("pmQtyPerLayer","Quantity per Layer"), val("pmQtyPerLayer"), C.teal, C.tealTint);
-      if(layerPng){
-        const maxW = Math.min(P.contentW * 0.92, 165), maxH = 145;
-        let w = maxW, h = w * (layerPng.height/layerPng.width);
-        if(h > maxH){ h = maxH; w = h * (layerPng.width/layerPng.height); }
-        P.spacer(2);
-        P.image(layerPng.dataUrl, w, h);
-        P.spacer(2);
-      } else if(layerDims){
-        const maxW = Math.min(P.contentW * 0.92, 165), maxH = 145;
-        let w = maxW, h = w * (layerDims.height/layerDims.width);
-        if(h > maxH){ h = maxH; w = h * (layerDims.width/layerDims.height); }
-        P.spacer(2);
-        P.image(layerDims.dataUrl, w, h);
-        P.spacer(2);
+      P.banner("1. Pallet Layer Setup");
+      P.field("Pallet Size", val("pmPalletSize"), C.teal, C.tealTint);
+      P.field("Product Dimension", val("pmProductDimension"), C.teal, C.tealTint);
+      P.field("Usable Area", val("pmUsableArea"), C.teal, C.tealTint);
+      P.field("Layout", val("pmLayout"), C.teal, C.tealTint);
+      P.field("Edge Clearance", val("pmEdgeClearance"), C.teal, C.tealTint);
+      P.field("Quantity per Layer", val("pmQtyPerLayer"), C.teal, C.tealTint);
+    });
+
+    // Layout diagram — the live packing preview, or the reference photo if
+    // the packing tool was switched off. Kept as its own (usually short)
+    // section so a page break never lands between the image and its caption.
+    const packingEnabled = $("cpEnabled") && $("cpEnabled").checked;
+    activeManualPdfKey = "builtin:layerSetup";
+    await P.section(async ()=>{
+      if(packingEnabled && $("cpSvgWrap").innerHTML.trim()){
+        const png = await svgMarkupToPngDataUrl($("cpSvgWrap").innerHTML, 900);
+        if(png){
+          const maxW = 150, maxH = 120;
+          let w = maxW, h = w * (png.height/png.width);
+          if(h > maxH){ h = maxH; w = h * (png.width/png.height); }
+          P.image(png.dataUrl, w, h);
+        }
+      } else if(packingPhotoDataUrl){
+        const dims = await getImageDataUrlDimensions(packingPhotoDataUrl);
+        if(dims){
+          const maxW = 150, maxH = 120;
+          let w = maxW, h = w * (dims.height/dims.width);
+          if(h > maxH){ h = maxH; w = h * (dims.width/dims.height); }
+          P.image(dims.dataUrl, w, h);
+        }
       }
     });
-      },
-      palletSetup: async ()=>{
+
+    activeManualPdfKey = "builtin:palletSetup";
     await P.section(async ()=>{
-      P.banner(PMT("palletSetup","2. Pallet Setup"), C.magenta);
-      P.field(PML("pmPalletTypeName","Pallet Type"), val("pmPalletTypeName"), C.magenta, C.magentaTint);
-      P.field(PML("pmUnitsLayer","Units / Layer"), val("pmUnitsLayer"), C.magenta, C.magentaTint);
-      P.field(PML("pmLayerPallet","Layer / Pallet"), val("pmLayerPallet"), C.magenta, C.magentaTint);
-      P.field(PML("pmUnitsPallet","Units / Pallet"), val("pmUnitsPallet"), C.magenta, C.magentaTint);
-      P.field(PML("pmPalletHeight","Pallet Height (mm)"), val("pmPalletHeight"), C.magenta, C.magentaTint);
-      P.field(PML("pmPlasticRoll","Plastic Roll"), val("pmPlasticRoll"), C.magenta, C.magentaTint);
-      P.field(PML("pmSeparatorsType","Pallet Separators Type"), val("pmSeparatorsType"), C.magenta, C.magentaTint);
-      P.field(PML("pmSeparatorsSizeQty","Pallet Separators Size / Qty"), val("pmSeparatorsSizeQty"), C.magenta, C.magentaTint);
-      P.field(PML("pmPalletCover","Pallet Cover"), val("pmPalletCover"), C.magenta, C.magentaTint);
-      P.field(PML("pmFrame","Frame"), hasFrame ? val("pmFrame") : "N/A — Top Frame Wooden = No", C.magenta, C.magentaTint);
-      P.field(PML("pmSealing","Sealing"), val("pmSealing"), C.magenta, C.magentaTint);
-      P.field(PML("pmStrapM","Strap (m)"), val("pmStrapM"), C.magenta, C.magentaTint);
-      P.field(PML("pmLabelColor","Pallet Label Color"), val("pmLabelColor"), C.magenta, C.magentaTint);
-      P.field(PML("pmLabelDims","Pallet Label Dimensions"), val("pmLabelDims"), C.magenta, C.magentaTint);
-      P.field(PML("pmCSR","Customer Special Request (CSR)"), val("pmCSR"), C.magenta, C.magentaTint);
+      P.banner("2. Pallet Setup");
+      P.field("Pallet Type", val("pmPalletTypeName"), C.magenta, C.magentaTint);
+      P.field("Units / Layer", val("pmUnitsLayer"), C.magenta, C.magentaTint);
+      P.field("Layer / Pallet", val("pmLayerPallet"), C.magenta, C.magentaTint);
+      P.field("Units / Pallet", val("pmUnitsPallet"), C.magenta, C.magentaTint);
+      P.field("Pallet Height (mm)", val("pmPalletHeight"), C.magenta, C.magentaTint);
+      P.field("Plastic Roll", val("pmPlasticRoll"), C.magenta, C.magentaTint);
+      P.field("Pallet Separators Type", val("pmSeparatorsType"), C.magenta, C.magentaTint);
+      P.field("Pallet Separators Size / Qty", val("pmSeparatorsSizeQty"), C.magenta, C.magentaTint);
+      P.field("Pallet Cover", val("pmPalletCover"), C.magenta, C.magentaTint);
+      P.field("Frame", hasFrame ? val("pmFrame") : "N/A — Top Frame Wooden = No", C.magenta, C.magentaTint);
+      P.field("Sealing", val("pmSealing"), C.magenta, C.magentaTint);
+      P.field("Strap (m)", val("pmStrapM"), C.magenta, C.magentaTint);
+      P.field("Pallet Label Color", val("pmLabelColor"), C.magenta, C.magentaTint);
+      P.field("Pallet Label Dimensions", val("pmLabelDims"), C.magenta, C.magentaTint);
+      P.field("Customer Special Request (CSR)", val("pmCSR"), C.magenta, C.magentaTint);
     });
-      },
-      loading: async ()=>{
+
     // 3. Loading Data — compact two-fields-per-row layout.
+    activeManualPdfKey = "builtin:loading";
     await P.section(async ()=>{
-      P.banner(PMT("loading","3. Loading Data / Packaging Modifications"), C.lime);
-      P.fieldPair(PML("pmContType","Container Type"), val("pmContType"), C.lime, C.limeTint, PML("pmPalletsPerCont","No. Pallets / Container / Unit"), val("pmPalletsPerCont"), C.lime, C.limeTint);
-      P.fieldPair(PML("pmPalletNetWeight","Pallet Net Weight"), val("pmPalletNetWeight"), C.lime, C.limeTint, PML("pmPalletGrossWeight","Pallet Gross Weight"), val("pmPalletGrossWeight"), C.lime, C.limeTint);
-      P.fieldPair(PML("pmUnitsPerCont","No. of Units / Container / Unit"), val("pmUnitsPerCont"), C.lime, C.limeTint, PML("pmContNetWeight","Container Net Weight / Unit"), val("pmContNetWeight"), C.lime, C.limeTint);
-      P.fieldPair(PML("pmContGrossWeight","Container Gross Weight / Unit"), val("pmContGrossWeight"), C.lime, C.limeTint, PML("pmCushions","No. of Cushions"), val("pmCushions"), C.lime, C.limeTint);
+      P.banner("3. Loading Data");
+      P.fieldPair("Container Type", val("pmContType"), C.lime, C.limeTint, "No. Pallets / Container / Unit", val("pmPalletsPerCont"), C.lime, C.limeTint);
+      P.fieldPair("Pallet Net Weight", val("pmPalletNetWeight"), C.lime, C.limeTint, "Pallet Gross Weight", val("pmPalletGrossWeight"), C.lime, C.limeTint);
+      P.fieldPair("No. of Units / Container / Unit", val("pmUnitsPerCont"), C.lime, C.limeTint, "Container Net Weight / Unit", val("pmContNetWeight"), C.lime, C.limeTint);
+      P.fieldPair("Container Gross Weight / Unit", val("pmContGrossWeight"), C.lime, C.limeTint, "No. of Cushions", val("pmCushions"), C.lime, C.limeTint);
     });
-      },
-      product: async ()=>{
+
     // 4. Product Data — compact two-fields-per-row layout, photo kept with it.
+    activeManualPdfKey = "builtin:product";
     await P.section(async ()=>{
-      P.banner(PMT("product","4. Product Data / SKU Guidelines"), C.gold);
-      P.fieldPair(PML("pmBrimful","Brimful Capacity (ml)"), val("pmBrimful"), C.gold, C.goldTint, PML("pmWeight","Weight"), val("pmWeight"), C.gold, C.goldTint);
-      P.fieldPair(PML("pmHeight","Height"), val("pmHeight"), C.gold, C.goldTint, PML("pmDiameter","Diameter"), val("pmDiameter"), C.gold, C.goldTint);
-      P.fieldPair(PML("pmColour","Colour"), val("pmColour"), C.gold, C.goldTint, PML("pmFinish","Finish"), val("pmFinish"), C.gold, C.goldTint);
-      P.fieldPair(PML("pmLabelling","Labelling"), val("pmLabelling"), C.gold, C.goldTint, PML("pmPrinting","Printing"), val("pmPrinting"), C.gold, C.goldTint);
-      P.field(PML("pmTDRef","TD Reference / Date"), val("pmTDRef"), C.gold, C.goldTint);
+      P.banner("4. Product Data");
+      P.fieldPair("Brimful Capacity (ml)", val("pmBrimful"), C.gold, C.goldTint, "Weight", val("pmWeight"), C.gold, C.goldTint);
+      P.fieldPair("Height", val("pmHeight"), C.gold, C.goldTint, "Diameter", val("pmDiameter"), C.gold, C.goldTint);
+      P.fieldPair("Colour", val("pmColour"), C.gold, C.goldTint, "Finish", val("pmFinish"), C.gold, C.goldTint);
+      P.fieldPair("Labelling", val("pmLabelling"), C.gold, C.goldTint, "Printing", val("pmPrinting"), C.gold, C.goldTint);
+      P.field("TD Reference / Date", val("pmTDRef"), C.gold, C.goldTint);
       const pmProductImage = pmProduct2DDataUrl || productPhotoDataUrl;
       if(pmProductImage){
         const dims = await getImageDataUrlDimensions(pmProductImage);
@@ -6976,139 +6640,129 @@ async function exportManualToPdf(){
         }
       }
     });
-      },
-      process: async ()=>{
+
+    activeManualPdfKey = "builtin:process";
     await P.section(async ()=>{
-      P.banner(PMT("process","5. Product Production Process / Codes"), C.teal);
-      // One field per row (full width) — matches the preferred Manual layout
-      P.field(PML("pmOnlineProcess","Online Process / Color"), val("pmOnlineProcess"), C.teal, C.tealTint);
-      P.field(PML("pmSprayingProcess","Spraying Process"), val("pmSprayingProcess"), C.teal, C.tealTint);
-      P.field(PML("pmPrintedProcess","Printed Process"), val("pmPrintedProcess"), C.teal, C.tealTint);
-      P.field(PML("pmOfflinePacking","Offline Packing"), val("pmOfflinePacking"), C.teal, C.tealTint);
+      P.banner("5. Product Production Process / Codes");
+      P.fieldPair("Online Process / Color", val("pmOnlineProcess"), C.teal, C.tealTint, "Spraying Process", val("pmSprayingProcess"), C.teal, C.tealTint);
+      P.fieldPair("Printed Process", val("pmPrintedProcess"), C.teal, C.tealTint, "Offline Packing", val("pmOfflinePacking"), C.teal, C.tealTint);
     });
-      },
-      material: async ()=>{
+
+    activeManualPdfKey = "builtin:material";
     await P.section(async ()=>{
-      P.banner(PMT("material","6. Packaging Material Specification — Wooden Pallet"), C.magenta);
-      P.field(PML("pmWoodPalletName","Pallet Name"), val("pmWoodPalletName"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletType","Pallet Type"), val("pmWoodPalletType"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletCode","Pallet Code"), val("pmWoodPalletCode"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletSize","Pallet Size"), val("pmWoodPalletSize"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletMaterial","Pallet Material"), val("pmWoodPalletMaterial"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletRefDoc","Reference Document"), val("pmWoodPalletRefDoc"), C.magenta, C.magentaTint);
+      P.banner("6. Packaging Material Specification — Wooden Pallet");
+      P.field("Pallet Name", val("pmWoodPalletName"), C.magenta, C.magentaTint);
+      P.field("Pallet Type", val("pmWoodPalletType"), C.magenta, C.magentaTint);
+      P.field("Pallet Code", val("pmWoodPalletCode"), C.magenta, C.magentaTint);
+      P.field("Pallet Size", val("pmWoodPalletSize"), C.magenta, C.magentaTint);
+      P.field("Pallet Material", val("pmWoodPalletMaterial"), C.magenta, C.magentaTint);
+      P.field("Reference Document", val("pmWoodPalletRefDoc"), C.magenta, C.magentaTint);
     });
-      },
-      deck: async ()=>{
+
     const deckRows = gatherPmRows(pmDeckBoardsBody, ["item","desc","qty","dims","tol"]);
-    // Pre-load pallet photo so the section can measure height including the image.
-    let palletDims = null;
-    if(PM_PHOTOS.pmPallet){
-      palletDims = await getImageDataUrlDimensions(PM_PHOTOS.pmPallet);
-    }
-    // Table + photo kept together as one unsplit block.
-    if(deckRows.length || palletDims){
+    if(deckRows.length){
+      activeManualPdfKey = "builtin:design";
       await P.section(async ()=>{
-        if(deckRows.length){
-          P.spacer(2);
-          P.banner(PMT("deck","Pallet Design & Dimensions — Deck Boards / Blocks"), C.lime);
-          P.table(
-            ["Item","Description","Qty","Dimensions (mm)","Tolerance"],
-            [0.10, 0.34, 0.10, 0.28, 0.18],
-            deckRows.map(r=>[r.item,r.desc,r.qty,r.dims,r.tol]),
-            C.lime
-          );
-        }
-        if(palletDims){
+        P.spacer(4);
+        P.banner("Pallet Design & Dimensions — Deck Boards / Blocks");
+        P.table(
+          ["Item","Description","Qty","Dimensions (mm)","Tolerance"],
+          [0.10, 0.34, 0.10, 0.28, 0.18],
+          deckRows.map(r=>[r.item,r.desc,r.qty,r.dims,r.tol])
+        );
+      });
+    }
+
+    // Pallet photo — kept larger and full-width so it's genuinely legible in
+    // the Compliance & Quality section, rather than a small thumbnail.
+    if(PM_PHOTOS.pmPallet){
+      activeManualPdfKey = "builtin:design";
+      await P.section(async ()=>{
+        const dims = await getImageDataUrlDimensions(PM_PHOTOS.pmPallet);
+        if(dims){
           const maxW = P.contentW, maxH = 150;
-          let w = maxW, h = w * (palletDims.height/palletDims.width);
-          if(h > maxH){ h = maxH; w = h * (palletDims.width/palletDims.height); }
-          P.spacer(2);
-          P.image(palletDims.dataUrl, w, h);
+          let w = maxW, h = w * (dims.height/dims.width);
+          if(h > maxH){ h = maxH; w = h * (dims.width/dims.height); }
+          P.image(dims.dataUrl, w, h);
         }
       });
     }
 
-    // Compliance is its own section — always kept intact on one page when it fits.
+    activeManualPdfKey = "builtin:design";
     await P.section(async ()=>{
-      P.banner("Compliance & Quality Requirements", C.ink);
+      P.banner("Compliance & Quality Requirements");
       P.paragraph($("pmComplianceText").value || "");
     });
-      },
-      frame: async ()=>{
+
     // Wooden Frame section — skipped entirely when Top Frame Wooden = No on
     // the Spec Sheet, so the manual never shows frame specs for a product
     // that isn't actually built with one.
     if(hasFrame){
-      // Pre-load assets so one measured section can include fields + photo + table.
-      let imgW = 0, imgH = 0, imgData = null;
-      if(PM_PHOTOS.pmFrame){
-        const dims = await getImageDataUrlDimensions(PM_PHOTOS.pmFrame);
-        if(dims){
-          imgW = 48; imgH = imgW * (dims.height/dims.width);
-          if(imgH > 52){ imgH = 52; imgW = imgH * (dims.width/dims.height); }
-          imgData = dims.dataUrl;
-        }
-      }
-      const frameRows = gatherPmRows(pmFrameDimsBody, ["std","len","w","treat"]);
+      activeManualPdfKey = "builtin:frame";
       await P.section(async ()=>{
-        P.banner(PMT("frame","Wooden Frame"), C.teal);
-        const gap = 8;
-        const fieldsW = imgData ? (P.contentW - imgW - gap) : P.contentW;
-        const fieldsX = P.marginX;
-        const startY = P.y;
-        const fOpts = {width: fieldsW, x: fieldsX};
-        P.field(PML("pmFrameTypeName","Frame Type"), val("pmFrameTypeName"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameShape","Shape"), val("pmFrameShape"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameEdges","Edges"), val("pmFrameEdges"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameMaterial","Material"), val("pmFrameMaterial"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameMemberWidth","Member Width"), val("pmFrameMemberWidth"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameMemberThickness","Member Thickness"), val("pmFrameMemberThickness"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameMoisture","Moisture Content"), val("pmFrameMoisture"), C.teal, C.tealTint, null, fOpts);
-        if(imgData){
-          const imgX = fieldsX + fieldsW + gap;
-          P.image(imgData, imgW, imgH, {x: imgX, y: startY, noAdvance: true});
-          if(startY + imgH + 4 > P.y) P.y = startY + imgH + 4;
-        }
-        if(frameRows.length){
+        P.banner("Wooden Frame");
+        P.field("Frame Type", val("pmFrameTypeName"), C.teal, C.tealTint);
+        P.field("Shape", val("pmFrameShape"), C.teal, C.tealTint);
+        P.field("Edges", val("pmFrameEdges"), C.teal, C.tealTint);
+        P.field("Material", val("pmFrameMaterial"), C.teal, C.tealTint);
+        P.field("Member Width", val("pmFrameMemberWidth"), C.teal, C.tealTint);
+        P.field("Member Thickness", val("pmFrameMemberThickness"), C.teal, C.tealTint);
+        P.field("Moisture Content", val("pmFrameMoisture"), C.teal, C.tealTint);
+      });
+
+      const frameRows = gatherPmRows(pmFrameDimsBody, ["std","len","w","treat"]);
+      if(frameRows.length){
+        activeManualPdfKey = "builtin:frame";
+        await P.section(async ()=>{
           P.spacer(2);
           P.table(
             ["Reference Pallet Standard","Frame Length (mm)","Frame Width (mm)","Treatment Required"],
             [0.34, 0.22, 0.22, 0.22],
-            frameRows.map(r=>[r.std,r.len,r.w,r.treat]),
-            C.teal
+            frameRows.map(r=>[r.std,r.len,r.w,r.treat])
           );
+        });
+      }
+
+      if(PM_PHOTOS.pmFrame){
+        activeManualPdfKey = "builtin:frame";
+        await P.section(async ()=>{
+          const dims = await getImageDataUrlDimensions(PM_PHOTOS.pmFrame);
+          if(dims){
+            const maxW = P.contentW, maxH = 150;
+            let w = maxW, h = w * (dims.height/dims.width);
+            if(h > maxH){ h = maxH; w = h * (dims.width/dims.height); }
+            P.image(dims.dataUrl, w, h);
+          }
+        });
+      }
+    }
+
+    // Added field groups and new sections follow the order shown in the editor.
+    for(const sec of CUSTOM_PM_SECTIONS){
+      if(!sec.fields || !sec.fields.length) continue;
+      const slot = sec.bucketSlot || sec.slot || "custom";
+      activeManualPdfKey = slot==="custom" ? "custom:"+sec.id : "builtin:"+slot;
+      await P.section(async ()=>{
+        P.banner(sec.title || "Custom Section");
+        for(let i=0;i<sec.fields.length;i+=2){
+          const f1 = sec.fields[i], f2 = sec.fields[i+1];
+          const v1 = strFromField(f1.key);
+          if(f2){
+            const v2 = strFromField(f2.key);
+            P.fieldPair(f1.label, v1, C.magenta, C.magentaTint, f2.label, v2, C.magenta, C.magentaTint);
+          } else {
+            P.field(f1.label, v1, C.magenta, C.magentaTint);
+          }
         }
       });
     }
-      },
-    };
-    // Sections are exported in the order arranged on the Packaging Manual tab.
-    window.__pmExporting = true;
-    try{
-      for(const key of pmSectionOrder()){
-        if(key.startsWith("c:")){
-          const sec = CUSTOM_PM_SECTIONS.find(s=>s.id===key.slice(2));
-          if(!sec || !sec.fields || !sec.fields.length) continue;
-          await P.section(async ()=>{
-            P.banner(sec.title || "Custom Section", C.magenta);
-            for(let i=0;i<sec.fields.length;i+=2){
-              const f1 = sec.fields[i], f2 = sec.fields[i+1];
-              const v1 = strFromField(f1.key);
-              if(f2){
-                const v2 = strFromField(f2.key);
-                P.fieldPair(f1.label, v1, C.magenta, C.magentaTint, f2.label, v2, C.magenta, C.magentaTint);
-              } else {
-                P.field(f1.label, v1, C.magenta, C.magentaTint);
-              }
-            }
-          });
-        } else if(__pmChunks[key]){
-          pmExportBeginChunk(key);
-          await __pmChunks[key]();
-          if(!(key==="frame" && !hasFrame)) await pmPdfLeftoverFields(P, key);
-        }
-      }
-    } finally { window.__pmExporting = false; }
+
+    const manualOrder = new Map(pmManualSectionNodes().map((node,index)=>[node.dataset.pmSectionKey,index]));
+    queuedPdfSections.sort((a,b)=>
+      (manualOrder.get(a.key) ?? Number.MAX_SAFE_INTEGER) -
+      (manualOrder.get(b.key) ?? Number.MAX_SAFE_INTEGER)
+    );
+    for(const section of queuedPdfSections) await drawPdfSection(section.draw);
 
     const pageCount = doc.getNumberOfPages();
     for(let i=1;i<=pageCount;i++){ doc.setPage(i); pmDrawFooter(doc); }
@@ -7242,29 +6896,36 @@ async function exportManualToWord(){
       children:[new TextRun({text:"Kandil — Preserving Nature", size:18, color:"969696"})]
     }));
 
-    const __pmChunks = {
-      header: async ()=>{
+    const nativeWordPush = children.push.bind(children);
+    const queuedWordParts = [];
+    let activeManualWordKey = "builtin:header";
+    children.push = (...items)=>{
+      queuedWordParts.push({key:activeManualWordKey,items});
+      return children.length + items.length;
+    };
+
     children.push(buildWordFieldTable([
-      [PML("pmProductName","Product Name"), val("pmProductName"), C.gold, C.goldTint],
-      [PML("pmProductCode","Product Code"), val("pmProductCode"), C.gold, C.goldTint],
-      [PML("pmCustomer","Customer"), val("pmCustomer"), C.gold, C.goldTint],
-      [PML("pmSKU","SKU"), val("pmSKU"), C.gold, C.goldTint],
-      [PML("pmIssueDate","Issue Date"), val("pmIssueDate"), C.gold, C.goldTint],
-      [PML("pmRevisedDate","Revised / Approved Date"), val("pmRevisedDate"), C.gold, C.goldTint]
+      ["Product Name", val("pmProductName"), C.gold, C.goldTint],
+      ["Product Code", val("pmProductCode"), C.gold, C.goldTint],
+      ["Customer", val("pmCustomer"), C.gold, C.goldTint],
+      ["SKU", val("pmSKU"), C.gold, C.goldTint],
+      ["Issue Date", val("pmIssueDate"), C.gold, C.goldTint],
+      ["Revised / Approved Date", val("pmRevisedDate"), C.gold, C.goldTint]
     ]));
-      },
-      layerSetup: async ()=>{
-    children.push(wordHeading(PMT("layerSetup","1. Pallet Layer Setup")));
+
+    activeManualWordKey = "builtin:layerSetup";
+    children.push(wordHeading("1. Pallet Layer Setup"));
     children.push(buildWordFieldTable([
-      [PML("pmPalletSize","Pallet Size"), val("pmPalletSize"), C.teal, C.tealTint],
-      [PML("pmProductDimension","Product Dimension"), val("pmProductDimension"), C.teal, C.tealTint],
-      [PML("pmUsableArea","Usable Area"), val("pmUsableArea"), C.teal, C.tealTint],
-      [PML("pmLayout","Layout"), val("pmLayout"), C.teal, C.tealTint],
-      [PML("pmEdgeClearance","Edge Clearance"), val("pmEdgeClearance"), C.teal, C.tealTint],
-      [PML("pmQtyPerLayer","Quantity per Layer"), val("pmQtyPerLayer"), C.teal, C.tealTint]
+      ["Pallet Size", val("pmPalletSize"), C.teal, C.tealTint],
+      ["Product Dimension", val("pmProductDimension"), C.teal, C.tealTint],
+      ["Usable Area", val("pmUsableArea"), C.teal, C.tealTint],
+      ["Layout", val("pmLayout"), C.teal, C.tealTint],
+      ["Edge Clearance", val("pmEdgeClearance"), C.teal, C.tealTint],
+      ["Quantity per Layer", val("pmQtyPerLayer"), C.teal, C.tealTint]
     ]));
 
     // Layout diagram
+    activeManualWordKey = "builtin:layerSetup";
     const packingEnabled = $("cpEnabled") && $("cpEnabled").checked;
     let layoutImgDataUrl = null, layoutImgDims = null;
     if(packingEnabled && $("cpSvgWrap").innerHTML.trim()){
@@ -7284,53 +6945,53 @@ async function exportManualToWord(){
         children:[new ImageRun({data:img.bytes, type:img.type, transformation:{width:Math.round(w), height:Math.round(h)}})]
       }));
     }
-      },
-      palletSetup: async ()=>{
-    children.push(wordHeading(PMT("palletSetup","2. Pallet Setup")));
+
+    activeManualWordKey = "builtin:palletSetup";
+    children.push(wordHeading("2. Pallet Setup"));
     children.push(buildWordFieldTable([
-      [PML("pmPalletTypeName","Pallet Type"), val("pmPalletTypeName"), C.magenta, C.magentaTint],
-      [PML("pmUnitsLayer","Units / Layer"), val("pmUnitsLayer"), C.magenta, C.magentaTint],
-      [PML("pmLayerPallet","Layer / Pallet"), val("pmLayerPallet"), C.magenta, C.magentaTint],
-      [PML("pmUnitsPallet","Units / Pallet"), val("pmUnitsPallet"), C.magenta, C.magentaTint],
-      [PML("pmPalletHeight","Pallet Height (mm)"), val("pmPalletHeight"), C.magenta, C.magentaTint],
-      [PML("pmPlasticRoll","Plastic Roll"), val("pmPlasticRoll"), C.magenta, C.magentaTint],
-      [PML("pmSeparatorsType","Pallet Separators Type"), val("pmSeparatorsType"), C.magenta, C.magentaTint],
-      [PML("pmSeparatorsSizeQty","Pallet Separators Size / Qty"), val("pmSeparatorsSizeQty"), C.magenta, C.magentaTint],
-      [PML("pmPalletCover","Pallet Cover"), val("pmPalletCover"), C.magenta, C.magentaTint],
-      [PML("pmFrame","Frame"), hasFrame ? val("pmFrame") : "N/A — Top Frame Wooden = No", C.magenta, C.magentaTint],
-      [PML("pmSealing","Sealing"), val("pmSealing"), C.magenta, C.magentaTint],
-      [PML("pmStrapM","Strap (m)"), val("pmStrapM"), C.magenta, C.magentaTint],
-      [PML("pmLabelColor","Pallet Label Color"), val("pmLabelColor"), C.magenta, C.magentaTint],
-      [PML("pmLabelDims","Pallet Label Dimensions"), val("pmLabelDims"), C.magenta, C.magentaTint],
-      [PML("pmCSR","Customer Special Request (CSR)"), val("pmCSR"), C.magenta, C.magentaTint]
+      ["Pallet Type", val("pmPalletTypeName"), C.magenta, C.magentaTint],
+      ["Units / Layer", val("pmUnitsLayer"), C.magenta, C.magentaTint],
+      ["Layer / Pallet", val("pmLayerPallet"), C.magenta, C.magentaTint],
+      ["Units / Pallet", val("pmUnitsPallet"), C.magenta, C.magentaTint],
+      ["Pallet Height (mm)", val("pmPalletHeight"), C.magenta, C.magentaTint],
+      ["Plastic Roll", val("pmPlasticRoll"), C.magenta, C.magentaTint],
+      ["Pallet Separators Type", val("pmSeparatorsType"), C.magenta, C.magentaTint],
+      ["Pallet Separators Size / Qty", val("pmSeparatorsSizeQty"), C.magenta, C.magentaTint],
+      ["Pallet Cover", val("pmPalletCover"), C.magenta, C.magentaTint],
+      ["Frame", hasFrame ? val("pmFrame") : "N/A — Top Frame Wooden = No", C.magenta, C.magentaTint],
+      ["Sealing", val("pmSealing"), C.magenta, C.magentaTint],
+      ["Strap (m)", val("pmStrapM"), C.magenta, C.magentaTint],
+      ["Pallet Label Color", val("pmLabelColor"), C.magenta, C.magentaTint],
+      ["Pallet Label Dimensions", val("pmLabelDims"), C.magenta, C.magentaTint],
+      ["Customer Special Request (CSR)", val("pmCSR"), C.magenta, C.magentaTint]
     ]));
-      },
-      loading: async ()=>{
-    children.push(wordHeading(PMT("loading","3. Loading Data")));
+
+    activeManualWordKey = "builtin:loading";
+    children.push(wordHeading("3. Loading Data"));
     children.push(buildWordFieldTable([
-      [PML("pmContType","Container Type"), val("pmContType"), C.lime, C.limeTint],
-      [PML("pmPalletsPerCont","No. Pallets / Container / Unit"), val("pmPalletsPerCont"), C.lime, C.limeTint],
-      [PML("pmPalletNetWeight","Pallet Net Weight"), val("pmPalletNetWeight"), C.lime, C.limeTint],
-      [PML("pmPalletGrossWeight","Pallet Gross Weight"), val("pmPalletGrossWeight"), C.lime, C.limeTint],
-      [PML("pmUnitsPerCont","No. of Units / Container / Unit"), val("pmUnitsPerCont"), C.lime, C.limeTint],
-      [PML("pmContNetWeight","Container Net Weight / Unit"), val("pmContNetWeight"), C.lime, C.limeTint],
-      [PML("pmContGrossWeight","Container Gross Weight / Unit"), val("pmContGrossWeight"), C.lime, C.limeTint],
-      [PML("pmCushions","No. of Cushions"), val("pmCushions"), C.lime, C.limeTint]
+      ["Container Type", val("pmContType"), C.lime, C.limeTint],
+      ["No. Pallets / Container / Unit", val("pmPalletsPerCont"), C.lime, C.limeTint],
+      ["Pallet Net Weight", val("pmPalletNetWeight"), C.lime, C.limeTint],
+      ["Pallet Gross Weight", val("pmPalletGrossWeight"), C.lime, C.limeTint],
+      ["No. of Units / Container / Unit", val("pmUnitsPerCont"), C.lime, C.limeTint],
+      ["Container Net Weight / Unit", val("pmContNetWeight"), C.lime, C.limeTint],
+      ["Container Gross Weight / Unit", val("pmContGrossWeight"), C.lime, C.limeTint],
+      ["No. of Cushions", val("pmCushions"), C.lime, C.limeTint]
     ], {pair:true}));
-      },
-      product: async ()=>{
-    children.push(wordHeading(PMT("product","4. Product Data")));
+
+    activeManualWordKey = "builtin:product";
+    children.push(wordHeading("4. Product Data"));
     children.push(buildWordFieldTable([
-      [PML("pmBrimful","Brimful Capacity (ml)"), val("pmBrimful"), C.gold, C.goldTint],
-      [PML("pmWeight","Weight"), val("pmWeight"), C.gold, C.goldTint],
-      [PML("pmHeight","Height"), val("pmHeight"), C.gold, C.goldTint],
-      [PML("pmDiameter","Diameter"), val("pmDiameter"), C.gold, C.goldTint],
-      [PML("pmColour","Colour"), val("pmColour"), C.gold, C.goldTint],
-      [PML("pmFinish","Finish"), val("pmFinish"), C.gold, C.goldTint],
-      [PML("pmLabelling","Labelling"), val("pmLabelling"), C.gold, C.goldTint],
-      [PML("pmPrinting","Printing"), val("pmPrinting"), C.gold, C.goldTint]
+      ["Brimful Capacity (ml)", val("pmBrimful"), C.gold, C.goldTint],
+      ["Weight", val("pmWeight"), C.gold, C.goldTint],
+      ["Height", val("pmHeight"), C.gold, C.goldTint],
+      ["Diameter", val("pmDiameter"), C.gold, C.goldTint],
+      ["Colour", val("pmColour"), C.gold, C.goldTint],
+      ["Finish", val("pmFinish"), C.gold, C.goldTint],
+      ["Labelling", val("pmLabelling"), C.gold, C.goldTint],
+      ["Printing", val("pmPrinting"), C.gold, C.goldTint]
     ], {pair:true}));
-    children.push(buildWordFieldTable([[PML("pmTDRef","TD Reference / Date"), val("pmTDRef"), C.gold, C.goldTint]]));
+    children.push(buildWordFieldTable([["TD Reference / Date", val("pmTDRef"), C.gold, C.goldTint]]));
     const pmProductImage = pmProduct2DDataUrl || productPhotoDataUrl;
     if(pmProductImage){
       const dims = await getImageDataUrlDimensions(pmProductImage);
@@ -7345,31 +7006,31 @@ async function exportManualToWord(){
         }));
       }
     }
-      },
-      process: async ()=>{
-    children.push(wordHeading(PMT("process","5. Product Production Process / Codes")));
+
+    activeManualWordKey = "builtin:process";
+    children.push(wordHeading("5. Product Production Process / Codes"));
     children.push(buildWordFieldTable([
-      [PML("pmOnlineProcess","Online Process / Color"), val("pmOnlineProcess"), C.teal, C.tealTint],
-      [PML("pmSprayingProcess","Spraying Process"), val("pmSprayingProcess"), C.teal, C.tealTint],
-      [PML("pmPrintedProcess","Printed Process"), val("pmPrintedProcess"), C.teal, C.tealTint],
-      [PML("pmOfflinePacking","Offline Packing"), val("pmOfflinePacking"), C.teal, C.tealTint]
-    ]));
-      },
-      material: async ()=>{
-    children.push(wordHeading(PMT("material","6. Packaging Material Specification — Wooden Pallet")));
+      ["Online Process / Color", val("pmOnlineProcess"), C.teal, C.tealTint],
+      ["Spraying Process", val("pmSprayingProcess"), C.teal, C.tealTint],
+      ["Printed Process", val("pmPrintedProcess"), C.teal, C.tealTint],
+      ["Offline Packing", val("pmOfflinePacking"), C.teal, C.tealTint]
+    ], {pair:true}));
+
+    activeManualWordKey = "builtin:material";
+    children.push(wordHeading("6. Packaging Material Specification — Wooden Pallet"));
     children.push(buildWordFieldTable([
-      [PML("pmWoodPalletName","Pallet Name"), val("pmWoodPalletName"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletType","Pallet Type"), val("pmWoodPalletType"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletCode","Pallet Code"), val("pmWoodPalletCode"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletSize","Pallet Size"), val("pmWoodPalletSize"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletMaterial","Pallet Material"), val("pmWoodPalletMaterial"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletRefDoc","Reference Document"), val("pmWoodPalletRefDoc"), C.magenta, C.magentaTint]
+      ["Pallet Name", val("pmWoodPalletName"), C.magenta, C.magentaTint],
+      ["Pallet Type", val("pmWoodPalletType"), C.magenta, C.magentaTint],
+      ["Pallet Code", val("pmWoodPalletCode"), C.magenta, C.magentaTint],
+      ["Pallet Size", val("pmWoodPalletSize"), C.magenta, C.magentaTint],
+      ["Pallet Material", val("pmWoodPalletMaterial"), C.magenta, C.magentaTint],
+      ["Reference Document", val("pmWoodPalletRefDoc"), C.magenta, C.magentaTint]
     ]));
-      },
-      deck: async ()=>{
+
+    activeManualWordKey = "builtin:design";
     const deckRows = gatherPmRows(pmDeckBoardsBody, ["item","desc","qty","dims","tol"]);
     if(deckRows.length){
-      children.push(wordHeading(PMT("deck","Pallet Design & Dimensions — Deck Boards / Blocks")));
+      children.push(wordHeading("Pallet Design & Dimensions — Deck Boards / Blocks"));
       children.push(wordDataTable(
         ["Item","Description","Qty","Dimensions (mm)","Tolerance"],
         [0.10,0.34,0.10,0.28,0.18],
@@ -7396,18 +7057,18 @@ async function exportManualToWord(){
       spacing:{after:200},
       children:[new TextRun({text: $("pmComplianceText").value || "", size:17})]
     }));
-      },
-      frame: async ()=>{
+
+    activeManualWordKey = "builtin:frame";
     if(hasFrame){
-      children.push(wordHeading(PMT("frame","Wooden Frame")));
+      children.push(wordHeading("Wooden Frame"));
       children.push(buildWordFieldTable([
-        [PML("pmFrameTypeName","Frame Type"), val("pmFrameTypeName"), C.teal, C.tealTint],
-        [PML("pmFrameShape","Shape"), val("pmFrameShape"), C.teal, C.tealTint],
-        [PML("pmFrameEdges","Edges"), val("pmFrameEdges"), C.teal, C.tealTint],
-        [PML("pmFrameMaterial","Material"), val("pmFrameMaterial"), C.teal, C.tealTint],
-        [PML("pmFrameMemberWidth","Member Width"), val("pmFrameMemberWidth"), C.teal, C.tealTint],
-        [PML("pmFrameMemberThickness","Member Thickness"), val("pmFrameMemberThickness"), C.teal, C.tealTint],
-        [PML("pmFrameMoisture","Moisture Content"), val("pmFrameMoisture"), C.teal, C.tealTint]
+        ["Frame Type", val("pmFrameTypeName"), C.teal, C.tealTint],
+        ["Shape", val("pmFrameShape"), C.teal, C.tealTint],
+        ["Edges", val("pmFrameEdges"), C.teal, C.tealTint],
+        ["Material", val("pmFrameMaterial"), C.teal, C.tealTint],
+        ["Member Width", val("pmFrameMemberWidth"), C.teal, C.tealTint],
+        ["Member Thickness", val("pmFrameMemberThickness"), C.teal, C.tealTint],
+        ["Moisture Content", val("pmFrameMoisture"), C.teal, C.tealTint]
       ]));
       const frameRows = gatherPmRows(pmFrameDimsBody, ["std","len","w","treat"]);
       if(frameRows.length){
@@ -7431,23 +7092,24 @@ async function exportManualToWord(){
         }
       }
     }
-      },
-    };
-    window.__pmExporting = true;
-    try{
-      for(const key of pmSectionOrder()){
-        if(key.startsWith("c:")){
-          const sec = CUSTOM_PM_SECTIONS.find(s=>s.id===key.slice(2));
-          if(!sec || !sec.fields || !sec.fields.length) continue;
-          children.push(wordHeading(sec.title || "Custom Section"));
-          children.push(buildWordFieldTable(sec.fields.map(f=>[f.label, strFromField(f.key), C.magenta, C.magentaTint])));
-        } else if(__pmChunks[key]){
-          pmExportBeginChunk(key);
-          await __pmChunks[key]();
-          if(!(key==="frame" && !hasFrame)) pmWordLeftoverFields(children, key);
-        }
-      }
-    } finally { window.__pmExporting = false; }
+
+    for(const sec of CUSTOM_PM_SECTIONS){
+      if(!sec.fields || !sec.fields.length) continue;
+      const slot = sec.bucketSlot || sec.slot || "custom";
+      activeManualWordKey = slot==="custom" ? "custom:"+sec.id : "builtin:"+slot;
+      children.push(wordHeading(sec.title || "Custom Section"));
+      children.push(buildWordFieldTable(
+        sec.fields.map(f=>[f.label, strFromField(f.key), C.magenta, C.magentaTint])
+      ));
+    }
+
+    children.push = nativeWordPush;
+    const manualOrder = new Map(pmManualSectionNodes().map((node,index)=>[node.dataset.pmSectionKey,index]));
+    queuedWordParts.sort((a,b)=>
+      (manualOrder.get(a.key) ?? Number.MAX_SAFE_INTEGER) -
+      (manualOrder.get(b.key) ?? Number.MAX_SAFE_INTEGER)
+    );
+    queuedWordParts.forEach(part=>nativeWordPush(...part.items));
 
     const wdoc = new Document({ sections:[{ properties:{}, children }] });
     const blob = await Packer.toBlob(wdoc);
@@ -7467,7 +7129,6 @@ async function exportManualToWord(){
 }
 $("pmExportWordBtn").addEventListener("click", exportManualToWord);
 
-initKpiCardUi();
 recalc();
 renderCoreFormulasTab(); // after recalc so LAST_CALC is populated for previews
 
@@ -7486,413 +7147,6 @@ setTimeout(()=>{
 
 $("exportExcel").addEventListener("click", exportToExcel);
 $("exportPdf").addEventListener("click", exportToPdf);
-</script>
-<script>
-
-/* =====================================================================
-   Packaging Manual — in-table layout editor.
-   Rename section titles and field names by clicking them, reorder fields
-   and whole sections with the ↑ / ↓ buttons, add fields to any section,
-   hide built-in fields, and add/delete whole new sections. The layout is
-   stored on this device and applied to the tab and to PDF/Word exports.
-===================================================================== */
-const PM_LAYOUT_KEY = "kandilPmLayout_v1";
-let PM_LAYOUT = Object.assign({order:[], titles:{}, labels:{}, hidden:{}, rowOrder:{}}, loadJSON(PM_LAYOUT_KEY) || {});
-function persistPmLayout(){ saveJSON(PM_LAYOUT_KEY, PM_LAYOUT); }
-const PM_BUILTIN_KEYS = ["header","layerSetup","palletSetup","loading","product","process","material","deck","frame"];
-const PM_SLOT_COLORS = {header:"gold",layerSetup:"teal",palletSetup:"magenta",loading:"lime",product:"gold",process:"teal",material:"magenta",deck:"lime",frame:"teal"};
-const PM_DEFAULT_TITLES = {header:"Customer Data",layerSetup:"1. Pallet Layer Setup",palletSetup:"2. Pallet Setup",loading:"3. Loading Data / Packaging Modifications",product:"4. Product Data / SKU Guidelines",process:"5. Product Production Process / Codes",material:"6. Packaging Material Specification — Wooden Pallet",deck:"Pallet Design & Dimensions — Deck Boards / Blocks",frame:"Wooden Frame"};
-const PM_BUILTIN_ROW_IDS = {};
-
-function pmMergeOrder(stored, all){
-  const ord = (stored||[]).filter(k=>all.includes(k));
-  all.forEach((k,i)=>{
-    if(ord.includes(k)) return;
-    let pos = 0;
-    for(let j=i-1;j>=0;j--){ const p = ord.indexOf(all[j]); if(p>=0){ pos = p+1; break; } }
-    ord.splice(pos, 0, k);
-  });
-  return ord;
-}
-function pmIsCustomSec(s){ return (s.slot||"custom") === "custom"; }
-function pmSectionOrder(){
-  const all = [...PM_BUILTIN_KEYS, ...CUSTOM_PM_SECTIONS.filter(pmIsCustomSec).map(s=>"c:"+s.id)];
-  return pmMergeOrder(PM_LAYOUT.order, all);
-}
-function pmSlotCustomFields(slot){
-  const out = [];
-  CUSTOM_PM_SECTIONS.forEach(s=>{ if(s.slot === slot) (s.fields||[]).forEach(f=> out.push(f)); });
-  return out;
-}
-function pmSlotDefaultRowIds(slot){
-  return [...(PM_BUILTIN_ROW_IDS[slot]||[]), ...pmSlotCustomFields(slot).map(f=>f.key)];
-}
-function pmSlotRowOrder(slot){ return pmMergeOrder(PM_LAYOUT.rowOrder[slot], pmSlotDefaultRowIds(slot)); }
-function pmSortById(slot, items){
-  const ord = pmSlotRowOrder(slot);
-  return items.map((it,i)=>({it,i})).sort((a,b)=>{
-    const ia = a.it.id ? ord.indexOf(a.it.id) : -1, ib = b.it.id ? ord.indexOf(b.it.id) : -1;
-    if(ia<0 || ib<0) return a.i - b.i;
-    return ia - ib;
-  }).map(x=>x.it);
-}
-
-/* ---------- export hooks (used by exportManualToPdf / exportManualToWord) ---------- */
-let __pmCur = null;
-function pmExportBeginChunk(key){ __pmCur = {slot:key, bannered:new Set(), wordDone:new Set(), pendingBanner:null}; }
-function PML(id, label){
-  if(PM_LAYOUT.hidden[id]) return null;
-  return {__pm:true, id, label: PM_LAYOUT.labels[id] || label, toString(){ return this.label; }};
-}
-function PMT(slot, title){
-  if(__pmCur){ __pmCur.bannered.add(slot); __pmCur.pendingBanner = slot; }
-  return PM_LAYOUT.titles[slot] || title;
-}
-function pmWrapPdfBuilder(P){
-  const o = {field:P.field.bind(P), fieldPair:P.fieldPair.bind(P), section:P.section.bind(P)};
-  let buf = [], pairMode = false, appendSlot = null, appendedInRun = false;
-  const flush = ()=>{
-    if(appendSlot && !appendedInRun){
-      appendedInRun = true;
-      const last = buf[buf.length-1], cn = PM_SLOT_COLORS[appendSlot] || "magenta";
-      const color = last ? last.color : PDF_COLORS[cn], tint = last ? last.tint : PDF_COLORS[cn+"Tint"];
-      pmSlotCustomFields(appendSlot).forEach(f=> buf.push({id:f.key, label:f.label, value: strFromField(f.key) || "N/A", color, tint, status:null, opts: last ? last.opts : undefined}));
-    }
-    if(!buf.length){ pairMode = false; return; }
-    const slot = appendSlot || (__pmCur && __pmCur.slot);
-    const items = pmSortById(slot, buf); buf = [];
-    if(pairMode){
-      for(let i=0;i<items.length;i+=2){
-        const a = items[i], b = items[i+1];
-        if(b) o.fieldPair(a.label, a.value, a.color, a.tint, b.label, b.value, b.color, b.tint);
-        else o.field(a.label, a.value, a.color, a.tint);
-      }
-    } else items.forEach(it=> o.field(it.label, it.value, it.color, it.tint, it.status, it.opts));
-    pairMode = false;
-  };
-  const pmOn = ()=> !!window.__pmExporting;
-  P.field = (label, value, color, tint, status, opts)=>{
-    if(pmOn() && label && label.__pm){ buf.push({id:label.id, label:label.label, value, color, tint, status, opts}); return; }
-    if(pmOn() && label === null) return;
-    flush(); return o.field(label, value, color, tint, status, opts);
-  };
-  P.fieldPair = (l1,v1,c1,t1,l2,v2,c2,t2)=>{
-    if(pmOn() && ((l1 && l1.__pm) || l1 === null || (l2 && l2.__pm) || l2 === null)){
-      if(l1) buf.push({id:l1.id, label:l1.label||String(l1), value:v1, color:c1, tint:t1});
-      if(l2) buf.push({id:l2.id, label:l2.label||String(l2), value:v2, color:c2, tint:t2});
-      pairMode = true; return;
-    }
-    flush(); return o.fieldPair(l1,v1,c1,t1,l2,v2,c2,t2);
-  };
-  ["banner","paragraph","image","table","spacer","forcePage"].forEach(name=>{
-    if(typeof P[name] !== "function") return;
-    const orig = P[name].bind(P);
-    P[name] = (...args)=>{
-      flush();
-      if(name === "banner" && pmOn() && __pmCur && __pmCur.pendingBanner){ appendSlot = __pmCur.pendingBanner; __pmCur.pendingBanner = null; }
-      return orig(...args);
-    };
-  });
-  P.section = (fn)=> o.section(async ()=>{
-    buf = []; pairMode = false; appendSlot = null; appendedInRun = false;
-    await fn();
-    flush(); appendSlot = null;
-  });
-  return P;
-}
-const __pmOrigMakePdfBuilder = makePdfBuilder;
-makePdfBuilder = function(doc, drawHeader){ return pmWrapPdfBuilder(__pmOrigMakePdfBuilder(doc, drawHeader)); };
-
-async function pmPdfLeftoverFields(P, key){
-  if(!__pmCur || __pmCur.bannered.has(key) || !pmSlotCustomFields(key).length) return;
-  const cn = PM_SLOT_COLORS[key] || "magenta";
-  await P.section(async ()=>{ P.banner(PMT(key, PM_DEFAULT_TITLES[key]), PDF_COLORS[cn]); });
-}
-const __pmOrigBuildWordFieldTable = buildWordFieldTable;
-buildWordFieldTable = function(pairs, opts){
-  if(!window.__pmExporting || !__pmCur) return __pmOrigBuildWordFieldTable(pairs, opts);
-  let rows = (pairs||[]).filter(r=> r[0] !== null);
-  if(rows.some(r=> r[0] && r[0].__pm)){
-    const slot = __pmCur.slot;
-    if(!__pmCur.wordDone.has(slot)){
-      __pmCur.wordDone.add(slot);
-      const last = rows[rows.length-1];
-      pmSlotCustomFields(slot).forEach(f=> rows.push([{__pm:true, id:f.key, label:f.label}, strFromField(f.key) || "N/A", last[2], last[3]]));
-    }
-    rows = pmSortById(slot, rows.map(r=>({id: r[0] && r[0].__pm ? r[0].id : null, row:r}))).map(x=>x.row)
-      .map(r=> [r[0] && r[0].__pm ? r[0].label : r[0], ...r.slice(1)]);
-  }
-  return __pmOrigBuildWordFieldTable(rows, opts);
-};
-function pmWordLeftoverFields(children, key){
-  if(!__pmCur || __pmCur.wordDone.has(key)) return;
-  const fields = pmSlotCustomFields(key);
-  if(!fields.length) return;
-  __pmCur.wordDone.add(key);
-  const cn = PM_SLOT_COLORS[key] || "magenta";
-  if(key !== "header" && !__pmCur.bannered.has(key)) children.push(wordHeading(PMT(key, PM_DEFAULT_TITLES[key])));
-  const items = pmSortById(key, fields.map(f=>({id:f.key, f})));
-  children.push(__pmOrigBuildWordFieldTable(items.map(x=>[x.f.label, strFromField(x.f.key) || "N/A", PDF_COLORS[cn], PDF_COLORS[cn+"Tint"]])));
-}
-
-/* ---------- on-tab editing ---------- */
-function pmSectionEl(key){ return document.querySelector(`#tab-manual [data-pm-key="${key}"]`); }
-function pmRowToolsHtml(){
-  return `<td class="pm-row-tools"><button type="button" class="pm-tool" data-act="row-up" title="Move field up">↑</button><button type="button" class="pm-tool" data-act="row-down" title="Move field down">↓</button><button type="button" class="pm-tool pm-tool-danger" data-act="row-del" title="Remove field">✕</button></td>`;
-}
-function pmSecToolsHtml(isCustom){
-  return `<span class="pm-sec-tools" contenteditable="false">
-    <button type="button" class="pm-tool" data-act="sec-up" title="Move section up">↑</button>
-    <button type="button" class="pm-tool" data-act="sec-down" title="Move section down">↓</button>
-    <button type="button" class="pm-tool" data-act="field-add" title="Add a field to this section">＋ Field</button>
-    <button type="button" class="pm-tool pm-show-hidden" data-act="show-hidden" title="Show removed fields again" hidden>Show removed</button>
-    ${isCustom ? '<button type="button" class="pm-tool pm-tool-danger" data-act="sec-del" title="Delete this section">🗑</button>' : ''}
-  </span>`;
-}
-function pmDecorateTitle(sectionEl, key, defaultTitle){
-  const h3 = sectionEl.querySelector("h3");
-  if(!h3 || h3.querySelector(".pm-title")) return;
-  let node = Array.from(h3.childNodes).find(n=> n.nodeType === 3 && n.textContent.trim());
-  const span = document.createElement("span");
-  span.className = "pm-title"; span.contentEditable = "true"; span.spellcheck = false;
-  span.title = "Click to rename this section";
-  span.dataset.default = defaultTitle != null ? defaultTitle : (node ? node.textContent.trim() : "");
-  span.textContent = span.dataset.default;
-  if(node) h3.replaceChild(span, node); else h3.insertBefore(span, h3.firstChild);
-  h3.insertAdjacentHTML("beforeend", pmSecToolsHtml(key.startsWith("c:")));
-  h3.classList.add("pm-editable-h3");
-}
-function pmDecorateRow(tr){
-  if(tr.querySelector(".pm-row-tools")) return;
-  const th = tr.querySelector("th");
-  if(th){ th.contentEditable = "true"; th.spellcheck = false; th.title = "Click to rename this field"; if(th.dataset.default == null) th.dataset.default = th.textContent.trim(); }
-  tr.insertAdjacentHTML("beforeend", pmRowToolsHtml());
-}
-function pmEnsureKvTable(key){
-  const sec = pmSectionEl(key);
-  let table = sec.querySelector("table.pm-kv-table");
-  if(!table){
-    table = document.createElement("table");
-    table.className = "pm-kv-table pm-extra-kv";
-    table.appendChild(document.createElement("tbody"));
-    const h3 = sec.querySelector("h3");
-    const hint = h3.nextElementSibling && h3.nextElementSibling.classList.contains("hint") ? h3.nextElementSibling : h3;
-    hint.after(table);
-  }
-  return table;
-}
-function pmInitBuiltins(){
-  PM_BUILTIN_KEYS.forEach(key=>{
-    const sec = pmSectionEl(key); if(!sec) return;
-    pmDecorateTitle(sec, key);
-    const ids = [];
-    sec.querySelectorAll("table.pm-kv-table tr").forEach(tr=>{
-      const inp = tr.querySelector("td input[id], td select[id], td textarea[id]");
-      if(!inp) return;
-      tr.dataset.fid = inp.id; tr.dataset.slot = key; ids.push(inp.id);
-      pmDecorateRow(tr);
-    });
-    PM_BUILTIN_ROW_IDS[key] = ids;
-  });
-}
-function pmCustomRowHtml(f, slot, secId){
-  return `<tr class="pm-custom-row" data-fid="${escapeAttr(f.key)}" data-slot="${escapeAttr(slot)}" data-sec="${escapeAttr(secId)}"><th>${escapeHtml(f.label)}</th><td><input id="${escapeAttr(f.key)}" type="text" data-custom-pm="1"></td></tr>`;
-}
-renderCustomPmSections = function(){
-  const vals = {};
-  document.querySelectorAll('[data-custom-pm="1"]').forEach(el=>{ vals[el.id] = el.value; });
-  document.querySelectorAll(".pm-inline-custom-fields").forEach(el=>{ el.innerHTML = ""; });
-  document.querySelectorAll("#tab-manual tr.pm-custom-row").forEach(el=> el.remove());
-  document.querySelectorAll("#tab-manual [data-pm-custom-section]").forEach(el=> el.remove());
-  const anchor = $("pmCustomSectionsWrap");
-  if(anchor) anchor.innerHTML = "";
-
-  PM_BUILTIN_KEYS.forEach(slot=>{
-    if(!pmSectionEl(slot)) return;
-    CUSTOM_PM_SECTIONS.forEach(s=>{
-      if(s.slot !== slot || !(s.fields||[]).length) return;
-      const table = pmEnsureKvTable(slot);
-      const body = table.tBodies[0] || table;
-      s.fields.forEach(f=>{ body.insertAdjacentHTML("beforeend", pmCustomRowHtml(f, slot, s.id)); pmDecorateRow(body.lastElementChild); });
-    });
-  });
-
-  CUSTOM_PM_SECTIONS.filter(pmIsCustomSec).forEach(s=>{
-    const key = "c:" + s.id;
-    const div = document.createElement("div");
-    div.className = "field-group group-magenta pm-section";
-    div.dataset.pmKey = key; div.dataset.pmCustomSection = "1";
-    div.innerHTML = `<h3>x</h3><table class="pm-kv-table"><tbody></tbody></table>`;
-    const body = div.querySelector("tbody");
-    (s.fields||[]).forEach(f=>{ body.insertAdjacentHTML("beforeend", pmCustomRowHtml(f, key, s.id)); pmDecorateRow(body.lastElementChild); });
-    if(!(s.fields||[]).length) body.innerHTML = `<tr class="pm-empty-row"><td colspan="3" class="hint">No fields yet — click “＋ Field” above.</td></tr>`;
-    if(anchor) anchor.parentNode.insertBefore(div, anchor);
-    div.querySelector("h3").textContent = "";
-    pmDecorateTitle(div, key, s.title || "Custom Section");
-  });
-
-  document.querySelectorAll('[data-custom-pm="1"]').forEach(el=>{ if(vals[el.id] != null) el.value = vals[el.id]; });
-  pmApplyLayout();
-};
-function pmApplyLayout(){
-  PM_BUILTIN_KEYS.forEach(key=>{
-    const sec = pmSectionEl(key); if(!sec) return;
-    const t = sec.querySelector(".pm-title");
-    if(t && document.activeElement !== t) t.textContent = PM_LAYOUT.titles[key] || t.dataset.default;
-    const table = sec.querySelector("table.pm-kv-table"); if(!table) return;
-    const body = table.tBodies[0] || table;
-    const rows = {};
-    sec.querySelectorAll("tr[data-fid]").forEach(tr=>{ rows[tr.dataset.fid] = tr; });
-    let hiddenCount = 0;
-    pmSlotRowOrder(key).forEach(id=>{
-      const tr = rows[id]; if(!tr) return;
-      body.appendChild(tr);
-      const hide = !!PM_LAYOUT.hidden[id];
-      tr.classList.toggle("pm-row-hidden", hide);
-      if(hide) hiddenCount++;
-      const th = tr.querySelector("th");
-      if(th && document.activeElement !== th && !tr.classList.contains("pm-custom-row")) th.textContent = PM_LAYOUT.labels[id] || th.dataset.default;
-    });
-    const btn = sec.querySelector(".pm-show-hidden");
-    if(btn){ btn.hidden = !hiddenCount; btn.textContent = `Show removed (${hiddenCount})`; }
-  });
-  const order = pmSectionOrder();
-  const anchor = $("pmCustomSectionsWrap");
-  order.forEach((key, i)=>{
-    const el = pmSectionEl(key); if(!el || !anchor) return;
-    anchor.parentNode.insertBefore(el, anchor);
-    const up = el.querySelector('.pm-sec-tools [data-act="sec-up"]'), down = el.querySelector('.pm-sec-tools [data-act="sec-down"]');
-    if(up) up.disabled = i === 0;
-    if(down) down.disabled = i === order.length-1;
-  });
-}
-function pmRefreshAll(){
-  persistPmLayout(); persistCustomPmSections();
-  renderCustomPmSections();
-  if(typeof renderPmCustomSectionsAdmin === "function") renderPmCustomSectionsAdmin();
-}
-function pmRowContext(tr){
-  const slot = tr.dataset.slot;
-  const sec = tr.dataset.sec ? CUSTOM_PM_SECTIONS.find(s=>s.id===tr.dataset.sec) : null;
-  return {slot, sec, isCustomSection: slot && slot.startsWith("c:")};
-}
-function pmMoveRow(tr, delta){
-  const {slot, sec, isCustomSection} = pmRowContext(tr);
-  const id = tr.dataset.fid;
-  if(isCustomSection){
-    const i = sec.fields.findIndex(f=>f.key===id), j = i+delta;
-    if(i<0 || j<0 || j>=sec.fields.length) return;
-    [sec.fields[i], sec.fields[j]] = [sec.fields[j], sec.fields[i]];
-  } else {
-    const ord = pmSlotRowOrder(slot);
-    const i = ord.indexOf(id); if(i<0) return;
-    let j = i + delta;
-    while(j>=0 && j<ord.length && PM_LAYOUT.hidden[ord[j]]) j += delta;
-    if(j<0 || j>=ord.length) return;
-    [ord[i], ord[j]] = [ord[j], ord[i]];
-    PM_LAYOUT.rowOrder[slot] = ord;
-  }
-  pmRefreshAll();
-}
-function pmDeleteRow(tr){
-  const {sec} = pmRowContext(tr);
-  const id = tr.dataset.fid;
-  if(tr.classList.contains("pm-custom-row") && sec){
-    if(!confirm("Delete this field? Any values already entered for it will be lost.")) return;
-    sec.fields = (sec.fields||[]).filter(f=>f.key!==id);
-    if(!sec.fields.length && String(sec.id).startsWith("inline_")) CUSTOM_PM_SECTIONS = CUSTOM_PM_SECTIONS.filter(s=>s!==sec);
-  } else {
-    PM_LAYOUT.hidden[id] = true;
-  }
-  pmRefreshAll();
-}
-function pmAddField(key){
-  const label = (prompt("Name of the new field:", "New Field") || "").trim();
-  if(!label) return;
-  let sec;
-  if(key.startsWith("c:")) sec = CUSTOM_PM_SECTIONS.find(s=>s.id===key.slice(2));
-  else {
-    sec = CUSTOM_PM_SECTIONS.find(s=>s.id==="inline_"+key);
-    if(!sec){ sec = {id:"inline_"+key, title:"Extra fields — " + (PM_LAYOUT.titles[key] || PM_DEFAULT_TITLES[key]), slot:key, fields:[]}; CUSTOM_PM_SECTIONS.push(sec); }
-  }
-  if(!sec) return;
-  sec.fields = sec.fields || [];
-  const fkey = slugifyPmKey(label, allCustomPmKeys());
-  sec.fields.push({id:"f_"+Date.now()+"_"+Math.floor(Math.random()*1000), key:fkey, label});
-  pmRefreshAll();
-  const inp = $(fkey); if(inp){ inp.focus(); }
-}
-function pmMoveSection(key, delta){
-  const ord = pmSectionOrder();
-  const i = ord.indexOf(key), j = i + delta;
-  if(i<0 || j<0 || j>=ord.length) return;
-  [ord[i], ord[j]] = [ord[j], ord[i]];
-  PM_LAYOUT.order = ord;
-  pmRefreshAll();
-  const el = pmSectionEl(key); if(el) el.scrollIntoView({behavior:"smooth", block:"nearest"});
-}
-function pmDeleteSection(key){
-  if(!confirm("Delete this entire section, including all its fields and any values entered?")) return;
-  CUSTOM_PM_SECTIONS = CUSTOM_PM_SECTIONS.filter(s=>"c:"+s.id !== key);
-  PM_LAYOUT.order = (PM_LAYOUT.order||[]).filter(k=>k!==key);
-  pmRefreshAll();
-}
-(function pmInitEditor(){
-  const tab = $("tab-manual"); if(!tab) return;
-  pmInitBuiltins();
-  tab.addEventListener("click", e=>{
-    const btn = e.target.closest(".pm-tool"); if(!btn || !tab.contains(btn)) return;
-    e.preventDefault(); e.stopPropagation();
-    const secEl = btn.closest("[data-pm-key]"), key = secEl && secEl.dataset.pmKey;
-    const tr = btn.closest("tr");
-    switch(btn.dataset.act){
-      case "row-up": pmMoveRow(tr, -1); break;
-      case "row-down": pmMoveRow(tr, 1); break;
-      case "row-del": pmDeleteRow(tr); break;
-      case "sec-up": pmMoveSection(key, -1); break;
-      case "sec-down": pmMoveSection(key, 1); break;
-      case "sec-del": pmDeleteSection(key); break;
-      case "field-add": pmAddField(key); break;
-      case "show-hidden":
-        (PM_BUILTIN_ROW_IDS[key]||[]).forEach(id=>{ delete PM_LAYOUT.hidden[id]; });
-        pmRefreshAll(); break;
-    }
-  });
-  tab.addEventListener("keydown", e=>{
-    if(e.key === "Enter" && e.target.isContentEditable){ e.preventDefault(); e.target.blur(); }
-    if(e.key === "Escape" && e.target.isContentEditable){ e.target.textContent = e.target.dataset.prev || e.target.textContent; e.target.blur(); }
-  });
-  tab.addEventListener("focusin", e=>{ if(e.target.isContentEditable) e.target.dataset.prev = e.target.textContent; });
-  tab.addEventListener("focusout", e=>{
-    const el = e.target; if(!el.isContentEditable) return;
-    const text = el.textContent.replace(/\s+/g," ").trim();
-    const secEl = el.closest("[data-pm-key]"); if(!secEl) return;
-    const key = secEl.dataset.pmKey;
-    if(el.classList.contains("pm-title")){
-      if(key.startsWith("c:")){
-        const sec = CUSTOM_PM_SECTIONS.find(s=>"c:"+s.id===key);
-        if(sec){ sec.title = text || sec.title; el.textContent = sec.title; }
-      } else {
-        if(!text || text === el.dataset.default) delete PM_LAYOUT.titles[key]; else PM_LAYOUT.titles[key] = text;
-        el.textContent = PM_LAYOUT.titles[key] || el.dataset.default;
-      }
-    } else if(el.tagName === "TH"){
-      const tr = el.closest("tr"), id = tr.dataset.fid;
-      if(tr.classList.contains("pm-custom-row")){
-        const sec = CUSTOM_PM_SECTIONS.find(s=>s.id===tr.dataset.sec);
-        const f = sec && (sec.fields||[]).find(x=>x.key===id);
-        if(f){ f.label = text || f.label; el.textContent = f.label; }
-      } else {
-        if(!text || text === el.dataset.default) delete PM_LAYOUT.labels[id]; else PM_LAYOUT.labels[id] = text;
-        el.textContent = PM_LAYOUT.labels[id] || el.dataset.default;
-      }
-    } else return;
-    persistPmLayout(); persistCustomPmSections();
-    if(typeof renderPmCustomSectionsAdmin === "function") renderPmCustomSectionsAdmin();
-  });
-  renderCustomPmSections();
-})();
-
 </script>
 </body>
 </html>
