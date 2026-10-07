@@ -394,6 +394,28 @@
   }
   body.dark-mode .kpi-rail{background:color-mix(in srgb, var(--bg) 94%, #000);}
   body.dark-mode .kpi-rail.is-stuck{background:color-mix(in srgb, var(--bg) 98%, #000);box-shadow:0 6px 18px rgba(0,0,0,.35);}
+
+  /* KPI rail collapse (esp. useful on phone) */
+  .kpi-collapse-btn{
+    border:1px solid var(--border);background:var(--card);color:var(--ink-dark);
+    border-radius:8px;padding:4px 10px;font-size:.78rem;font-weight:800;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;line-height:1.3;
+  }
+  .kpi-collapse-btn:hover{border-color:var(--teal);color:var(--teal-dark);}
+  .kpi-collapse-btn .kpi-chevron{display:inline-block;transition:transform .2s ease;font-size:.85rem;}
+  .kpi-rail.is-collapsed .kpi-chevron{transform:rotate(-90deg);}
+  .kpi-rail.is-collapsed .kpi-cards-wrap{display:none !important;}
+  .kpi-rail.is-collapsed .kpi-intro p{display:none;}
+  .kpi-rail.is-collapsed{
+    padding-top:8px;padding-bottom:8px;margin-bottom:12px;
+    box-shadow:none;border-bottom-color:var(--border);
+  }
+  .kpi-rail.is-collapsed.is-stuck{padding-top:8px;padding-bottom:8px;}
+  @media(max-width:620px){
+    .kpi-intro-actions{width:100%;justify-content:flex-start;}
+    .kpi-collapse-btn{margin-left:auto;}
+  }
+
   body.dark-mode .kpi-label{color:#9aa3b0;}
   body.dark-mode .kpi-unit{color:#8a929d;}
   body.dark-mode .kpi-value{color:var(--kpi-c, var(--teal));}
@@ -506,6 +528,10 @@
         <div class="kpi-intro-actions">
           <button type="button" class="btn btn-ghost btn-sm" id="kpiAddBtn" title="Add a new summary card">＋ Add card</button>
           <button type="button" class="btn btn-ghost btn-sm" id="kpiManageBtn" title="Manage summary cards">⚙ Manage</button>
+          <button type="button" class="kpi-collapse-btn" id="kpiCollapseBtn" title="Hide or show summary cards" aria-expanded="true" aria-controls="kpiCardsWrap">
+            <span class="kpi-chevron">▼</span>
+            <span id="kpiCollapseLabel">Hide cards</span>
+          </button>
         </div>
       </div>
       <div class="kpi-cards-wrap" id="kpiCardsWrap"></div>
@@ -2241,7 +2267,43 @@ function moveKpiCard(delta){
   renderKpiCards();
   setStatus("Card order updated ✓");
 }
+
+/* Collapse / expand KPI summary cards (helps on phone). */
+const KPI_COLLAPSE_KEY = "kandilKpiCollapsed_v1";
+function setKpiCollapsed(collapsed){
+  const rail = $("kpiRail");
+  const btn = $("kpiCollapseBtn");
+  const label = $("kpiCollapseLabel");
+  if(!rail) return;
+  rail.classList.toggle("is-collapsed", !!collapsed);
+  if(btn){
+    btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+  }
+  if(label) label.textContent = collapsed ? "Show cards" : "Hide cards";
+  try{ localStorage.setItem(KPI_COLLAPSE_KEY, collapsed ? "1" : "0"); }catch(e){}
+}
+function initKpiCollapse(){
+  const btn = $("kpiCollapseBtn");
+  if(!btn) return;
+  let startCollapsed = false;
+  try{ startCollapsed = localStorage.getItem(KPI_COLLAPSE_KEY) === "1"; }catch(e){}
+  // First visit on a narrow phone: start collapsed so content is visible
+  if(!startCollapsed){
+    try{
+      if(localStorage.getItem(KPI_COLLAPSE_KEY) == null && window.matchMedia("(max-width:700px)").matches){
+        startCollapsed = true;
+      }
+    }catch(e){}
+  }
+  setKpiCollapsed(startCollapsed);
+  btn.addEventListener("click", ()=>{
+    const rail = $("kpiRail");
+    setKpiCollapsed(!(rail && rail.classList.contains("is-collapsed")));
+  });
+}
+
 function initKpiCardUi(){
+  initKpiCollapse();
   if($("kpiAddBtn")) $("kpiAddBtn").addEventListener("click", openKpiEditorNew);
   if($("kpiManageBtn")) $("kpiManageBtn").addEventListener("click", openKpiManageList);
   if($("kpiEditorClose")) $("kpiEditorClose").addEventListener("click", closeKpiEditor);
@@ -6233,6 +6295,51 @@ Additional Quality Standards:
    built-in defaults match the USA Pallet Type A / US Size sample. */
 const PM_PALLET_PROFILES_KEY = "kandilPmPalletProfiles_v1";
 const DEFAULT_PM_PALLET_PROFILES = {
+  "Local Pallet": {
+    type: "Single, 4-Way, Double-Face, Non-Reversible",
+    code: "LOC-100120",
+    size: "L: 1200 mm  W: 1000 mm  H: 150 mm",
+    material: "White Wood or Swedish Wood",
+    refDoc: "OpEx-2025-005, Ver: 02",
+    compliance: PM_STANDARD_COMPLIANCE_TEXT,
+    photoDataUrl: null,
+    deckRows: [
+      {item:"1", desc:"Bottom Deck Boards", qty:"3", dims:"15T x 140W x 1000L", tol:"±1T, ±2W, ±3L"},
+      {item:"2", desc:"Top Deck Boards", qty:"5", dims:"15T x 140W x 1000L", tol:"±1T, ±2W, ±3L"},
+      {item:"3", desc:"Stringer Boards", qty:"3", dims:"15T x 140W x 1200L", tol:"±1T, ±2W, ±3L"},
+      {item:"4", desc:"Blocks", qty:"9", dims:"105H x 140W x 140L", tol:"±1H, ±2W, ±2L"}
+    ]
+  },
+  "Export Pallet": {
+    type: "Single, 4-Way, Double-Face, Non-Reversible",
+    code: "EXP-100120",
+    size: "L: 1200 mm  W: 1000 mm  H: 150 mm",
+    material: "White Wood or Swedish Wood — HT treated",
+    refDoc: "OpEx-2025-005, Ver: 02",
+    compliance: PM_STANDARD_COMPLIANCE_TEXT,
+    photoDataUrl: null,
+    deckRows: [
+      {item:"1", desc:"Bottom Deck Boards", qty:"3", dims:"15T x 140W x 1000L", tol:"±1T, ±2W, ±3L"},
+      {item:"2", desc:"Top Deck Boards", qty:"5", dims:"15T x 140W x 1000L", tol:"±1T, ±2W, ±3L"},
+      {item:"3", desc:"Stringer Boards", qty:"3", dims:"15T x 140W x 1200L", tol:"±1T, ±2W, ±3L"},
+      {item:"4", desc:"Blocks", qty:"9", dims:"105H x 140W x 140L", tol:"±1H, ±2W, ±2L"}
+    ]
+  },
+  "GMA Pallet": {
+    type: "Single, 4-Way, Double-Face, Non-Reversible, GMA Standard",
+    code: "GMA-48x40",
+    size: "L: 1219 mm  W: 1016 mm  H: 140 mm",
+    material: "Hardwood / Softwood mix — HT treated",
+    refDoc: "GMA pallet specification",
+    compliance: PM_STANDARD_COMPLIANCE_TEXT,
+    photoDataUrl: null,
+    deckRows: [
+      {item:"1", desc:"Bottom Deck Boards", qty:"3", dims:"15T x 140W x 1016L", tol:"±1T, ±2W, ±3L"},
+      {item:"2", desc:"Top Deck Boards", qty:"7", dims:"15T x 140W x 1016L", tol:"±1T, ±2W, ±3L"},
+      {item:"3", desc:"Stringer Boards", qty:"3", dims:"15T x 140W x 1219L", tol:"±1T, ±2W, ±3L"},
+      {item:"4", desc:"Blocks", qty:"9", dims:"100H x 140W x 140L", tol:"±1H, ±2W, ±2L"}
+    ]
+  },
   "USA Pallet Type A": {
     type: "Single, 4-Way, Double-Face, Non-Reversible, Uni-Directional Base",
     code: "SHM-9703",
@@ -6242,10 +6349,94 @@ const DEFAULT_PM_PALLET_PROFILES = {
     compliance: PM_STANDARD_COMPLIANCE_TEXT,
     photoDataUrl: null,
     deckRows: PM_STANDARD_DECK_ROWS
+  },
+  "USA Pallet Type B": {
+    type: "Single, 4-Way, Double-Face, Non-Reversible, Uni-Directional Base",
+    code: "SHM-9703-B",
+    size: "L: 1420 mm  W: 1120 mm  H: 150 mm",
+    material: "White Wood or Swedish Wood",
+    refDoc: "OpEx-2025-005, Ver: 02, Date: 19-11-2025",
+    compliance: PM_STANDARD_COMPLIANCE_TEXT,
+    photoDataUrl: null,
+    deckRows: PM_STANDARD_DECK_ROWS
+  },
+  "Euro Pallet": {
+    type: "EUR/EPAL Standard, 4-Way",
+    code: "EUR-1",
+    size: "L: 1200 mm  W: 800 mm  H: 144 mm",
+    material: "Softwood — EPAL / HT treated",
+    refDoc: "EUR-pallet standard",
+    compliance: PM_STANDARD_COMPLIANCE_TEXT,
+    photoDataUrl: null,
+    deckRows: [
+      {item:"1", desc:"Bottom Deck Boards", qty:"3", dims:"22T x 145W x 800L", tol:"±1T, ±2W, ±3L"},
+      {item:"2", desc:"Top Deck Boards", qty:"5", dims:"22T x 145W x 800L", tol:"±1T, ±2W, ±3L"},
+      {item:"3", desc:"Stringer Boards / Blocks", qty:"9", dims:"78H x 145W x 145L", tol:"±1H, ±2W, ±2L"}
+    ]
   }
 };
 /* Generic photo-zone wiring shared by pallet/frame preset + manual photos. */
-const PM_PHOTOS = {};
+const PM_PHOTOS_KEY = "kandilPmPhotos_v1";
+let PM_PHOTOS = loadJSON(PM_PHOTOS_KEY) || {};
+if(typeof PM_PHOTOS !== "object" || !PM_PHOTOS) PM_PHOTOS = {};
+function pmPersistPhotos(){
+  try{ saveJSON(PM_PHOTOS_KEY, PM_PHOTOS); }catch(e){ /* quota — large photos */ }
+}
+/** Keep matching pallet/frame preset photo in sync when Manual (or Options) photo changes. */
+function pmSyncPhotoIntoPreset(key, dataUrl){
+  if(key === "pmPallet" || key === "palletPreset"){
+    const nameEl = $("pmWoodPalletName") || $("optPalletPresetName");
+    const name = (nameEl && nameEl.value || "").trim();
+    if(name && PM_PALLET_PROFILES[name]){
+      PM_PALLET_PROFILES[name].photoDataUrl = dataUrl || null;
+      if(typeof pmSavePalletProfiles === "function") pmSavePalletProfiles();
+    }
+    // Mirror between Manual and Options editor zones
+    if(key === "pmPallet"){
+      PM_PHOTOS.palletPreset = dataUrl || null;
+      const wrap = $("optPalletPresetPhotoPreviewWrap");
+      if(wrap && $("optPalletPresetPhotoPreview")){
+        if(dataUrl){ $("optPalletPresetPhotoPreview").src = dataUrl; wrap.classList.remove("hidden"); }
+        else { wrap.classList.add("hidden"); }
+      }
+    } else if(key === "palletPreset"){
+      PM_PHOTOS.pmPallet = dataUrl || null;
+      const wrap = $("pmPalletPhotoPreviewWrap");
+      if(wrap && $("pmPalletPhotoPreview")){
+        if(dataUrl){ $("pmPalletPhotoPreview").src = dataUrl; wrap.classList.remove("hidden"); }
+        else { wrap.classList.add("hidden"); }
+      }
+    }
+  }
+  if(key === "pmFrame" || key === "framePreset"){
+    const nameEl = $("pmFrameType") || $("optFramePresetName");
+    // Frame type may be free text; also try Wood Frame name fields if present
+    const name = (
+      ($("optFramePresetName") && $("optFramePresetName").value) ||
+      ($("pmFrameTypeName") && $("pmFrameTypeName").value) ||
+      ""
+    ).trim();
+    if(name && PM_FRAME_PROFILES[name]){
+      PM_FRAME_PROFILES[name].photoDataUrl = dataUrl || null;
+      if(typeof pmSaveFrameProfiles === "function") pmSaveFrameProfiles();
+    }
+    if(key === "pmFrame"){
+      PM_PHOTOS.framePreset = dataUrl || null;
+      const wrap = $("optFramePresetPhotoPreviewWrap");
+      if(wrap && $("optFramePresetPhotoPreview")){
+        if(dataUrl){ $("optFramePresetPhotoPreview").src = dataUrl; wrap.classList.remove("hidden"); }
+        else { wrap.classList.add("hidden"); }
+      }
+    } else if(key === "framePreset"){
+      PM_PHOTOS.pmFrame = dataUrl || null;
+      const wrap = $("pmFramePhotoPreviewWrap");
+      if(wrap && $("pmFramePhotoPreview")){
+        if(dataUrl){ $("pmFramePhotoPreview").src = dataUrl; wrap.classList.remove("hidden"); }
+        else { wrap.classList.add("hidden"); }
+      }
+    }
+  }
+}
 function pmPhotoIds(prefix){
   return {input:prefix+"Input", preview:prefix+"Preview", wrap:prefix+"PreviewWrap",
           label:prefix+"ZoneLabel", remove:prefix+"Remove"};
@@ -6253,17 +6444,21 @@ function pmPhotoIds(prefix){
 function pmSetPhoto(prefix, key, dataUrl, labelText){
   const ids = pmPhotoIds(prefix);
   PM_PHOTOS[key] = dataUrl || null;
+  pmPersistPhotos();
   const wrap = $(ids.wrap), prev = $(ids.preview), lab = $(ids.label);
-  if(!wrap) return;
-  if(dataUrl){
-    prev.src = dataUrl;
-    wrap.classList.remove("hidden");
-    if(lab) lab.textContent = labelText || "📷 Photo attached — click to replace";
-  } else {
-    wrap.classList.add("hidden");
-    if($(ids.input)) $(ids.input).value = "";
-    if(lab) lab.textContent = labelText || "📷 Click to attach a photo";
+  if(wrap){
+    if(dataUrl){
+      if(prev) prev.src = dataUrl;
+      wrap.classList.remove("hidden");
+      if(lab) lab.textContent = labelText || "📷 Photo attached — click to replace";
+    } else {
+      wrap.classList.add("hidden");
+      if($(ids.input)) $(ids.input).value = "";
+      if(lab) lab.textContent = labelText || "📷 Click to attach a photo";
+    }
   }
+  // Store on the active pallet/frame preset so it travels with that preset
+  try{ pmSyncPhotoIntoPreset(key, dataUrl); }catch(e){}
 }
 function pmWirePhoto(prefix, key, emptyLabel){
   const ids = pmPhotoIds(prefix);
@@ -6286,11 +6481,35 @@ function pmSavePalletProfiles(){ saveJSON(PM_PALLET_PROFILES_KEY, PM_PALLET_PROF
 
 const PM_FRAME_PROFILES_KEY = "kandilPmFrameProfiles_v1";
 const DEFAULT_PM_FRAME_PROFILES = {
+  "Local Size": {
+    shape:"Rectangular", edges:"Rounded", material:"Solid wood",
+    memberWidth:"75 mm ± 0.3 mm", memberThickness:"20 mm ± 0.2 mm", moisture:"≤16%",
+    photoDataUrl: null,
+    dimsRows: [{std:"Local", len:"1200", w:"1000", treat:"HT"}]
+  },
+  "Export Size": {
+    shape:"Rectangular", edges:"Rounded", material:"Solid wood",
+    memberWidth:"75 mm ± 0.3 mm", memberThickness:"20 mm ± 0.2 mm", moisture:"≤16%",
+    photoDataUrl: null,
+    dimsRows: [{std:"Export", len:"1200", w:"1000", treat:"HT"}]
+  },
+  "GMA Size": {
+    shape:"Rectangular", edges:"Rounded", material:"Solid wood",
+    memberWidth:"75 mm ± 0.3 mm", memberThickness:"20 mm ± 0.2 mm", moisture:"≤16%",
+    photoDataUrl: null,
+    dimsRows: [{std:"GMA", len:"1219", w:"1016", treat:"HT"}]
+  },
   "US Size": {
     shape:"Rectangular", edges:"Rounded", material:"Solid wood",
     memberWidth:"75 mm ± 0.3 mm", memberThickness:"20 mm ± 0.2 mm", moisture:"≤16%",
     photoDataUrl: null,
     dimsRows: PM_STANDARD_FRAME_ROWS
+  },
+  "Euro Size": {
+    shape:"Rectangular", edges:"Rounded", material:"Solid wood",
+    memberWidth:"75 mm ± 0.3 mm", memberThickness:"20 mm ± 0.2 mm", moisture:"≤16%",
+    photoDataUrl: null,
+    dimsRows: [{std:"Euro", len:"1200", w:"800", treat:"HT"}]
   }
 };
 let PM_FRAME_PROFILES = Object.assign({}, DEFAULT_PM_FRAME_PROFILES, loadJSON(PM_FRAME_PROFILES_KEY) || {});
@@ -6310,6 +6529,20 @@ function pmPopulatePalletDropdowns(keepValues){
   populateSelect($("pmWoodPalletSize"), collect("size"), keepValues.size);
   populateSelect($("pmWoodPalletMaterial"), collect("material"), keepValues.material);
 }
+
+function pmRestorePhotosFromPresets(){
+  const pName = ($("pmWoodPalletName") && $("pmWoodPalletName").value || "").trim();
+  if(pName && PM_PALLET_PROFILES[pName] && PM_PALLET_PROFILES[pName].photoDataUrl){
+    if(!PM_PHOTOS.pmPallet) pmSetPhoto("pmPalletPhoto", "pmPallet", PM_PALLET_PROFILES[pName].photoDataUrl, "📷 Pallet photo (from preset)");
+  }
+  // Frame: match by preset name if select exists
+  const fSel = $("optFramePresetSelect");
+  const fName = (fSel && fSel.value) || ($("optFramePresetName") && $("optFramePresetName").value) || "";
+  if(fName && PM_FRAME_PROFILES[fName] && PM_FRAME_PROFILES[fName].photoDataUrl){
+    if(!PM_PHOTOS.pmFrame) pmSetPhoto("pmFramePhoto", "pmFrame", PM_FRAME_PROFILES[fName].photoDataUrl, "📷 Frame photo (from preset)");
+  }
+}
+
 function pmApplyPalletProfile(name){
   const p = PM_PALLET_PROFILES[name];
   if(!p){ pmPopulatePalletDropdowns(); return; }
@@ -6425,7 +6658,7 @@ $("optSavePalletPresetBtn").addEventListener("click", ()=>{
     size: $("optPalletPresetSize").value, material: $("optPalletPresetMaterial").value,
     refDoc: $("optPalletPresetRefDoc").value,
     compliance: $("optPalletPresetCompliance").value,
-    photoDataUrl: PM_PHOTOS.palletPreset || null,
+    photoDataUrl: PM_PHOTOS.palletPreset || PM_PHOTOS.pmPallet || null,
     deckRows: gatherPmRows(optPalletPresetDeckBody, ["item","desc","qty","dims","tol"])
   };
   pmSavePalletProfiles();
@@ -6443,7 +6676,7 @@ $("optSaveFramePresetBtn").addEventListener("click", ()=>{
   PM_FRAME_PROFILES[name] = {
     shape: $("optFramePresetShape").value, edges: $("optFramePresetEdges").value, material: $("optFramePresetMaterial").value,
     memberWidth: $("optFramePresetMemberWidth").value, memberThickness: $("optFramePresetMemberThickness").value, moisture: $("optFramePresetMoisture").value,
-    photoDataUrl: PM_PHOTOS.framePreset || null,
+    photoDataUrl: PM_PHOTOS.framePreset || PM_PHOTOS.pmFrame || null,
     dimsRows: gatherPmRows(optFramePresetDimsBody, ["std","len","w","treat"])
   };
   pmSaveFrameProfiles();
@@ -6480,6 +6713,7 @@ renderPalletPresetSelect(Object.keys(PM_PALLET_PROFILES)[0] || "");
 loadPalletPresetIntoEditor($("optPalletPresetSelect").value);
 renderFramePresetSelect(Object.keys(PM_FRAME_PROFILES)[0] || "");
 loadFramePresetIntoEditor($("optFramePresetSelect").value);
+try{ pmRestorePhotosFromPresets(); }catch(e){}
 function appendPmRow(tbody, cols, values){
   const tr = document.createElement("tr");
   tr.innerHTML = cols.map(()=>`<td><input type="text" style="width:100%;border:none;background:transparent;font:inherit;"></td>`).join("")
