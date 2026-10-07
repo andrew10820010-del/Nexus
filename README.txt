@@ -1,4 +1,4 @@
-KANDIL PACKAGING SPEC GENERATOR — INSTALLABLE APP SETUP
+NEXUS — INSTALLABLE APP SETUP
 =========================================================
 
 This folder turns the spec generator into an installable app (its own icon
@@ -21,7 +21,7 @@ OPTION A — Netlify Drop (fastest, no account needed)
 3. Netlify gives you a live https:// link in a few seconds. Open it.
 4. On desktop Chrome/Edge: click the install icon (a little monitor/⊕
    icon) at the right side of the address bar, or use the browser's menu
-   → "Install Kandil Packaging Spec Generator..." Or just use the
+   → "Install NEXUS..." Or just use the
    "📲 Install App" button that now appears next to Dark Mode in the app.
 5. On an Android phone: open the link in Chrome, tap the ⋮ menu →
    "Add to Home screen" / "Install app" (or tap the install banner if
@@ -38,14 +38,14 @@ term (no login tied to it unless you create a Netlify account first).
 OPTION B — GitHub Pages (free, permanent, your own URL)
 --------------------------------------------------------
 1. Create a free GitHub account at https://github.com if you don't have
-   one, then create a new repository (e.g. "kandil-specs").
+   one, then create a new repository (e.g. "nexus").
 2. Upload all 5 files in this folder into that repository (GitHub's web
    interface has an "Add file → Upload files" button — no command line
    needed).
 3. In the repository, go to Settings → Pages, set "Source" to the main
    branch / root folder, and save.
 4. GitHub gives you a URL like:
-   https://<your-username>.github.io/kandil-specs/
+   https://<your-username>.github.io/nexus/
    Wait a minute or two for it to go live, then open it.
 5. Install exactly as described in steps 4–6 of Option A above.
 

@@ -1,7 +1,7 @@
-// Kandil Packaging Spec Generator — service worker
+// NEXUS — service worker
 // Bump CACHE_VERSION whenever index.html (or anything else precached) changes,
 // so returning users get the update instead of a stale cached copy.
-const CACHE_VERSION = "kandil-specs-v1";
+const CACHE_VERSION = "nexus-app-v1";
 const PRECACHE_URLS = [
   "./",
   "./index.html",
