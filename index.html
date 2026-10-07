@@ -927,7 +927,8 @@
       </table>
       <button type="button" class="btn btn-ghost btn-sm" id="optAddPalletDeckRowBtn" style="margin-top:8px;">+ Add Row</button>
       <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-        <button type="button" class="btn btn-teal btn-sm" id="optSavePalletPresetBtn">💾 Save Preset</button>
+        <button type="button" class="btn btn-teal btn-sm" id="optSavePalletPresetBtn">💾 Save as New</button>
+        <button type="button" class="btn btn-magenta btn-sm" id="optUpdatePalletPresetBtn">↻ Update Preset</button>
         <button type="button" class="btn btn-ghost btn-sm" id="optNewPalletPresetBtn">+ New Preset</button>
         <button type="button" class="btn btn-ghost btn-sm" id="optDeletePalletPresetBtn">🗑 Delete Preset</button>
       </div>
@@ -963,7 +964,8 @@
       </table>
       <button type="button" class="btn btn-ghost btn-sm" id="optAddFrameDimsRowBtn" style="margin-top:8px;">+ Add Row</button>
       <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-        <button type="button" class="btn btn-teal btn-sm" id="optSaveFramePresetBtn">💾 Save Preset</button>
+        <button type="button" class="btn btn-teal btn-sm" id="optSaveFramePresetBtn">💾 Save as New</button>
+        <button type="button" class="btn btn-magenta btn-sm" id="optUpdateFramePresetBtn">↻ Update Preset</button>
         <button type="button" class="btn btn-ghost btn-sm" id="optNewFramePresetBtn">+ New Preset</button>
         <button type="button" class="btn btn-ghost btn-sm" id="optDeleteFramePresetBtn">🗑 Delete Preset</button>
       </div>
@@ -1105,7 +1107,7 @@
           (This is the same "anyone with the link/value has access" model as before — keep the URL as private as you'd keep a password.)<br>
           4. Back on the <strong>Data</strong> tab, copy the <strong>Database URL</strong> shown at the top (looks like
           <code>https://your-project-default-rtdb.firebaseio.com</code>).<br>
-          5. Paste it below. Anyone who pastes the same URL sees and edits the same shared product list.
+          5. Paste it below. Anyone who pastes the same URL sees and edits the same shared product list, plus pallet/frame presets (including photos).
         </p>
         <label class="field">Firebase Database URL<input type="text" id="cloudDbUrl" placeholder="https://your-project-default-rtdb.firebaseio.com"></label>
         <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
@@ -5463,6 +5465,9 @@ function setCloudStatus(text, ok){
 }
 
 function firebaseProductsUrl(){ return CLOUD_CONFIG.dbUrl.replace(/\/+$/, "") + "/products.json"; }
+function firebasePalletProfilesUrl(){ return CLOUD_CONFIG.dbUrl.replace(/\/+$/, "") + "/palletProfiles.json"; }
+function firebaseFrameProfilesUrl(){ return CLOUD_CONFIG.dbUrl.replace(/\/+$/, "") + "/frameProfiles.json"; }
+function firebasePmPhotosUrl(){ return CLOUD_CONFIG.dbUrl.replace(/\/+$/, "") + "/pmPhotos.json"; }
 
 /* Firebase stores a dense array as a real JSON array, but can return an
    object (or null) in edge cases — normalize whatever comes back into a
@@ -5555,12 +5560,124 @@ function startCloudPolling(){
   cloudPollTimer = setInterval(()=>{ if(CLOUD_CONFIG) fetchProductsFromCloud(); }, 60000);
 }
 
+
+/* ---------- Cloud sync: pallet/frame presets (+ photos on each preset) ---------- */
+function mergeProfileMaps(localMap, cloudMap){
+  const out = Object.assign({}, localMap || {});
+  if(!cloudMap || typeof cloudMap !== "object") return out;
+  Object.keys(cloudMap).forEach(key=>{
+    const c = cloudMap[key];
+    if(!c || typeof c !== "object") return;
+    const l = out[key];
+    if(!l){ out[key] = c; return; }
+    const ct = Number(c.updatedAt || 0), lt = Number(l.updatedAt || 0);
+    // Prefer the newer side; if equal, prefer cloud so teammates converge
+    if(ct >= lt) out[key] = c;
+  });
+  return out;
+}
+async function fetchPresetsFromCloud(){
+  if(!CLOUD_CONFIG) return;
+  try{
+    const [pr, fr] = await Promise.all([
+      fetch(firebasePalletProfilesUrl()),
+      fetch(firebaseFrameProfilesUrl())
+    ]);
+    if(pr.ok){
+      const json = await pr.json();
+      if(json && typeof json === "object"){
+        PM_PALLET_PROFILES = mergeProfileMaps(PM_PALLET_PROFILES, json);
+        pmSavePalletProfiles();
+        if(typeof renderPalletPresetSelect === "function"){
+          const keep = ($("optPalletPresetSelect") && $("optPalletPresetSelect").value) || Object.keys(PM_PALLET_PROFILES)[0] || "";
+          renderPalletPresetSelect(keep);
+        }
+        if(typeof pmPopulatePalletDropdowns === "function") pmPopulatePalletDropdowns();
+      }
+    } else if(pr.status !== 404){
+      console.warn("Pallet presets cloud fetch:", pr.status);
+    }
+    if(fr.ok){
+      const json = await fr.json();
+      if(json && typeof json === "object"){
+        PM_FRAME_PROFILES = mergeProfileMaps(PM_FRAME_PROFILES, json);
+        pmSaveFrameProfiles();
+        if(typeof renderFramePresetSelect === "function"){
+          const keep = ($("optFramePresetSelect") && $("optFramePresetSelect").value) || Object.keys(PM_FRAME_PROFILES)[0] || "";
+          renderFramePresetSelect(keep);
+        }
+        if(typeof pmRefreshFrameTypeList === "function") pmRefreshFrameTypeList();
+      }
+    } else if(fr.status !== 404){
+      console.warn("Frame presets cloud fetch:", fr.status);
+    }
+    // Optional: shared non-preset photo keys (current Manual session photos)
+    try{
+      const ph = await fetch(firebasePmPhotosUrl());
+      if(ph.ok){
+        const json = await ph.json();
+        if(json && typeof json === "object"){
+          PM_PHOTOS = Object.assign({}, PM_PHOTOS, json);
+          pmPersistPhotos();
+        }
+      }
+    }catch(e){}
+  }catch(err){
+    console.error("fetchPresetsFromCloud", err);
+  }
+}
+async function pushPresetsToCloud(){
+  if(!CLOUD_CONFIG) return;
+  const headers = { "Content-Type": "application/json" };
+  // Strip nothing — photoDataUrl is part of each preset object by design
+  const palletBody = JSON.stringify(PM_PALLET_PROFILES || {});
+  const frameBody = JSON.stringify(PM_FRAME_PROFILES || {});
+  const [pr, fr] = await Promise.all([
+    fetch(firebasePalletProfilesUrl(), { method: "PUT", headers, body: palletBody }),
+    fetch(firebaseFrameProfilesUrl(), { method: "PUT", headers, body: frameBody })
+  ]);
+  if(!pr.ok){
+    let detail = "";
+    try{ const body = await pr.json(); detail = body && body.error ? body.error : ""; }catch(e){}
+    throw new Error("Pallet presets cloud write failed: HTTP " + pr.status + (detail ? " ("+detail+")" : ""));
+  }
+  if(!fr.ok){
+    let detail = "";
+    try{ const body = await fr.json(); detail = body && body.error ? body.error : ""; }catch(e){}
+    throw new Error("Frame presets cloud write failed: HTTP " + fr.status + (detail ? " ("+detail+")" : ""));
+  }
+  // Best-effort photos map (session keys); ignore failures
+  try{
+    await fetch(firebasePmPhotosUrl(), { method: "PUT", headers, body: JSON.stringify(PM_PHOTOS || {}) });
+  }catch(e){}
+}
+let _presetCloudPushTimer = null;
+function schedulePushPresetsToCloud(){
+  if(!CLOUD_CONFIG) return;
+  if(_presetCloudPushTimer) clearTimeout(_presetCloudPushTimer);
+  _presetCloudPushTimer = setTimeout(async ()=>{
+    try{
+      await pushPresetsToCloud();
+      setCloudStatus("Connected — presets synced", true);
+    }catch(err){
+      console.error(err);
+      setCloudStatus("Preset sync error: " + err.message, false);
+      try{ setStatus("Cloud preset sync failed: " + err.message); }catch(e){}
+    }
+  }, 600);
+}
+
+
 function connectFirebase(cfg){
   CLOUD_CONFIG = cfg;
   setCloudStatus("Connecting…", true);
   fetchProductsFromCloud();
+  fetchPresetsFromCloud();
   startCloudStream();
   startCloudPolling();
+  // Refresh presets periodically with products
+  if(window._presetPollTimer) clearInterval(window._presetPollTimer);
+  window._presetPollTimer = setInterval(()=>{ if(CLOUD_CONFIG) fetchPresetsFromCloud(); }, 60000);
 }
 
 (function bootCloud(){
@@ -6380,8 +6497,12 @@ const PM_PHOTOS_KEY = "kandilPmPhotos_v1";
 let PM_PHOTOS = loadJSON(PM_PHOTOS_KEY) || {};
 if(typeof PM_PHOTOS !== "object" || !PM_PHOTOS) PM_PHOTOS = {};
 function pmPersistPhotos(){
-  try{ saveJSON(PM_PHOTOS_KEY, PM_PHOTOS); }catch(e){ /* quota — large photos */ }
+  try{ saveJSON(PM_PHOTOS_KEY, PM_PHOTOS); }catch(e){
+    try{ setStatus("Warning: photo may be too large to store permanently in this browser."); }catch(_){}
+  }
 }
+/** Tracks explicit Remove clicks so Save/Update can clear a preset photo on purpose. */
+const PM_PHOTO_CLEARED = {};
 /** Keep matching pallet/frame preset photo in sync when Manual (or Options) photo changes. */
 function pmSyncPhotoIntoPreset(key, dataUrl){
   if(key === "pmPallet" || key === "palletPreset"){
@@ -6389,7 +6510,9 @@ function pmSyncPhotoIntoPreset(key, dataUrl){
     const name = (nameEl && nameEl.value || "").trim();
     if(name && PM_PALLET_PROFILES[name]){
       PM_PALLET_PROFILES[name].photoDataUrl = dataUrl || null;
+      PM_PALLET_PROFILES[name].updatedAt = Date.now();
       if(typeof pmSavePalletProfiles === "function") pmSavePalletProfiles();
+      if(typeof schedulePushPresetsToCloud === "function") schedulePushPresetsToCloud();
     }
     // Mirror between Manual and Options editor zones
     if(key === "pmPallet"){
@@ -6418,7 +6541,9 @@ function pmSyncPhotoIntoPreset(key, dataUrl){
     ).trim();
     if(name && PM_FRAME_PROFILES[name]){
       PM_FRAME_PROFILES[name].photoDataUrl = dataUrl || null;
+      PM_FRAME_PROFILES[name].updatedAt = Date.now();
       if(typeof pmSaveFrameProfiles === "function") pmSaveFrameProfiles();
+      if(typeof schedulePushPresetsToCloud === "function") schedulePushPresetsToCloud();
     }
     if(key === "pmFrame"){
       PM_PHOTOS.framePreset = dataUrl || null;
@@ -6444,6 +6569,8 @@ function pmPhotoIds(prefix){
 function pmSetPhoto(prefix, key, dataUrl, labelText){
   const ids = pmPhotoIds(prefix);
   PM_PHOTOS[key] = dataUrl || null;
+  if(dataUrl) delete PM_PHOTO_CLEARED[key];
+  else PM_PHOTO_CLEARED[key] = true;
   pmPersistPhotos();
   const wrap = $(ids.wrap), prev = $(ids.preview), lab = $(ids.label);
   if(wrap){
@@ -6477,7 +6604,14 @@ function pmWirePhoto(prefix, key, emptyLabel){
 }
 
 let PM_PALLET_PROFILES = Object.assign({}, DEFAULT_PM_PALLET_PROFILES, loadJSON(PM_PALLET_PROFILES_KEY) || {});
-function pmSavePalletProfiles(){ saveJSON(PM_PALLET_PROFILES_KEY, PM_PALLET_PROFILES); }
+function pmSavePalletProfiles(){
+  try{
+    localStorage.setItem(PM_PALLET_PROFILES_KEY, JSON.stringify(PM_PALLET_PROFILES));
+  }catch(e){
+    alert("Could not store pallet presets (browser storage full). Try a smaller photo, or remove unused presets.");
+    throw e;
+  }
+}
 
 const PM_FRAME_PROFILES_KEY = "kandilPmFrameProfiles_v1";
 const DEFAULT_PM_FRAME_PROFILES = {
@@ -6513,7 +6647,14 @@ const DEFAULT_PM_FRAME_PROFILES = {
   }
 };
 let PM_FRAME_PROFILES = Object.assign({}, DEFAULT_PM_FRAME_PROFILES, loadJSON(PM_FRAME_PROFILES_KEY) || {});
-function pmSaveFrameProfiles(){ saveJSON(PM_FRAME_PROFILES_KEY, PM_FRAME_PROFILES); }
+function pmSaveFrameProfiles(){
+  try{
+    localStorage.setItem(PM_FRAME_PROFILES_KEY, JSON.stringify(PM_FRAME_PROFILES));
+  }catch(e){
+    alert("Could not store frame presets (browser storage full). Try a smaller photo, or remove unused presets.");
+    throw e;
+  }
+}
 
 function pmRefreshPalletNameList(){
   $("pmPalletNameList").innerHTML = Object.keys(PM_PALLET_PROFILES).map(n=>`<option value="${escapeAttr(n)}">`).join("");
@@ -6618,6 +6759,8 @@ function loadPalletPresetIntoEditor(name){
   $("optPalletPresetMaterial").value = p ? (p.material||"") : "";
   $("optPalletPresetRefDoc").value = p ? (p.refDoc||"") : "";
   $("optPalletPresetCompliance").value = p && p.compliance != null ? p.compliance : PM_STANDARD_COMPLIANCE_TEXT;
+  delete PM_PHOTO_CLEARED.palletPreset;
+  delete PM_PHOTO_CLEARED.pmPallet;
   pmSetPhoto("optPalletPresetPhoto", "palletPreset", (p && p.photoDataUrl) || null, "📷 Click to attach a pallet photo");
   optPalletPresetDeckBody.innerHTML = "";
   (p && p.deckRows && p.deckRows.length ? p.deckRows : []).forEach(r=>
@@ -6632,6 +6775,8 @@ function loadFramePresetIntoEditor(name){
   $("optFramePresetMemberWidth").value = p ? (p.memberWidth||"") : "";
   $("optFramePresetMemberThickness").value = p ? (p.memberThickness||"") : "";
   $("optFramePresetMoisture").value = p ? (p.moisture||"") : "";
+  delete PM_PHOTO_CLEARED.framePreset;
+  delete PM_PHOTO_CLEARED.pmFrame;
   pmSetPhoto("optFramePresetPhoto", "framePreset", (p && p.photoDataUrl) || null, "📷 Click to attach a wooden frame photo");
   optFramePresetDimsBody.innerHTML = "";
   (p && p.dimsRows && p.dimsRows.length ? p.dimsRows : []).forEach(r=>
@@ -6650,47 +6795,105 @@ $("optNewFramePresetBtn").addEventListener("click", ()=>{
   $("optFramePresetName").focus();
 });
 
-$("optSavePalletPresetBtn").addEventListener("click", ()=>{
-  const name = $("optPalletPresetName").value.trim();
+
+function resolvePresetPhoto(editorKey, manualKey, existingPhoto){
+  // Prefer live editor/manual attachment. If user clicked Remove, clear.
+  // Otherwise keep the photo already stored on the preset (never drop by accident).
+  if(PM_PHOTOS[editorKey]) return PM_PHOTOS[editorKey];
+  if(PM_PHOTOS[manualKey]) return PM_PHOTOS[manualKey];
+  if(PM_PHOTO_CLEARED[editorKey] || PM_PHOTO_CLEARED[manualKey]) return null;
+  return existingPhoto || null;
+}
+function commitPalletPreset(mode){
+  // mode: "save" (create/overwrite by typed name) | "update" (must already exist)
+  const name = ($("optPalletPresetName").value || "").trim();
   if(!name){ alert("Enter a preset name first."); return; }
+  const existing = PM_PALLET_PROFILES[name];
+  if(mode === "update" && !existing){
+    alert("No preset named \"" + name + "\" exists yet. Use “Save as New” first, or pick a preset from the list.");
+    return;
+  }
+  if(mode === "save" && existing && !confirm("A pallet preset named \"" + name + "\" already exists. Overwrite it (including its photo)?")) return;
+  const photo = resolvePresetPhoto("palletPreset", "pmPallet", existing && existing.photoDataUrl);
   PM_PALLET_PROFILES[name] = {
     type: $("optPalletPresetType").value, code: $("optPalletPresetCode").value,
     size: $("optPalletPresetSize").value, material: $("optPalletPresetMaterial").value,
     refDoc: $("optPalletPresetRefDoc").value,
     compliance: $("optPalletPresetCompliance").value,
-    photoDataUrl: PM_PHOTOS.palletPreset || PM_PHOTOS.pmPallet || null,
-    deckRows: gatherPmRows(optPalletPresetDeckBody, ["item","desc","qty","dims","tol"])
+    photoDataUrl: photo,
+    deckRows: gatherPmRows(optPalletPresetDeckBody, ["item","desc","qty","dims","tol"]),
+    updatedAt: Date.now()
   };
+  // Keep live photo stores aligned with what was saved
+  if(photo){
+    PM_PHOTOS.palletPreset = photo;
+    PM_PHOTOS.pmPallet = photo;
+    delete PM_PHOTO_CLEARED.palletPreset;
+    delete PM_PHOTO_CLEARED.pmPallet;
+  } else {
+    PM_PHOTOS.palletPreset = null;
+    PM_PHOTOS.pmPallet = null;
+  }
+  pmPersistPhotos();
   pmSavePalletProfiles();
+  schedulePushPresetsToCloud();
   renderPalletPresetSelect(name);
-  pmRefreshPalletNameList();
-  // Keep the Packaging Manual tab's dropdowns and any currently-matching
-  // Pallet Name in sync with the freshly-saved preset.
+  loadPalletPresetIntoEditor(name);
   pmPopulatePalletDropdowns();
-  if($("pmWoodPalletName").value.trim() === name) pmApplyPalletProfile(name);
-  setStatus(`Saved Pallet preset "${name}" ✓`);
-});
-$("optSaveFramePresetBtn").addEventListener("click", ()=>{
-  const name = $("optFramePresetName").value.trim();
+  if($("pmWoodPalletName") && $("pmWoodPalletName").value.trim() === name) pmApplyPalletProfile(name);
+  setStatus((mode === "update" ? "Updated" : "Saved") + " pallet preset \"" + name + "\"" + (photo ? " (photo stored)" : "") + " ✓");
+}
+function commitFramePreset(mode){
+  const name = ($("optFramePresetName").value || "").trim();
   if(!name){ alert("Enter a preset name first."); return; }
+  const existing = PM_FRAME_PROFILES[name];
+  if(mode === "update" && !existing){
+    alert("No preset named \"" + name + "\" exists yet. Use “Save as New” first, or pick a preset from the list.");
+    return;
+  }
+  if(mode === "save" && existing && !confirm("A frame preset named \"" + name + "\" already exists. Overwrite it (including its photo)?")) return;
+  const photo = resolvePresetPhoto("framePreset", "pmFrame", existing && existing.photoDataUrl);
   PM_FRAME_PROFILES[name] = {
     shape: $("optFramePresetShape").value, edges: $("optFramePresetEdges").value, material: $("optFramePresetMaterial").value,
     memberWidth: $("optFramePresetMemberWidth").value, memberThickness: $("optFramePresetMemberThickness").value, moisture: $("optFramePresetMoisture").value,
-    photoDataUrl: PM_PHOTOS.framePreset || PM_PHOTOS.pmFrame || null,
-    dimsRows: gatherPmRows(optFramePresetDimsBody, ["std","len","w","treat"])
+    photoDataUrl: photo,
+    dimsRows: gatherPmRows(optFramePresetDimsBody, ["std","len","w","treat"]),
+    updatedAt: Date.now()
   };
+  if(photo){
+    PM_PHOTOS.framePreset = photo;
+    PM_PHOTOS.pmFrame = photo;
+    delete PM_PHOTO_CLEARED.framePreset;
+    delete PM_PHOTO_CLEARED.pmFrame;
+  } else {
+    PM_PHOTOS.framePreset = null;
+    PM_PHOTOS.pmFrame = null;
+  }
+  pmPersistPhotos();
   pmSaveFrameProfiles();
+  schedulePushPresetsToCloud();
   renderFramePresetSelect(name);
-  pmRefreshFrameTypeList();
-  if($("pmFrameTypeName").value.trim() === name) pmApplyFrameProfile(name);
-  setStatus(`Saved Frame preset "${name}" ✓`);
-});
+  loadFramePresetIntoEditor(name);
+  if(typeof pmRefreshFrameTypeList === "function") pmRefreshFrameTypeList();
+  if(typeof pmApplyFrameProfile === "function"){
+    const fName = ($("pmFrameTypeName") && $("pmFrameTypeName").value || "").trim();
+    if(fName === name) pmApplyFrameProfile(name);
+  }
+  setStatus((mode === "update" ? "Updated" : "Saved") + " frame preset \"" + name + "\"" + (photo ? " (photo stored)" : "") + " ✓");
+}
+$("optSavePalletPresetBtn").addEventListener("click", ()=> commitPalletPreset("save"));
+if($("optUpdatePalletPresetBtn")) $("optUpdatePalletPresetBtn").addEventListener("click", ()=> commitPalletPreset("update"));
+$("optSaveFramePresetBtn").addEventListener("click", ()=> commitFramePreset("save"));
+if($("optUpdateFramePresetBtn")) $("optUpdateFramePresetBtn").addEventListener("click", ()=> commitFramePreset("update"));
+
+
 $("optDeletePalletPresetBtn").addEventListener("click", ()=>{
   const name = $("optPalletPresetSelect").value;
   if(!name){ return; }
   if(!confirm(`Delete the Pallet preset "${name}"? This can't be undone.`)) return;
   delete PM_PALLET_PROFILES[name];
   pmSavePalletProfiles();
+  schedulePushPresetsToCloud();
   renderPalletPresetSelect("");
   loadPalletPresetIntoEditor($("optPalletPresetSelect").value);
   pmRefreshPalletNameList();
@@ -6703,6 +6906,7 @@ $("optDeleteFramePresetBtn").addEventListener("click", ()=>{
   if(!confirm(`Delete the Frame preset "${name}"? This can't be undone.`)) return;
   delete PM_FRAME_PROFILES[name];
   pmSaveFrameProfiles();
+  schedulePushPresetsToCloud();
   renderFramePresetSelect("");
   loadFramePresetIntoEditor($("optFramePresetSelect").value);
   pmRefreshFrameTypeList();
@@ -8187,12 +8391,45 @@ function pmDeleteSection(key){
     try{
       const reg = await navigator.serviceWorker.register("./sw.js", { scope: "./" });
       console.info("NEXUS service worker registered", reg.scope);
+
+      // Reload at most once when a *new* worker takes over (after you publish an update).
+      // Not on first install, and not every time you open the app.
+      let refreshing = false;
+      const reloadOnceOnControllerChange = ()=>{
+        if(refreshing) return;
+        refreshing = true;
+        location.reload();
+      };
+
+      const checkForUpdate = ()=>{ try{ reg.update(); }catch(e){} };
+      checkForUpdate();
+      document.addEventListener("visibilitychange", ()=>{
+        if(document.visibilityState === "visible") checkForUpdate();
+      });
+      window.addEventListener("focus", checkForUpdate);
+
+      reg.addEventListener("updatefound", ()=>{
+        const nw = reg.installing;
+        if(!nw) return;
+        nw.addEventListener("statechange", ()=>{
+          // New SW installed while this page already had a controller → real update
+          if(nw.state === "installed" && navigator.serviceWorker.controller){
+            navigator.serviceWorker.addEventListener("controllerchange", reloadOnceOnControllerChange);
+            try{ if(typeof setStatus === "function") setStatus("New version found — applying update…"); }catch(e){}
+          }
+        });
+      });
+
+      if(reg.waiting && navigator.serviceWorker.controller){
+        navigator.serviceWorker.addEventListener("controllerchange", reloadOnceOnControllerChange);
+        reg.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
     }catch(err){
       console.warn("Service worker registration failed:", err);
     }
   }
 
-  window.addEventListener("beforeinstallprompt", (e)=>{
+  window.addEventListener("beforeinstallprompt"window.addEventListener("beforeinstallprompt"window.addEventListener("beforeinstallprompt", (e)=>{
     e.preventDefault();
     deferredPrompt = e;
     const bar = document.getElementById("installAppBar");
