@@ -477,6 +477,26 @@
   .pm-extra-kv{margin:8px 0 12px;}
   body.dark-mode .pm-tool{background:var(--card);color:var(--ink-dark);}
   body.dark-mode .pm-kv-table th[contenteditable]:focus{background:rgba(255,255,255,.06);}
+  /* tolerance pairs + extra fields */
+  .tol-row{display:flex;gap:6px;align-items:center;}
+  .tol-row input:first-child{flex:1;min-width:0;}
+  .tol-row .tol-sign{font-weight:800;color:var(--ink);font-size:1rem;}
+  .tol-row input.tol{width:34%;flex:0 0 34%;min-width:0;}
+  .req-extra{display:contents;}
+  .an-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;}
+  .an-kpis .kpi-card{cursor:default;text-align:left;}
+  .an-kpis .kpi-value{font-size:1.35rem;}
+  .an-kpis .kpi-unit{white-space:normal;}
+  .an-chart{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 12px 6px;margin-bottom:16px;color:var(--ink-dark);box-shadow:0 2px 10px rgba(40,60,70,.06);}
+  .an-chart h4{margin:0 0 2px;font-size:.92rem;}
+  .an-chart .an-sub{font-size:.76rem;color:#888;margin:0 0 4px;}
+  .an-chart svg{width:100%;height:auto;display:block;}
+  .an-scroll{overflow-x:auto;margin-bottom:16px;}
+  .an-scroll table.bom-table td,.an-scroll table.bom-table th{white-space:nowrap;text-align:center;font-size:.8rem;}
+  .an-scroll tr.an-best td{background:rgba(185,213,50,.22) !important;font-weight:700;}
+  .an-scroll tr.an-cur td{box-shadow:inset 0 0 0 1px var(--magenta);}
+  .an-insights li{margin-bottom:6px;font-size:.86rem;}
+  .rf-group-title{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink);margin:14px 0 6px;}
 </style>
 </head>
 <body>
@@ -494,6 +514,7 @@
 
   <div class="tabbar">
     <button class="tab-btn active" data-tab="sheet">📋 Spec Sheet</button>
+    <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
     <button class="tab-btn" data-tab="options">🗂️ Manage Options</button>
     <button class="tab-btn" data-tab="formulas">🧮 Formulas</button>
     <button class="tab-btn" data-tab="products">📦 Products</button>
@@ -579,6 +600,7 @@
         <label class="field">Customer<input id="customer" type="text" placeholder="Customer name"></label>
         <label class="field">Product Name<input id="productName" type="text" value="Park Cam"></label>
         <label class="field">Product Code<input id="productCode" type="text" placeholder="SKU / code"></label>
+        <div class="req-extra" id="reqExtra-general"></div>
       </div>
 
       <div class="field-group group-lime">
@@ -591,6 +613,7 @@
         <label class="field">Container's Destination<select id="containerDestination"></select></label>
         <label class="field">Separator Setup<select id="separatorSetup"></select></label>
         <input id="separatorFlap" type="hidden" value="no_flap">
+        <div class="req-extra" id="reqExtra-category"></div>
       </div>
 
       <div class="field-group group-gold">
@@ -600,6 +623,7 @@
         <label class="field">No. Straps / Long Side<input id="strapsLongSide" type="number" step="1" value="2" min="0"></label>
         <label class="field">No. Straps / Short Side<input id="strapsShortSide" type="number" step="1" value="2" min="0"></label>
         <label class="field">Total No. Straps<input id="totalStraps" type="text" readonly></label>
+        <div class="req-extra" id="reqExtra-hardware"></div>
       </div>
 
       <div class="field-group group-magenta">
@@ -608,6 +632,7 @@
         <label class="field">Boxes / Pallet<input id="boxesPerPallet" type="text" value="N/A" readonly></label>
         <label class="field">Units / Shrink-Box<input id="unitsPerShrinkBox" type="number" step="any" value="12"></label>
         <label class="field">Box / Layer<input id="boxesPerLayer" type="number" step="any" value="10"></label>
+        <div class="req-extra" id="reqExtra-shrink"></div>
       </div>
 
       <div class="field-group group-teal hidden" id="customReqFieldsGroup">
@@ -626,11 +651,12 @@
         <h3>Labels</h3>
         <label class="field">Customer Label (D.)<input id="customerLabel" type="text" placeholder="Customer label details"></label>
         <label class="field">Shrink Label (D.)<input id="shrinkLabel" type="text" placeholder="Shrink label details"></label>
+        <div class="req-extra" id="reqExtra-special"></div>
       </div>
     </div>
 
     <div id="reqFieldsManagerWrap" class="field-group group-teal hidden" style="margin:14px 0;">
-      <h3 id="reqFieldFormTitle">New Required-Info Field</h3>
+      <h3 id="reqFieldFormTitle">New Field</h3>
       <div class="field-grid two-col">
         <label class="field">Field Name<input type="text" id="reqFieldLabel" placeholder="e.g. PO Number"></label>
         <label class="field">Field Type
@@ -641,6 +667,7 @@
           </select>
         </label>
       </div>
+      <label class="field">Section (where the field appears)<select id="reqFieldGroup"></select></label>
       <label class="field hidden" id="reqFieldOptionsWrap">Dropdown options (comma-separated)<input type="text" id="reqFieldOptions" placeholder="Option A, Option B, Option C"></label>
       <div style="display:flex;gap:10px;margin-top:6px;">
         <button type="button" class="btn btn-gold btn-sm" id="reqFieldSaveBtn">✓ Save Field</button>
@@ -659,11 +686,12 @@
         <h3>Inputs <span class="required-pill">Kindly enter the required data</span></h3>
         <div class="split-media" style="gap:14px;align-items:start;">
           <div>
-        <label class="field">Unit Max Diameter (mm)<input id="unitMaxDiameter" type="number" step="0.01" value="65.28"></label>
+        <label class="field">Unit Max Diameter (mm) &nbsp;<span style="font-weight:600;color:#999;">value ± tolerance</span><span class="tol-row"><input id="unitMaxDiameter" type="number" step="0.01" value="65.28"><span class="tol-sign">±</span><input id="unitMaxDiameterTol" class="tol" type="number" step="0.01" min="0" placeholder="tol."></span></label>
         <label class="field" id="boxLengthLabel">Box Length (mm)<input id="boxLength" type="number" step="0.01" value="300"></label>
         <label class="field" id="boxWidthLabel">Box Width (mm)<input id="boxWidth" type="number" step="0.01" value="200"></label>
-        <label class="field">Unit Height (mm)<input id="unitHeight" type="number" step="0.01" value="197.84"></label>
-        <label class="field">Unit Weight (gm)<input id="unitWeight" type="number" step="0.01" value="212.69"></label>
+        <label class="field">Unit Height (mm) &nbsp;<span style="font-weight:600;color:#999;">value ± tolerance</span><span class="tol-row"><input id="unitHeight" type="number" step="0.01" value="197.84"><span class="tol-sign">±</span><input id="unitHeightTol" class="tol" type="number" step="0.01" min="0" placeholder="tol."></span></label>
+        <label class="field">Unit Weight (gm) &nbsp;<span style="font-weight:600;color:#999;">value ± tolerance</span><span class="tol-row"><input id="unitWeight" type="number" step="0.01" value="212.69"><span class="tol-sign">±</span><input id="unitWeightTol" class="tol" type="number" step="0.01" min="0" placeholder="tol."></span></label>
+        <label class="field">Brimful Capacity (ml) &nbsp;<span style="font-weight:600;color:#999;">syncs to Packaging Manual</span><span class="tol-row"><input id="brimfulCapacity" type="number" step="any" min="0"><span class="tol-sign">±</span><input id="brimfulCapacityTol" class="tol" type="number" step="any" min="0" placeholder="tol."></span></label>
         <label class="field" id="units1Label">Units / Row 1<input id="units1" type="number" step="1" value="210" readonly></label>
         <label class="field" id="units2Label">Units / Row 2<input id="units2" type="number" step="1" value="0" readonly></label>
         <label class="field">Pallet / Container
@@ -680,6 +708,8 @@
           </span>
           <span class="hint" id="layersPerPalletHint" style="margin:2px 0 0;font-weight:600;">Auto-filled to the max that fits Height/Weight Clearance</span>
         </label>
+        <div class="req-extra" id="reqExtra-inputs"></div>
+        <div style="text-align:right;margin-top:6px;"><button type="button" class="btn btn-ghost btn-sm" id="manageInputFieldsBtn">⚙ Add / reorder input fields</button></div>
           </div>
           <div class="media-col" style="max-width:200px;">
             <p class="hint" style="margin:0 0 6px;font-weight:700;color:var(--gold-dark,#8a6a10);">Product photo</p>
@@ -882,6 +912,22 @@
     <button type="button" class="btn btn-ghost" id="updateProductSpecBtn" title="Overwrite the currently loaded product">↻ Update Product</button>
   </div>
   <p class="status" id="statusMsg"></p>
+  </div>
+
+  <!-- =================== TAB: ANALYTICS =================== -->
+  <div class="tab-panel" id="tab-analytics">
+    <div class="section-banner">Product Analytics — Units / Container &amp; Weight Optimisation</div>
+    <p class="hint">Compares every pallet type (Full vs Half pallet, or Box on FP vs HP for box products) for the selected product, using the same formulas as the Spec Sheet. Layers/Pallet is auto-maximised for each pallet so the comparison is fair.</p>
+    <div class="field-group group-teal" style="margin-bottom:14px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+        <label class="field" style="flex:1;min-width:240px;margin-bottom:0;">Product to analyse
+          <select id="anProductSelect"></select>
+        </label>
+        <button type="button" class="btn btn-ghost btn-sm" id="anRefreshBtn">🔄 Refresh</button>
+      </div>
+      <p class="hint" id="anSubtitle" style="margin:8px 0 0;"></p>
+    </div>
+    <div id="anBody"></div>
   </div>
 
   <!-- =================== TAB: MANAGE OPTIONS =================== -->
@@ -1826,24 +1872,44 @@ function slugifyReqKey(label, excludeId){
   return key;
 }
 
-function renderCustomReqFields(){
-  const group = $("customReqFieldsGroup");
-  const wrap = $("customReqFieldsContainer");
-  if(!CUSTOM_REQ_FIELDS.length){ group.classList.add("hidden"); wrap.innerHTML = ""; return; }
-  group.classList.remove("hidden");
-  wrap.innerHTML = CUSTOM_REQ_FIELDS.map(f=>{
-    if(f.type === "select"){
-      return `<label class="field">${escapeHtml(f.label)}<select id="${escapeAttr(f.key)}" data-custom-req="1">
-        <option value=""></option>
-        ${(f.options||[]).map(o=>`<option value="${escapeAttr(o)}">${escapeHtml(o)}</option>`).join("")}
-      </select></label>`;
-    }
-    return `<label class="field">${escapeHtml(f.label)}<input id="${escapeAttr(f.key)}" type="${f.type==="number"?"number":"text"}" data-custom-req="1" step="${f.type==="number"?"any":""}"></label>`;
-  }).join("");
+const REQ_GROUPS = [
+  {id:"general", label:"Required Info — General"},
+  {id:"category", label:"Required Info — Category"},
+  {id:"hardware", label:"Required Info — Hardware"},
+  {id:"shrink", label:"Required Info — Shrink / Box"},
+  {id:"special", label:"Special Requirements (Labels)"},
+  {id:"inputs", label:"Calculations — Inputs"},
+  {id:"custom", label:"Separate “Custom Fields” card"}
+];
+function reqFieldGroup(f){ return REQ_GROUPS.some(g=>g.id===f.group) ? f.group : "custom"; }
+function reqGroupLabel(id){ const g = REQ_GROUPS.find(x=>x.id===id); return g ? g.label : id; }
+function populateReqGroupSelect(selected){
+  const sel = $("reqFieldGroup"); if(!sel) return;
+  sel.innerHTML = REQ_GROUPS.map(g=>`<option value="${g.id}">${escapeHtml(g.label)}</option>`).join("");
+  sel.value = selected || "general";
 }
-
+function reqFieldHtml(f){
+  if(f.type === "select"){
+    return `<label class="field">${escapeHtml(f.label)}<select id="${escapeAttr(f.key)}" data-custom-req="1">
+      <option value=""></option>
+      ${(f.options||[]).map(o=>`<option value="${escapeAttr(o)}">${escapeHtml(o)}</option>`).join("")}
+    </select></label>`;
+  }
+  return `<label class="field">${escapeHtml(f.label)}<input id="${escapeAttr(f.key)}" type="${f.type==="number"?"number":"text"}" data-custom-req="1" ${f.type==="number"?'step="any"':''}></label>`;
+}
+function renderCustomReqFields(){
+  const old = {};
+  document.querySelectorAll('[data-custom-req="1"]').forEach(el=>{ old[el.id] = el.value; });
+  REQ_GROUPS.forEach(g=>{
+    const c = g.id === "custom" ? $("customReqFieldsContainer") : $("reqExtra-"+g.id);
+    if(c) c.innerHTML = CUSTOM_REQ_FIELDS.filter(f=>reqFieldGroup(f)===g.id).map(reqFieldHtml).join("");
+  });
+  const grp = $("customReqFieldsGroup");
+  if(grp) grp.classList.toggle("hidden", !CUSTOM_REQ_FIELDS.some(f=>reqFieldGroup(f)==="custom"));
+  document.querySelectorAll('[data-custom-req="1"]').forEach(el=>{ if(old[el.id] != null) el.value = old[el.id]; });
+}
 function gatherCustomReqValues(){
-  return CUSTOM_REQ_FIELDS.map(f=>({ key:f.key, label:f.label, value: strFromField(f.key) }));
+  return CUSTOM_REQ_FIELDS.map(f=>({ key:f.key, label:f.label, group:reqFieldGroup(f), type:f.type, value: ($(f.key) ? $(f.key).value.trim() : "") }));
 }
 function applyCustomReqValues(values){
   const map = {}; (values||[]).forEach(v=>{ map[v.key]=v.value; });
@@ -1962,36 +2028,54 @@ function renderPmCustomSectionsAdmin(){
   wrap.querySelectorAll(".pmsec-delete").forEach(btn=>{ btn.addEventListener("click",()=>{ if(!confirm("Delete this entire section, including all its fields and any values entered?")) return; CUSTOM_PM_SECTIONS=CUSTOM_PM_SECTIONS.filter(s=>s.id!==btn.dataset.sec); persistCustomPmSections(); renderPmCustomSectionsAdmin(); renderCustomPmSections(); setStatus("Section deleted ✓"); }); });
 }
 let reqFieldEditingId = null;
-function openReqFieldForm(id){
+function openReqFieldForm(id, presetGroup){
   reqFieldEditingId = id || null;
   const f = id ? CUSTOM_REQ_FIELDS.find(x=>x.id===id) : null;
-  $("reqFieldFormTitle").textContent = f ? "Edit Required-Info Field" : "New Required-Info Field";
+  $("reqFieldFormTitle").textContent = f ? "Edit Field" : "New Field";
   $("reqFieldLabel").value = f ? f.label : "";
   $("reqFieldType").value = f ? f.type : "text";
   $("reqFieldOptions").value = f && f.options ? f.options.join(", ") : "";
+  populateReqGroupSelect(f ? reqFieldGroup(f) : (presetGroup || "general"));
   $("reqFieldOptionsWrap").classList.toggle("hidden", ($("reqFieldType").value!=="select"));
 }
 function closeReqFieldForm(){ reqFieldEditingId = null; $("reqFieldLabel").value=""; $("reqFieldOptions").value=""; }
-
+function moveReqField(id, dir){
+  const f = CUSTOM_REQ_FIELDS.find(x=>x.id===id); if(!f) return;
+  const g = reqFieldGroup(f);
+  const idx = CUSTOM_REQ_FIELDS.indexOf(f);
+  let j = idx + dir;
+  while(j>=0 && j<CUSTOM_REQ_FIELDS.length && reqFieldGroup(CUSTOM_REQ_FIELDS[j]) !== g) j += dir;
+  if(j<0 || j>=CUSTOM_REQ_FIELDS.length) return;
+  [CUSTOM_REQ_FIELDS[idx], CUSTOM_REQ_FIELDS[j]] = [CUSTOM_REQ_FIELDS[j], CUSTOM_REQ_FIELDS[idx]];
+  persistCustomReqFields(); renderCustomReqFields(); renderReqFieldsManagerList();
+}
 function renderReqFieldsManagerList(){
   const wrap = $("reqFieldsList");
   if(!CUSTOM_REQ_FIELDS.length){ wrap.innerHTML = '<p class="opt-empty">No custom fields yet — add one above.</p>'; return; }
-  wrap.innerHTML = CUSTOM_REQ_FIELDS.map(f=>`
+  wrap.innerHTML = REQ_GROUPS.map(g=>{
+    const list = CUSTOM_REQ_FIELDS.filter(f=>reqFieldGroup(f)===g.id);
+    if(!list.length) return "";
+    return `<div class="rf-group-title">${escapeHtml(g.label)}</div>` + list.map((f,i)=>`
     <div class="product-card" data-id="${f.id}">
       <div>
         <div class="pc-name">${escapeHtml(f.label)}</div>
         <div class="pc-meta">${escapeHtml(f.type)}${f.type==="select" ? " — "+escapeHtml((f.options||[]).join(", ")) : ""}</div>
       </div>
-      <div style="display:flex;gap:8px;">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button type="button" class="btn btn-ghost btn-sm rf-up" data-id="${f.id}" ${i===0?"disabled":""} title="Move up">↑</button>
+        <button type="button" class="btn btn-ghost btn-sm rf-down" data-id="${f.id}" ${i===list.length-1?"disabled":""} title="Move down">↓</button>
         <button type="button" class="btn btn-ghost btn-sm rf-edit" data-id="${f.id}">Edit</button>
         <button type="button" class="btn btn-ghost btn-sm rf-delete" data-id="${f.id}">Delete</button>
       </div>
     </div>`).join("");
+  }).join("");
+  wrap.querySelectorAll(".rf-up").forEach(b=> b.addEventListener("click", ()=> moveReqField(b.dataset.id,-1)));
+  wrap.querySelectorAll(".rf-down").forEach(b=> b.addEventListener("click", ()=> moveReqField(b.dataset.id,1)));
   wrap.querySelectorAll(".rf-edit").forEach(b=> b.addEventListener("click", ()=> openReqFieldForm(b.dataset.id)));
   wrap.querySelectorAll(".rf-delete").forEach(b=> b.addEventListener("click", ()=>{
-    if(!confirm("Delete this field from Required Information? Any values already entered for it will be lost.")) return;
+    if(!confirm("Delete this field? Any values already entered for it will be lost.")) return;
     CUSTOM_REQ_FIELDS = CUSTOM_REQ_FIELDS.filter(f=>f.id!==b.dataset.id);
-    persistCustomReqFields(); renderCustomReqFields(); renderReqFieldsManagerList();
+    persistCustomReqFields(); renderCustomReqFields(); renderReqFieldsManagerList(); renderFieldChips(); recalc();
   }));
 }
 
@@ -2008,6 +2092,7 @@ const FIELD_REFERENCE = [
   {key:"strapsShortSide", label:"No. Straps / Short Side", group:"Inputs"},
   {key:"totalStraps", label:"Total No. Straps", group:"Inputs"},
   {key:"unitsPerShrinkBox", label:"Units / Shrink-Box", group:"Inputs"},
+  {key:"brimfulCapacity", label:"Brimful Capacity (ml)", group:"Inputs"},
   {key:"unitsPerLayer", label:"Units / Layer", group:"Outputs"},
   {key:"unitsPerPallet", label:"Units / Pallet", group:"Outputs"},
   {key:"unitsPerContainer", label:"Units / Container", group:"Outputs"},
@@ -2095,6 +2180,7 @@ function kpiMetricCatalog(){
     {key:"unitMaxDiameter", label:"Unit Max Diameter", unit:"mm"},
     {key:"unitHeight", label:"Unit Height", unit:"mm"},
     {key:"unitWeight", label:"Unit Weight", unit:"gm"},
+    {key:"brimfulCapacity", label:"Brimful Capacity", unit:"ml"},
     {key:"boxesPerLayer", label:"Boxes / Layer", unit:"boxes"},
     {key:"palletPerContainer", label:"Pallets / Container", unit:""}
   ];
@@ -2457,6 +2543,8 @@ const escapeHtml = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,
 function numFromField(id){ const v = parseFloat($(id).value); return isFinite(v) ? v : 0; }
 function strFromField(id){ return ($(id).value || "").trim(); }
 function fmt(v){ if(!isFinite(v)) return "0"; return (Math.round(v*100)/100).toLocaleString(undefined,{maximumFractionDigits:2}); }
+function fmtTol(v, t){ t = +t; return fmt(v) + (t > 0 ? " ± " + t.toLocaleString(undefined,{maximumFractionDigits:3}) : ""); }
+function brimfulText(v, t){ v = String(v==null?"":v).trim(); if(v==="") return ""; t = +t; return v + (t > 0 ? " ± " + t : ""); }
 function setOut(id, value, unit){ const el = $(id); el.dataset.raw = value; el.textContent = fmt(value) + (unit ? (" " + unit) : ""); }
 
 /* =====================================================================
@@ -2542,7 +2630,8 @@ function setFieldNA(id, na, fallbackValue){
     // freeze/crash: Box Length/Width silently became 0, sending the box
     // packing grid math into an infinite loop).
     const wasNA = el.dataset.prevType !== undefined;
-    const restore = el.dataset.prevValue;
+    const cur = el.value;
+    const restore = (cur !== "" && cur !== "N/A") ? cur : el.dataset.prevValue;
     if(wasNA){ el.type = el.dataset.prevType; delete el.dataset.prevType; }
     el.disabled = false;
     if(wasNA){
@@ -2559,6 +2648,7 @@ function setFieldNA(id, na, fallbackValue){
    applies instead) — and vice versa for every other Packaging Type. */
 function applyPackagingModeUI(isBoxMode){
   setFieldNA("unitMaxDiameter", isBoxMode, 65.28);
+  setFieldNA("unitMaxDiameterTol", isBoxMode, "");
   setFieldNA("units1", isBoxMode, 0);
   setFieldNA("units2", isBoxMode, 0);
 
@@ -2818,8 +2908,12 @@ function recalc(){
     palletWeightBaseFullHalfKG: FORMULAS.palletWeightBaseFullHalfKG,
     palletWeightBaseOtherKG: FORMULAS.palletWeightBaseOtherKG,
     weightAllowanceDefaultTon: FORMULAS.weightAllowanceDefaultTon,
-    weightAllowanceOtherTon: FORMULAS.weightAllowanceOtherTon
+    weightAllowanceOtherTon: FORMULAS.weightAllowanceOtherTon,
+    brimfulCapacity: numFromField("brimfulCapacity")
   };
+  CUSTOM_REQ_FIELDS.forEach(f=>{
+    if(f.type === "number"){ const el = $(f.key); const v = el ? parseFloat(el.value) : NaN; ctx[f.key] = isFinite(v) ? v : 0; }
+  });
   const resolve = key => { const v = evalCoreFormula(key, ctx); ctx[key] = v; return v; };
 
   const unitsPerPallet = resolve("unitsPerPallet");
@@ -4099,6 +4193,9 @@ function gatherData(){
     customerLabel: strFromField("customerLabel"), shrinkLabel: strFromField("shrinkLabel"),
     packagingType: strFromField("packagingType"), palletType: strFromField("palletType"), containerType: strFromField("containerType"), containerDestination: strFromField("containerDestination"),
     unitMaxDiameter: numFromField("unitMaxDiameter"), unitHeight: numFromField("unitHeight"), unitWeight: numFromField("unitWeight"),
+    unitMaxDiameterTol: numFromField("unitMaxDiameterTol"), unitHeightTol: numFromField("unitHeightTol"),
+    brimfulCapacity: strFromField("brimfulCapacity"),
+    unitWeightTol: numFromField("unitWeightTol"), brimfulCapacityTol: numFromField("brimfulCapacityTol"),
     additionalComments: ($("additionalComments") ? $("additionalComments").value : ""),
     units1: numFromField("units1"), units2: numFromField("units2"),
     palletPerContainer: numFromField("palletPerContainer"), layersPerPallet: numFromField("layersPerPallet"),
@@ -4369,6 +4466,24 @@ async function exportToExcel(){
         set(`D${r}`, f.unit || "");
         r += 1;
       });
+    }
+
+    // Additional spec data (brimful, tolerances, user-added fields) — appended below the BOM
+    {
+      const extraRows = [];
+      if(String(data.brimfulCapacity||"").trim() !== "") extraRows.push(["Brimful Capacity (ml)", brimfulText(data.brimfulCapacity, data.brimfulCapacityTol)]);
+      if(data.unitMaxDiameterTol > 0 && !isBoxModeExport) extraRows.push(["Unit Max Diameter tolerance (± mm)", data.unitMaxDiameterTol]);
+      if(data.unitHeightTol > 0) extraRows.push(["Unit Height tolerance (± mm)", data.unitHeightTol]);
+      if(data.unitWeightTol > 0) extraRows.push(["Unit Weight tolerance (± gm)", data.unitWeightTol]);
+      (data.customReqValues||[]).forEach(f=>{ if(f.value !== "") extraRows.push([f.label + "  (" + reqGroupLabel(f.group) + ")", f.value]); });
+      if(extraRows.length){
+        let r3 = BOM_TEMPLATE_FIRST_ROW + Math.max(span, data.bom.length) + 3 + ((data.customFields && data.customFields.length) ? data.customFields.length + 3 : 0);
+        const hc = ws.getCell(`B${r3}`);
+        hc.value = "Additional Specification Data";
+        hc.font = {name:"Calibri", size:12, bold:true, color:{argb:"FF3A3A3A"}};
+        r3 += 1;
+        extraRows.forEach(([lab, v])=>{ set(`B${r3}`, lab); set(`C${r3}`, v); r3 += 1; });
+      }
     }
 
     // Strip all blue backgrounds inherited from the template — clear any
@@ -4675,6 +4790,7 @@ async function exportToPdf(){
     const doc = new jsPDF({unit:"mm", format:"a4", orientation:"portrait"});
     const P = makePdfBuilder(doc, drawPdfHeader);
     const C = PDF_COLORS;
+    const extras = (g, c, t)=> (data.customReqValues||[]).filter(f=>f.group===g).forEach(f=> P.field(f.label, f.value, c, t));
 
     P.y = drawPdfHeader(doc);
 
@@ -4685,6 +4801,7 @@ async function exportToPdf(){
         P.field("Customer", data.customer, C.teal, C.tealTint);
         P.field("Product Name", data.productName, C.teal, C.tealTint);
         P.field("Product Code", data.productCode, C.teal, C.tealTint);
+        extras("general", C.teal, C.tealTint);
       }
       if(isVisible("sec_req_category")){
         if(!isVisible("sec_req_general")) P.banner("Customer Data / Required Information", C.teal);
@@ -4693,6 +4810,7 @@ async function exportToPdf(){
         P.field("Packaging Category", data.packagingCategory, C.lime, C.limeTint);
         P.field("Separator Setup", data.separatorSetup, C.lime, C.limeTint);
         P.field("Separator Flap", data.separatorFlap === "with_flap" ? "With Flap" : "Without Flap", C.lime, C.limeTint);
+        extras("category", C.lime, C.limeTint);
       }
       if(isVisible("sec_req_hardware")){
         P.spacer();
@@ -4701,6 +4819,7 @@ async function exportToPdf(){
         P.field("No. Straps / Long Side", data.strapsLongSide, C.gold, C.goldTint);
         P.field("No. Straps / Short Side", data.strapsShortSide, C.gold, C.goldTint);
         P.field("Total No. Straps", data.totalStraps, C.gold, C.goldTint);
+        extras("hardware", C.gold, C.goldTint);
       }
       if(isVisible("sec_req_shrink")){
         P.spacer();
@@ -4708,10 +4827,12 @@ async function exportToPdf(){
         P.field("Boxes / Pallet", data.boxesPerPallet, C.magenta, C.magentaTint);
         P.field("Units / Shrink-Box", data.unitsPerShrinkBox, C.magenta, C.magentaTint);
         P.field("Box / Layer", data.boxesPerLayer, C.magenta, C.magentaTint);
+        extras("shrink", C.magenta, C.magentaTint);
       }
-      if(isVisible("sec_req_custom") && data.customReqValues && data.customReqValues.length){
+      const legacyReq = (data.customReqValues||[]).filter(f=>f.group==="custom");
+      if(isVisible("sec_req_custom") && legacyReq.length){
         P.spacer();
-        data.customReqValues.forEach(f=> P.field(f.label, f.value, C.teal, C.tealTint));
+        legacyReq.forEach(f=> P.field(f.label, f.value, C.teal, C.tealTint));
       }
     });
 
@@ -4721,6 +4842,7 @@ async function exportToPdf(){
         P.banner("Special Requirements", C.ink);
         P.field("Customer Label (D.)", data.customerLabel, C.gray, C.grayTint);
         P.field("Shrink Label (D.)", data.shrinkLabel, C.gray, C.grayTint);
+        extras("special", C.gray, C.grayTint);
       });
     }
 
@@ -4732,10 +4854,12 @@ async function exportToPdf(){
         P.banner("Calculations — Inputs", C.gold);
         P.fieldPair("Packaging Type", data.packagingType, C.gold, C.goldTint, "Pallet Type", data.palletType, C.gold, C.goldTint);
         P.fieldPair("Container's Type", data.containerType, C.gold, C.goldTint, "Container's Destination", data.containerDestination, C.gold, C.goldTint);
-        P.fieldPair("Unit Max Diameter (mm)", fmt(data.unitMaxDiameter), C.gold, C.goldTint, "Box Length (mm)", fmt(data.boxLength), C.gold, C.goldTint);
-        P.fieldPair("Box Width (mm)", fmt(data.boxWidth), C.gold, C.goldTint, "Unit Height (mm)", fmt(data.unitHeight), C.gold, C.goldTint);
-        P.fieldPair("Unit Weight (gm)", fmt(data.unitWeight), C.gold, C.goldTint, data.packingEnabled ? "Units / Row 1 (auto from packing)" : "Units / Row 1", data.units1, C.gold, C.goldTint);
+        P.fieldPair("Unit Max Diameter (mm)", fmtTol(data.unitMaxDiameter, data.unitMaxDiameterTol), C.gold, C.goldTint, "Box Length (mm)", fmt(data.boxLength), C.gold, C.goldTint);
+        P.fieldPair("Box Width (mm)", fmt(data.boxWidth), C.gold, C.goldTint, "Unit Height (mm)", fmtTol(data.unitHeight, data.unitHeightTol), C.gold, C.goldTint);
+        P.fieldPair("Unit Weight (gm)", fmtTol(data.unitWeight, data.unitWeightTol), C.gold, C.goldTint, data.packingEnabled ? "Units / Row 1 (auto from packing)" : "Units / Row 1", data.units1, C.gold, C.goldTint);
         P.fieldPair("Units / Row 2", data.units2, C.gold, C.goldTint, "Pallet / Container", data.palletPerContainer, C.gold, C.goldTint);
+        if(String(data.brimfulCapacity||"").trim() !== "") P.field("Brimful Capacity (ml)", brimfulText(data.brimfulCapacity, data.brimfulCapacityTol), C.gold, C.goldTint);
+        extras("inputs", C.gold, C.goldTint);
         P.field("Layers / Pallet", data.layersPerPallet, C.gold, C.goldTint);
       });
     }
@@ -5239,6 +5363,8 @@ function renderFieldChips(){
   groups.forEach(g=> byGroup[g] = []);
   FIELD_REFERENCE.forEach(f=> byGroup[f.group].push(f));
   if(CUSTOM_FIELDS.length) byGroup["Custom Fields"] = CUSTOM_FIELDS.map(f=>({key:f.key, label:f.label}));
+  const numReq = CUSTOM_REQ_FIELDS.filter(f=>f.type==="number");
+  if(numReq.length) byGroup["Custom Required / Input Fields"] = numReq.map(f=>({key:f.key, label:f.label}));
 
   const chip = f => `<span class="chip field-chip" data-key="${escapeAttr(f.key)}" title="{${escapeHtml(f.key)}}">
     ${escapeHtml(f.label)}<span class="chip-val" data-key-val="${escapeAttr(f.key)}">${fmtChipVal(LAST_CALC[f.key])}</span>
@@ -5388,10 +5514,11 @@ $("reqFieldSaveBtn").addEventListener("click", ()=>{
   const label = $("reqFieldLabel").value.trim();
   if(!label){ alert("Please give this field a name."); return; }
   const type = $("reqFieldType").value;
+  const group = $("reqFieldGroup").value || "general";
   const options = type==="select" ? $("reqFieldOptions").value.split(",").map(s=>s.trim()).filter(Boolean) : [];
   if(type==="select" && !options.length){ alert("Please enter at least one dropdown option."); return; }
   const key = reqFieldEditingId ? CUSTOM_REQ_FIELDS.find(f=>f.id===reqFieldEditingId).key : slugifyReqKey(label);
-  const rec = { id: reqFieldEditingId || ("rf_"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)), key, label, type, options };
+  const rec = { id: reqFieldEditingId || ("rf_"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)), key, label, type, options, group };
   if(reqFieldEditingId){
     const idx = CUSTOM_REQ_FIELDS.findIndex(f=>f.id===reqFieldEditingId);
     if(idx>-1) CUSTOM_REQ_FIELDS[idx] = rec;
@@ -5402,7 +5529,16 @@ $("reqFieldSaveBtn").addEventListener("click", ()=>{
   closeReqFieldForm();
   renderCustomReqFields();
   renderReqFieldsManagerList();
-  setStatus("Required-info field saved ✓");
+  renderFieldChips();
+  recalc();
+  setStatus("Field saved ✓");
+});
+$("manageInputFieldsBtn").addEventListener("click", ()=>{
+  const wrap = $("reqFieldsManagerWrap");
+  wrap.classList.remove("hidden");
+  renderReqFieldsManagerList();
+  openReqFieldForm(null, "inputs");
+  if(typeof wrap.scrollIntoView === "function") wrap.scrollIntoView({behavior:"smooth", block:"center"});
 });
 $("eqnCancelBtn").addEventListener("click", closeEqnForm);
 $("eqnLimitType").addEventListener("change", toggleEqnLimitInputs);
@@ -5562,66 +5698,83 @@ function startCloudPolling(){
 
 
 /* ---------- Cloud sync: pallet/frame presets (+ photos on each preset) ---------- */
-function mergeProfileMaps(localMap, cloudMap){
-  const out = Object.assign({}, localMap || {});
-  if(!cloudMap || typeof cloudMap !== "object") return out;
-  Object.keys(cloudMap).forEach(key=>{
-    const c = cloudMap[key];
-    if(!c || typeof c !== "object") return;
-    const l = out[key];
-    if(!l){ out[key] = c; return; }
-    const ct = Number(c.updatedAt || 0), lt = Number(l.updatedAt || 0);
-    // Prefer the newer side; if equal, prefer cloud so teammates converge
-    if(ct >= lt) out[key] = c;
+/* Deleted presets are remembered as "tombstones" (name -> time deleted) so they
+   cannot be resurrected by the built-in defaults or by a stale copy in the cloud
+   / on another device. Re-saving a preset with the same name clears its tombstone. */
+const PM_TOMB_KEY = "kandilPmPresetTombstones_v1";
+let PM_TOMBS = Object.assign({pallet:{}, frame:{}}, loadJSON(PM_TOMB_KEY) || {});
+if(!PM_TOMBS.pallet) PM_TOMBS.pallet = {};
+if(!PM_TOMBS.frame) PM_TOMBS.frame = {};
+function pmSaveTombs(){ saveJSON(PM_TOMB_KEY, PM_TOMBS); }
+function pmAddTombstone(kind, name){ PM_TOMBS[kind][name] = Date.now(); pmSaveTombs(); }
+function pmClearTombstone(kind, name){ delete PM_TOMBS[kind][name]; pmSaveTombs(); }
+function pmPruneByTombs(map, kind){
+  Object.keys(map).forEach(n=>{
+    const t = PM_TOMBS[kind][n];
+    if(t && t >= Number((map[n] || {}).updatedAt || 0)) delete map[n];
   });
+}
+function firebaseTombstonesUrl(){ return CLOUD_CONFIG.dbUrl.replace(/\/+$/, "") + "/presetTombstones.json"; }
+
+function mergeProfileMaps(localMap, cloudMap, kind){
+  const out = Object.assign({}, localMap || {});
+  if(cloudMap && typeof cloudMap === "object"){
+    Object.keys(cloudMap).forEach(key=>{
+      const c = cloudMap[key];
+      if(!c || typeof c !== "object") return;
+      const l = out[key];
+      if(!l){ out[key] = c; return; }
+      // Prefer the newer side; if equal, prefer cloud so teammates converge
+      if(Number(c.updatedAt || 0) >= Number(l.updatedAt || 0)) out[key] = c;
+    });
+  }
+  pmPruneByTombs(out, kind);
   return out;
 }
 async function fetchPresetsFromCloud(){
   if(!CLOUD_CONFIG) return;
   try{
-    const [pr, fr] = await Promise.all([
+    const [pr, fr, tr] = await Promise.all([
       fetch(firebasePalletProfilesUrl()),
-      fetch(firebaseFrameProfilesUrl())
+      fetch(firebaseFrameProfilesUrl()),
+      fetch(firebaseTombstonesUrl())
     ]);
+    // 1) merge deletion records first so deleted presets stay deleted
+    if(tr.ok){
+      const tj = await tr.json();
+      if(tj && typeof tj === "object"){
+        ["pallet","frame"].forEach(kind=>{
+          const ct = tj[kind] || {};
+          Object.keys(ct).forEach(n=>{ PM_TOMBS[kind][n] = Math.max(Number(PM_TOMBS[kind][n]||0), Number(ct[n]||0)); });
+        });
+        pmSaveTombs();
+      }
+    }
     if(pr.ok){
       const json = await pr.json();
-      if(json && typeof json === "object"){
-        PM_PALLET_PROFILES = mergeProfileMaps(PM_PALLET_PROFILES, json);
-        pmSavePalletProfiles();
-        if(typeof renderPalletPresetSelect === "function"){
-          const keep = ($("optPalletPresetSelect") && $("optPalletPresetSelect").value) || Object.keys(PM_PALLET_PROFILES)[0] || "";
-          renderPalletPresetSelect(keep);
-        }
-        if(typeof pmPopulatePalletDropdowns === "function") pmPopulatePalletDropdowns();
+      PM_PALLET_PROFILES = mergeProfileMaps(PM_PALLET_PROFILES, json, "pallet");
+      pmSavePalletProfiles();
+      if(typeof renderPalletPresetSelect === "function"){
+        const keep = ($("optPalletPresetSelect") && $("optPalletPresetSelect").value) || "";
+        renderPalletPresetSelect(PM_PALLET_PROFILES[keep] ? keep : (Object.keys(PM_PALLET_PROFILES)[0] || ""));
       }
+      if(typeof pmRefreshPalletNameList === "function") pmRefreshPalletNameList();
+      if(typeof pmPopulatePalletDropdowns === "function") pmPopulatePalletDropdowns();
     } else if(pr.status !== 404){
       console.warn("Pallet presets cloud fetch:", pr.status);
     }
     if(fr.ok){
       const json = await fr.json();
-      if(json && typeof json === "object"){
-        PM_FRAME_PROFILES = mergeProfileMaps(PM_FRAME_PROFILES, json);
-        pmSaveFrameProfiles();
-        if(typeof renderFramePresetSelect === "function"){
-          const keep = ($("optFramePresetSelect") && $("optFramePresetSelect").value) || Object.keys(PM_FRAME_PROFILES)[0] || "";
-          renderFramePresetSelect(keep);
-        }
-        if(typeof pmRefreshFrameTypeList === "function") pmRefreshFrameTypeList();
+      PM_FRAME_PROFILES = mergeProfileMaps(PM_FRAME_PROFILES, json, "frame");
+      pmSaveFrameProfiles();
+      if(typeof renderFramePresetSelect === "function"){
+        const keep = ($("optFramePresetSelect") && $("optFramePresetSelect").value) || "";
+        renderFramePresetSelect(PM_FRAME_PROFILES[keep] ? keep : (Object.keys(PM_FRAME_PROFILES)[0] || ""));
       }
+      if(typeof pmRefreshFrameTypeList === "function") pmRefreshFrameTypeList();
     } else if(fr.status !== 404){
       console.warn("Frame presets cloud fetch:", fr.status);
     }
-    // Optional: shared non-preset photo keys (current Manual session photos)
-    try{
-      const ph = await fetch(firebasePmPhotosUrl());
-      if(ph.ok){
-        const json = await ph.json();
-        if(json && typeof json === "object"){
-          PM_PHOTOS = Object.assign({}, PM_PHOTOS, json);
-          pmPersistPhotos();
-        }
-      }
-    }catch(e){}
   }catch(err){
     console.error("fetchPresetsFromCloud", err);
   }
@@ -5629,27 +5782,18 @@ async function fetchPresetsFromCloud(){
 async function pushPresetsToCloud(){
   if(!CLOUD_CONFIG) return;
   const headers = { "Content-Type": "application/json" };
-  // Strip nothing — photoDataUrl is part of each preset object by design
-  const palletBody = JSON.stringify(PM_PALLET_PROFILES || {});
-  const frameBody = JSON.stringify(PM_FRAME_PROFILES || {});
-  const [pr, fr] = await Promise.all([
-    fetch(firebasePalletProfilesUrl(), { method: "PUT", headers, body: palletBody }),
-    fetch(firebaseFrameProfilesUrl(), { method: "PUT", headers, body: frameBody })
+  const put = (url, obj)=> fetch(url, { method: "PUT", headers, body: JSON.stringify(obj || {}) });
+  const [pr, fr, tr] = await Promise.all([
+    put(firebasePalletProfilesUrl(), PM_PALLET_PROFILES),
+    put(firebaseFrameProfilesUrl(), PM_FRAME_PROFILES),
+    put(firebaseTombstonesUrl(), PM_TOMBS)
   ]);
-  if(!pr.ok){
-    let detail = "";
-    try{ const body = await pr.json(); detail = body && body.error ? body.error : ""; }catch(e){}
-    throw new Error("Pallet presets cloud write failed: HTTP " + pr.status + (detail ? " ("+detail+")" : ""));
-  }
-  if(!fr.ok){
-    let detail = "";
-    try{ const body = await fr.json(); detail = body && body.error ? body.error : ""; }catch(e){}
-    throw new Error("Frame presets cloud write failed: HTTP " + fr.status + (detail ? " ("+detail+")" : ""));
-  }
-  // Best-effort photos map (session keys); ignore failures
-  try{
-    await fetch(firebasePmPhotosUrl(), { method: "PUT", headers, body: JSON.stringify(PM_PHOTOS || {}) });
-  }catch(e){}
+  const chk = async (res, what)=>{
+    if(res.ok) return;
+    let detail = ""; try{ const b = await res.json(); detail = b && b.error ? b.error : ""; }catch(e){}
+    throw new Error(what + " cloud write failed: HTTP " + res.status + (detail ? " ("+detail+")" : ""));
+  };
+  await chk(pr, "Pallet presets"); await chk(fr, "Frame presets"); await chk(tr, "Preset deletions");
 }
 let _presetCloudPushTimer = null;
 function schedulePushPresetsToCloud(){
@@ -5779,6 +5923,7 @@ function loadProductIntoForm(p){
   setVal("customerLabel", p.customerLabel); setVal("shrinkLabel", p.shrinkLabel);
   setSelectVal("packagingType", normalizePackagingType(p.packagingType)); setSelectVal("palletType", p.palletType); setSelectVal("containerType", p.containerType || "40 HC"); setSelectVal("containerDestination", p.containerDestination);
   setVal("unitMaxDiameter", p.unitMaxDiameter); setVal("unitHeight", p.unitHeight); setVal("unitWeight", p.unitWeight);
+  setVal("unitMaxDiameterTol", p.unitMaxDiameterTol); setVal("unitHeightTol", p.unitHeightTol); setVal("brimfulCapacity", p.brimfulCapacity); setVal("unitWeightTol", p.unitWeightTol); setVal("brimfulCapacityTol", p.brimfulCapacityTol);
   if($("additionalComments")) $("additionalComments").value = p.additionalComments || "";
   setVal("palletPerContainer", p.palletPerContainer); setVal("layersPerPallet", p.layersPerPallet);
   if($("layersPerPallet")){
@@ -5837,6 +5982,7 @@ function loadProductIntoForm(p){
   if($("usePhotoCountForCalc")) $("usePhotoCountForCalc").checked = !!p.usePhotoCountForCalc;
 
   loadManualData(p.manual || {});
+  if(p.brimfulCapacity != null && String(p.brimfulCapacity).trim() !== "" && $("pmBrimful")) $("pmBrimful").value = brimfulText(p.brimfulCapacity, p.brimfulCapacityTol);
 
   // If Manual has no dedicated product image, fill it from Spec Sheet photo
   if(typeof syncProductPhotoToManual === "function") syncProductPhotoToManual(false);
@@ -5863,6 +6009,7 @@ async function deleteProduct(id){
 }
 
 function renderProductList(){
+  if(typeof anRefreshSelect === "function" && $("anProductSelect")){ anRefreshSelect(); const _t=$("tab-analytics"); if(_t && _t.classList.contains("active")) anRender(); }
   const wrap = $("productListContainer");
   if(!CLOUD_CONFIG){
     wrap.innerHTML = '<p class="opt-empty">Connect cloud sync above to see and share saved products.</p>';
@@ -6353,6 +6500,7 @@ function restoreLastFormValues(){
   if(d.customReqValues) applyCustomReqValues(d.customReqValues);
   if(d.customPmValues) applyCustomPmValues(d.customPmValues);
 }
+populateReqGroupSelect("general");
 renderCustomReqFields();
 renderCustomPmSections();
 renderPmCustomSectionsAdmin();
@@ -6492,75 +6640,18 @@ const DEFAULT_PM_PALLET_PROFILES = {
     ]
   }
 };
-/* Generic photo-zone wiring shared by pallet/frame preset + manual photos. */
-const PM_PHOTOS_KEY = "kandilPmPhotos_v1";
-let PM_PHOTOS = loadJSON(PM_PHOTOS_KEY) || {};
-if(typeof PM_PHOTOS !== "object" || !PM_PHOTOS) PM_PHOTOS = {};
-function pmPersistPhotos(){
-  try{ saveJSON(PM_PHOTOS_KEY, PM_PHOTOS); }catch(e){
-    try{ setStatus("Warning: photo may be too large to store permanently in this browser."); }catch(_){}
-  }
-}
-/** Tracks explicit Remove clicks so Save/Update can clear a preset photo on purpose. */
-const PM_PHOTO_CLEARED = {};
-/** Keep matching pallet/frame preset photo in sync when Manual (or Options) photo changes. */
-function pmSyncPhotoIntoPreset(key, dataUrl){
-  if(key === "pmPallet" || key === "palletPreset"){
-    const nameEl = $("pmWoodPalletName") || $("optPalletPresetName");
-    const name = (nameEl && nameEl.value || "").trim();
-    if(name && PM_PALLET_PROFILES[name]){
-      PM_PALLET_PROFILES[name].photoDataUrl = dataUrl || null;
-      PM_PALLET_PROFILES[name].updatedAt = Date.now();
-      if(typeof pmSavePalletProfiles === "function") pmSavePalletProfiles();
-      if(typeof schedulePushPresetsToCloud === "function") schedulePushPresetsToCloud();
-    }
-    // Mirror between Manual and Options editor zones
-    if(key === "pmPallet"){
-      PM_PHOTOS.palletPreset = dataUrl || null;
-      const wrap = $("optPalletPresetPhotoPreviewWrap");
-      if(wrap && $("optPalletPresetPhotoPreview")){
-        if(dataUrl){ $("optPalletPresetPhotoPreview").src = dataUrl; wrap.classList.remove("hidden"); }
-        else { wrap.classList.add("hidden"); }
-      }
-    } else if(key === "palletPreset"){
-      PM_PHOTOS.pmPallet = dataUrl || null;
-      const wrap = $("pmPalletPhotoPreviewWrap");
-      if(wrap && $("pmPalletPhotoPreview")){
-        if(dataUrl){ $("pmPalletPhotoPreview").src = dataUrl; wrap.classList.remove("hidden"); }
-        else { wrap.classList.add("hidden"); }
-      }
-    }
-  }
-  if(key === "pmFrame" || key === "framePreset"){
-    const nameEl = $("pmFrameType") || $("optFramePresetName");
-    // Frame type may be free text; also try Wood Frame name fields if present
-    const name = (
-      ($("optFramePresetName") && $("optFramePresetName").value) ||
-      ($("pmFrameTypeName") && $("pmFrameTypeName").value) ||
-      ""
-    ).trim();
-    if(name && PM_FRAME_PROFILES[name]){
-      PM_FRAME_PROFILES[name].photoDataUrl = dataUrl || null;
-      PM_FRAME_PROFILES[name].updatedAt = Date.now();
-      if(typeof pmSaveFrameProfiles === "function") pmSaveFrameProfiles();
-      if(typeof schedulePushPresetsToCloud === "function") schedulePushPresetsToCloud();
-    }
-    if(key === "pmFrame"){
-      PM_PHOTOS.framePreset = dataUrl || null;
-      const wrap = $("optFramePresetPhotoPreviewWrap");
-      if(wrap && $("optFramePresetPhotoPreview")){
-        if(dataUrl){ $("optFramePresetPhotoPreview").src = dataUrl; wrap.classList.remove("hidden"); }
-        else { wrap.classList.add("hidden"); }
-      }
-    } else if(key === "framePreset"){
-      PM_PHOTOS.pmFrame = dataUrl || null;
-      const wrap = $("pmFramePhotoPreviewWrap");
-      if(wrap && $("pmFramePhotoPreview")){
-        if(dataUrl){ $("pmFramePhotoPreview").src = dataUrl; wrap.classList.remove("hidden"); }
-        else { wrap.classList.add("hidden"); }
-      }
-    }
-  }
+/* Photo zones. PM_PHOTOS is IN-MEMORY ONLY and holds what each zone is showing right now:
+     palletPreset / framePreset  = the Manage Options editor
+     pmPallet / pmFrame          = the Packaging Manual tab (this product)
+   Photos are written into a preset ONLY when you press Save as New / Update Preset —
+   merely viewing/loading presets or products can never overwrite another preset's photo. */
+const PM_PHOTOS = {};
+const PM_PHOTO_CLEARED = {}; // legacy no-op, kept so older calls don't break
+function pmPersistPhotos(){ /* intentionally empty — photos live inside presets / products */ }
+function pmLoadProfileMap(key, defaults){
+  const stored = loadJSON(key);
+  // If anything was ever stored, trust it as-is (so deleted defaults stay deleted).
+  return (stored && typeof stored === "object" && !Array.isArray(stored)) ? stored : JSON.parse(JSON.stringify(defaults));
 }
 function pmPhotoIds(prefix){
   return {input:prefix+"Input", preview:prefix+"Preview", wrap:prefix+"PreviewWrap",
@@ -6569,9 +6660,6 @@ function pmPhotoIds(prefix){
 function pmSetPhoto(prefix, key, dataUrl, labelText){
   const ids = pmPhotoIds(prefix);
   PM_PHOTOS[key] = dataUrl || null;
-  if(dataUrl) delete PM_PHOTO_CLEARED[key];
-  else PM_PHOTO_CLEARED[key] = true;
-  pmPersistPhotos();
   const wrap = $(ids.wrap), prev = $(ids.preview), lab = $(ids.label);
   if(wrap){
     if(dataUrl){
@@ -6580,30 +6668,53 @@ function pmSetPhoto(prefix, key, dataUrl, labelText){
       if(lab) lab.textContent = labelText || "📷 Photo attached — click to replace";
     } else {
       wrap.classList.add("hidden");
+      if(prev) prev.removeAttribute("src");
       if($(ids.input)) $(ids.input).value = "";
       if(lab) lab.textContent = labelText || "📷 Click to attach a photo";
     }
   }
-  // Store on the active pallet/frame preset so it travels with that preset
-  try{ pmSyncPhotoIntoPreset(key, dataUrl); }catch(e){}
+}
+/* Downscale big camera photos so presets fit in browser storage (a full-size phone
+   photo can exceed the ~5 MB localStorage limit, which made presets silently vanish). */
+function pmCompressImage(file, maxDim){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onerror = ()=> reject(new Error("read failed"));
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onerror = ()=> resolve(reader.result);
+      img.onload = ()=>{
+        let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+        const sc = Math.min(1, maxDim / Math.max(w, h));
+        if(sc >= 1 && file.size < 250000) return resolve(reader.result);
+        w = Math.max(1, Math.round(w*sc)); h = Math.max(1, Math.round(h*sc));
+        const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+        const cx = cv.getContext("2d"); cx.fillStyle = "#fff"; cx.fillRect(0,0,w,h); cx.drawImage(img,0,0,w,h);
+        resolve(cv.toDataURL("image/jpeg", 0.85));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 function pmWirePhoto(prefix, key, emptyLabel){
   const ids = pmPhotoIds(prefix);
   const inp = $(ids.input);
   if(!inp) return;
-  inp.addEventListener("change", e=>{
+  inp.addEventListener("change", async e=>{
     const file = e.target.files[0];
     if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ()=> pmSetPhoto(prefix, key, reader.result, "📷 " + file.name);
-    reader.onerror = ()=> alert("Couldn't read that image file — try a different file.");
-    reader.readAsDataURL(file);
+    try{
+      const dataUrl = await pmCompressImage(file, 1400);
+      pmSetPhoto(prefix, key, dataUrl, "📷 " + file.name);
+    }catch(err){ alert("Couldn't read that image file — try a different file."); }
   });
   const rm = $(ids.remove);
   if(rm) rm.addEventListener("click", ()=> pmSetPhoto(prefix, key, null, emptyLabel));
 }
 
-let PM_PALLET_PROFILES = Object.assign({}, DEFAULT_PM_PALLET_PROFILES, loadJSON(PM_PALLET_PROFILES_KEY) || {});
+let PM_PALLET_PROFILES = pmLoadProfileMap(PM_PALLET_PROFILES_KEY, DEFAULT_PM_PALLET_PROFILES);
+pmPruneByTombs(PM_PALLET_PROFILES, "pallet");
 function pmSavePalletProfiles(){
   try{
     localStorage.setItem(PM_PALLET_PROFILES_KEY, JSON.stringify(PM_PALLET_PROFILES));
@@ -6646,7 +6757,8 @@ const DEFAULT_PM_FRAME_PROFILES = {
     dimsRows: [{std:"Euro", len:"1200", w:"800", treat:"HT"}]
   }
 };
-let PM_FRAME_PROFILES = Object.assign({}, DEFAULT_PM_FRAME_PROFILES, loadJSON(PM_FRAME_PROFILES_KEY) || {});
+let PM_FRAME_PROFILES = pmLoadProfileMap(PM_FRAME_PROFILES_KEY, DEFAULT_PM_FRAME_PROFILES);
+pmPruneByTombs(PM_FRAME_PROFILES, "frame");
 function pmSaveFrameProfiles(){
   try{
     localStorage.setItem(PM_FRAME_PROFILES_KEY, JSON.stringify(PM_FRAME_PROFILES));
@@ -6672,16 +6784,13 @@ function pmPopulatePalletDropdowns(keepValues){
 }
 
 function pmRestorePhotosFromPresets(){
+  // Manual tab photos follow the preset named in the Manual's own Pallet Name / Frame Type fields.
   const pName = ($("pmWoodPalletName") && $("pmWoodPalletName").value || "").trim();
-  if(pName && PM_PALLET_PROFILES[pName] && PM_PALLET_PROFILES[pName].photoDataUrl){
-    if(!PM_PHOTOS.pmPallet) pmSetPhoto("pmPalletPhoto", "pmPallet", PM_PALLET_PROFILES[pName].photoDataUrl, "📷 Pallet photo (from preset)");
-  }
-  // Frame: match by preset name if select exists
-  const fSel = $("optFramePresetSelect");
-  const fName = (fSel && fSel.value) || ($("optFramePresetName") && $("optFramePresetName").value) || "";
-  if(fName && PM_FRAME_PROFILES[fName] && PM_FRAME_PROFILES[fName].photoDataUrl){
-    if(!PM_PHOTOS.pmFrame) pmSetPhoto("pmFramePhoto", "pmFrame", PM_FRAME_PROFILES[fName].photoDataUrl, "📷 Frame photo (from preset)");
-  }
+  const pp = PM_PALLET_PROFILES[pName];
+  pmSetPhoto("pmPalletPhoto", "pmPallet", (pp && pp.photoDataUrl) || null, "📷 Attach pallet photo");
+  const fName = ($("pmFrameTypeName") && $("pmFrameTypeName").value || "").trim();
+  const fp = PM_FRAME_PROFILES[fName];
+  pmSetPhoto("pmFramePhoto", "pmFrame", (fp && fp.photoDataUrl) || null, "📷 Attach wooden frame photo");
 }
 
 function pmApplyPalletProfile(name){
@@ -6796,16 +6905,7 @@ $("optNewFramePresetBtn").addEventListener("click", ()=>{
 });
 
 
-function resolvePresetPhoto(editorKey, manualKey, existingPhoto){
-  // Prefer live editor/manual attachment. If user clicked Remove, clear.
-  // Otherwise keep the photo already stored on the preset (never drop by accident).
-  if(PM_PHOTOS[editorKey]) return PM_PHOTOS[editorKey];
-  if(PM_PHOTOS[manualKey]) return PM_PHOTOS[manualKey];
-  if(PM_PHOTO_CLEARED[editorKey] || PM_PHOTO_CLEARED[manualKey]) return null;
-  return existingPhoto || null;
-}
 function commitPalletPreset(mode){
-  // mode: "save" (create/overwrite by typed name) | "update" (must already exist)
   const name = ($("optPalletPresetName").value || "").trim();
   if(!name){ alert("Enter a preset name first."); return; }
   const existing = PM_PALLET_PROFILES[name];
@@ -6814,7 +6914,7 @@ function commitPalletPreset(mode){
     return;
   }
   if(mode === "save" && existing && !confirm("A pallet preset named \"" + name + "\" already exists. Overwrite it (including its photo)?")) return;
-  const photo = resolvePresetPhoto("palletPreset", "pmPallet", existing && existing.photoDataUrl);
+  const photo = PM_PHOTOS.palletPreset || null;   // exactly what the editor is showing
   PM_PALLET_PROFILES[name] = {
     type: $("optPalletPresetType").value, code: $("optPalletPresetCode").value,
     size: $("optPalletPresetSize").value, material: $("optPalletPresetMaterial").value,
@@ -6824,21 +6924,13 @@ function commitPalletPreset(mode){
     deckRows: gatherPmRows(optPalletPresetDeckBody, ["item","desc","qty","dims","tol"]),
     updatedAt: Date.now()
   };
-  // Keep live photo stores aligned with what was saved
-  if(photo){
-    PM_PHOTOS.palletPreset = photo;
-    PM_PHOTOS.pmPallet = photo;
-    delete PM_PHOTO_CLEARED.palletPreset;
-    delete PM_PHOTO_CLEARED.pmPallet;
-  } else {
-    PM_PHOTOS.palletPreset = null;
-    PM_PHOTOS.pmPallet = null;
-  }
-  pmPersistPhotos();
-  pmSavePalletProfiles();
+  try{ pmSavePalletProfiles(); }
+  catch(e){ if(existing) PM_PALLET_PROFILES[name] = existing; else delete PM_PALLET_PROFILES[name]; return; }
+  pmClearTombstone("pallet", name);
   schedulePushPresetsToCloud();
   renderPalletPresetSelect(name);
   loadPalletPresetIntoEditor(name);
+  pmRefreshPalletNameList();
   pmPopulatePalletDropdowns();
   if($("pmWoodPalletName") && $("pmWoodPalletName").value.trim() === name) pmApplyPalletProfile(name);
   setStatus((mode === "update" ? "Updated" : "Saved") + " pallet preset \"" + name + "\"" + (photo ? " (photo stored)" : "") + " ✓");
@@ -6852,7 +6944,7 @@ function commitFramePreset(mode){
     return;
   }
   if(mode === "save" && existing && !confirm("A frame preset named \"" + name + "\" already exists. Overwrite it (including its photo)?")) return;
-  const photo = resolvePresetPhoto("framePreset", "pmFrame", existing && existing.photoDataUrl);
+  const photo = PM_PHOTOS.framePreset || null;
   PM_FRAME_PROFILES[name] = {
     shape: $("optFramePresetShape").value, edges: $("optFramePresetEdges").value, material: $("optFramePresetMaterial").value,
     memberWidth: $("optFramePresetMemberWidth").value, memberThickness: $("optFramePresetMemberThickness").value, moisture: $("optFramePresetMoisture").value,
@@ -6860,25 +6952,14 @@ function commitFramePreset(mode){
     dimsRows: gatherPmRows(optFramePresetDimsBody, ["std","len","w","treat"]),
     updatedAt: Date.now()
   };
-  if(photo){
-    PM_PHOTOS.framePreset = photo;
-    PM_PHOTOS.pmFrame = photo;
-    delete PM_PHOTO_CLEARED.framePreset;
-    delete PM_PHOTO_CLEARED.pmFrame;
-  } else {
-    PM_PHOTOS.framePreset = null;
-    PM_PHOTOS.pmFrame = null;
-  }
-  pmPersistPhotos();
-  pmSaveFrameProfiles();
+  try{ pmSaveFrameProfiles(); }
+  catch(e){ if(existing) PM_FRAME_PROFILES[name] = existing; else delete PM_FRAME_PROFILES[name]; return; }
+  pmClearTombstone("frame", name);
   schedulePushPresetsToCloud();
   renderFramePresetSelect(name);
   loadFramePresetIntoEditor(name);
-  if(typeof pmRefreshFrameTypeList === "function") pmRefreshFrameTypeList();
-  if(typeof pmApplyFrameProfile === "function"){
-    const fName = ($("pmFrameTypeName") && $("pmFrameTypeName").value || "").trim();
-    if(fName === name) pmApplyFrameProfile(name);
-  }
+  pmRefreshFrameTypeList();
+  if(($("pmFrameTypeName").value || "").trim() === name) pmApplyFrameProfile(name);
   setStatus((mode === "update" ? "Updated" : "Saved") + " frame preset \"" + name + "\"" + (photo ? " (photo stored)" : "") + " ✓");
 }
 $("optSavePalletPresetBtn").addEventListener("click", ()=> commitPalletPreset("save"));
@@ -6892,6 +6973,7 @@ $("optDeletePalletPresetBtn").addEventListener("click", ()=>{
   if(!name){ return; }
   if(!confirm(`Delete the Pallet preset "${name}"? This can't be undone.`)) return;
   delete PM_PALLET_PROFILES[name];
+  pmAddTombstone("pallet", name);
   pmSavePalletProfiles();
   schedulePushPresetsToCloud();
   renderPalletPresetSelect("");
@@ -6905,6 +6987,7 @@ $("optDeleteFramePresetBtn").addEventListener("click", ()=>{
   if(!name){ return; }
   if(!confirm(`Delete the Frame preset "${name}"? This can't be undone.`)) return;
   delete PM_FRAME_PROFILES[name];
+  pmAddTombstone("frame", name);
   pmSaveFrameProfiles();
   schedulePushPresetsToCloud();
   renderFramePresetSelect("");
@@ -6993,8 +7076,8 @@ function loadManualData(m){
   $("pmComplianceText").value = m.complianceText != null ? m.complianceText : PM_STANDARD_COMPLIANCE_TEXT;
   loadPmDeckRows(m.deckRows);
   loadPmFrameRows(m.frameRows);
-  pmSetPhoto("pmPalletPhoto", "pmPallet", m.palletPhotoDataUrl || null, "📷 Attach pallet photo");
-  pmSetPhoto("pmFramePhoto", "pmFrame", m.framePhotoDataUrl || null, "📷 Attach wooden frame photo");
+  { const _pp = PM_PALLET_PROFILES[(m.pmWoodPalletName||"").trim()]; pmSetPhoto("pmPalletPhoto", "pmPallet", m.palletPhotoDataUrl || (_pp && _pp.photoDataUrl) || null, "📷 Attach pallet photo"); }
+  { const _fp = PM_FRAME_PROFILES[(m.pmFrameTypeName||"").trim()]; pmSetPhoto("pmFramePhoto", "pmFrame", m.framePhotoDataUrl || (_fp && _fp.photoDataUrl) || null, "📷 Attach wooden frame photo"); }
   pmProduct2DDataUrl = m.product2DPhotoDataUrl || null;
   if(m.customPmValues) applyCustomPmValues(m.customPmValues);
   if(pmProduct2DDataUrl){
@@ -7147,9 +7230,10 @@ function pmSyncFromSpec(){
   $("pmContNetWeight").value = fmt(contNetWeightPm) + " Ton";
   $("pmContGrossWeight").value = fmt(LAST_CALC.containerWeight) + " Ton";
 
-  $("pmWeight").value = fmt(data.unitWeight) + " gm";
-  $("pmHeight").value = fmt(data.unitHeight) + " mm";
-  $("pmDiameter").value = isBoxMode ? "N/A" : fmt(data.unitMaxDiameter) + " mm";
+  $("pmWeight").value = fmtTol(data.unitWeight, data.unitWeightTol) + " gm";
+  $("pmHeight").value = fmtTol(data.unitHeight, data.unitHeightTol) + " mm";
+  $("pmDiameter").value = isBoxMode ? "N/A" : fmtTol(data.unitMaxDiameter, data.unitMaxDiameterTol) + " mm";
+  if(String(data.brimfulCapacity||"").trim() !== "") $("pmBrimful").value = brimfulText(data.brimfulCapacity, data.brimfulCapacityTol);
 
   // Product photo from Spec Sheet → Packaging Manual product image
   if(typeof syncProductPhotoToManual === "function") syncProductPhotoToManual(true);
@@ -7927,6 +8011,276 @@ async function exportManualToWord(){
 }
 $("pmExportWordBtn").addEventListener("click", exportManualToWord);
 
+
+/* =====================================================================
+   Analytics tab — units/container + weight optimisation across pallet types
+===================================================================== */
+const AN_COLORS = ["#4FC6CB","#D71672","#FABB15","#B9D532"];
+function anNum(v){ return Math.round(+v||0).toLocaleString(); }
+function anPct(v){ return (isFinite(v) ? (v*100).toFixed(1) : "0.0") + "%"; }
+function anNiceMax(v){ if(!(v>0)) return 1; const pw=Math.pow(10,Math.floor(Math.log10(v))); const f=v/pw; return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*pw; }
+
+function anUnitsPerLayerFor(d, L, W){
+  const cp = d.circlePack || {};
+  const pt = String(d.packagingType||"").toLowerCase();
+  const isBox = pt === "box on fp" || pt === "box on hp";
+  if(d.packingEnabled === false) return {upl:+d.unitsPerLayer||0, fixed:true};
+  const ox = +cp.offX||0, oy = +cp.offY||0, gap = Math.max(0, +cp.gap||0);
+  const innL = Math.max(0, L-2*ox), innW = Math.max(0, W-2*oy);
+  if(isBox){
+    let bw = +d.boxLength||0, bh = +d.boxWidth||0;
+    const sh = cp.boxShape || "rect";
+    if(sh==="square" || sh==="rounded-square"){ const sd = Math.max(bw,bh); bw = bh = sd; }
+    const sc = cp.boxScenario || "max";
+    let res;
+    if(sc==="vertical") res = packBoxGrid(innL,innW,bw,bh,gap);
+    else if(sc==="horizontal") res = packBoxGrid(innL,innW,bh,bw,gap);
+    else if(sc==="combo") res = packBoxSimpleCombo(innL,innW,bw,bh,gap);
+    else res = packBoxCombined(innL,innW,bw,bh,gap);
+    return {upl:(res.total||0)*(+d.unitsPerShrinkBox||0), boxes:res.total||0};
+  }
+  const us = cp.unitShape || "circle";
+  if(us === "circle") return {upl: packHex(innL,innW,+d.unitMaxDiameter||0,gap,cp.boundaryShape||"rect",+cp.cornerParam||0).total};
+  let w = +cp.unitL||0, h = +cp.unitW||0;
+  if(us==="square" || us==="rounded-square"){ const sd = Math.max(w,h); w = h = sd; }
+  return {upl: packUnitGrid(innL,innW,w,h,gap).total};
+}
+
+function anScenario(d, pallet, upl, variant, containerName){
+  const dest = String(d.containerDestination||"").toLowerCase();
+  const ppc = palletsPerContainerFor(pallet.name, containerName);
+  const unitH = +d.unitHeight||0, unitW = +d.unitWeight||0, wTol = +d.unitWeightTol||0;
+  const vpt = variant.pt;
+  const isFull = vpt==="full pallet" ? 1:0, isHalf = vpt==="half pallet" ? 1:0;
+  const isFP = vpt==="box on fp" ? 1:0, isHP = vpt==="box on hp" ? 1:0;
+  const halfLike = (isHalf||isHP);
+  const weightAllowance = weightAllowanceTonFor(containerName, dest);
+  const maxH = containerMaxHeightFor(containerName);
+  const base = (isFull||isHalf) ? FORMULAS.palletWeightBaseFullHalfKG : FORMULAS.palletWeightBaseOtherKG;
+  const sLong = halfLike ? 2 : (+d.strapsLongSide||0), sShort = halfLike ? 2 : (+d.strapsShortSide||0);
+  const evalAt = (layers, uw)=>{
+    const ctx = {
+      unitsPerLayer: upl, unitHeight: unitH, unitWeight: uw, units1: upl, units2: 0,
+      palletPerContainer: ppc, layersPerPallet: layers,
+      strapsLongSide: sLong, strapsShortSide: sShort, totalStraps: sLong+sShort, strapsPerSide: sLong,
+      unitsPerShrinkBox: +d.unitsPerShrinkBox||0, boxesPerLayer: +d.boxesPerLayer||0,
+      boxLength: +d.boxLength||0, boxWidth: +d.boxWidth||0,
+      isBoxOnFP: isFP, isBoxOnHP: isHP, isFullPallet: isFull, isHalfPallet: isHalf,
+      palletWeightBase: base, totalHeightOffset: FORMULAS.totalHeightOffsetFlatMM,
+      weightAllowance, strapOffsetA: +pallet.a||0, strapOffsetB: +pallet.b||0,
+      palletHeightClearanceMM: FORMULAS.palletHeightClearanceMM, shrinkSizeAddOnMM: FORMULAS.shrinkSizeAddOnMM,
+      containerMaxHeightMM: maxH, palletWeightBaseFullHalfKG: FORMULAS.palletWeightBaseFullHalfKG,
+      palletWeightBaseOtherKG: FORMULAS.palletWeightBaseOtherKG,
+      weightAllowanceDefaultTon: FORMULAS.weightAllowanceDefaultTon, weightAllowanceOtherTon: FORMULAS.weightAllowanceOtherTon,
+      brimfulCapacity: +d.brimfulCapacity||0
+    };
+    ["unitsPerPallet","unitsPerContainer","palletWeight","palletHeight","totalPalletHeight","containerWeight"].forEach(k=>{ ctx[k] = evalCoreFormula(k, ctx); });
+    return ctx;
+  };
+  const layers = computeMaxLayersFitting(vpt, pallet.name, containerName, dest, unitH, unitW, ppc, upl);
+  const c = evalAt(layers, unitW);
+  const next = layers < 300 ? evalAt(layers+1, unitW) : null;
+  const heightBlock = next ? next.totalPalletHeight > maxH : true;
+  const weightBlock = next ? next.containerWeight > weightAllowance : true;
+  let limit = "—";
+  if(!(ppc>0)) limit = "No pallets/container set";
+  else if(!(upl>0)) limit = "Nothing fits";
+  else if(heightBlock && weightBlock) limit = "Height & Weight";
+  else if(heightBlock) limit = "Height";
+  else if(weightBlock) limit = "Weight";
+  const netTon = c.unitsPerContainer * unitW / 1e6;
+  const gross = c.containerWeight;
+  const tolGross = wTol > 0 ? evalAt(layers, unitW + wTol).containerWeight : null;
+  return {
+    pallet: pallet.name, variant: variant.label, vpt, container: containerName,
+    upl, layers, ppc, unitsPerPallet: c.unitsPerPallet, unitsPerContainer: c.unitsPerContainer,
+    palletWeightKg: c.palletWeight, totalHeight: c.totalPalletHeight, maxH,
+    gross, allowance: weightAllowance, netTon, overheadTon: Math.max(0, gross - netTon),
+    spareTon: weightAllowance - gross, payloadEff: gross > 0 ? netTon/gross : 0,
+    weightUtil: weightAllowance > 0 ? gross/weightAllowance : 0, heightUtil: maxH > 0 ? c.totalPalletHeight/maxH : 0,
+    limit, tolGross
+  };
+}
+
+function anBuild(d){
+  const lib = palletLibrary();
+  const pt = String(d.packagingType||"").toLowerCase();
+  const isBox = pt==="box on fp" || pt==="box on hp";
+  const variants = isBox
+    ? [{label:"Box on FP", pt:"box on fp"},{label:"Box on HP", pt:"box on hp"}]
+    : [{label:"Full Pallet", pt:"full pallet"},{label:"Half Pallet", pt:"half pallet"}];
+  const uplCache = {};
+  const uplFor = p=> uplCache[p.name] || (uplCache[p.name] = anUnitsPerLayerFor(d, +p.a||0, +p.b||0));
+  const rows = [];
+  lib.forEach(p=>{ const u = uplFor(p); variants.forEach(v=> rows.push(anScenario(d, p, u.upl, v, d.containerType))); });
+  const curP = palletByName(d.palletType) || lib[0];
+  const ctRows = [];
+  containerTypeLibrary().forEach(c=>{ const u = uplFor(curP); variants.forEach(v=> ctRows.push(anScenario(d, curP, u.upl, v, c.name))); });
+  return {rows, ctRows, variants, curP, isBox, lib, fixedLayer: !!(uplFor(lib[0]).fixed)};
+}
+
+function anSvgGrouped(o){
+  const W=820, H=o.height||340, mL=64, mR=14, mT=46, mB=o.rot?96:54;
+  const pw=W-mL-mR, ph=H-mT-mB, n=o.cats.length, ns=o.series.length;
+  const mx = anNiceMax(Math.max(1, ...o.series.flatMap(s=>s.vals)) * 1.04);
+  const gw = pw/Math.max(1,n), bw = Math.min(56, gw*0.8/ns);
+  const f = o.fmt || anNum;
+  let g = "";
+  for(let t=0;t<=5;t++){
+    const v = mx*t/5, y = mT+ph-ph*t/5;
+    g += `<line x1="${mL}" x2="${W-mR}" y1="${y}" y2="${y}" stroke="currentColor" stroke-opacity=".12"/><text x="${mL-8}" y="${y+4}" text-anchor="end" font-size="11" fill="currentColor" fill-opacity=".7">${f(v)}</text>`;
+  }
+  o.cats.forEach((c,i)=>{
+    const cx = mL+gw*i+gw/2, x0 = cx-bw*ns/2;
+    o.series.forEach((s,j)=>{
+      const v = s.vals[i]||0, h = ph*v/mx, x = x0+bw*j, y = mT+ph-h;
+      const hl = o.hl && o.hl.cat===i && o.hl.series===j;
+      g += `<rect x="${x+1}" y="${y}" width="${bw-2}" height="${Math.max(0,h)}" rx="3" fill="${s.color}"${hl?' stroke="currentColor" stroke-width="2.4"':''}><title>${escapeHtml(c)} — ${escapeHtml(s.name)}: ${f(v)} ${escapeHtml(o.unit||"")}</title></rect>`;
+      g += `<text x="${x+bw/2}" y="${y-5}" text-anchor="middle" font-size="${ns>2||n>6?9.5:10.5}" font-weight="700" fill="currentColor">${f(v)}</text>`;
+    });
+    const ly = mT+ph+18;
+    g += o.rot
+      ? `<text transform="translate(${cx},${ly}) rotate(-28)" text-anchor="end" font-size="11" fill="currentColor">${escapeHtml(c)}</text>`
+      : `<text x="${cx}" y="${ly}" text-anchor="middle" font-size="11.5" font-weight="${o.hl&&o.hl.cat===i?800:600}" fill="currentColor">${escapeHtml(c)}</text>`;
+  });
+  let lg = "", lx = mL;
+  o.series.forEach(s=>{ lg += `<rect x="${lx}" y="12" width="12" height="12" rx="3" fill="${s.color}"/><text x="${lx+17}" y="22.5" font-size="11.5" fill="currentColor">${escapeHtml(s.name)}</text>`; lx += 30 + s.name.length*6.6; });
+  if(o.unit) lg += `<text x="${W-mR}" y="22.5" text-anchor="end" font-size="11" fill="currentColor" fill-opacity=".65">${escapeHtml(o.unit)}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">${lg}${g}</svg>`;
+}
+
+function anSvgStacked(o){
+  const W=820, H=o.height||380, mL=64, mR=14, mT=46, mB=104;
+  const pw=W-mL-mR, ph=H-mT-mB, n=o.cats.length;
+  const totals = o.cats.map((_,i)=> o.segs.reduce((a,s)=>a+(s.vals[i]||0),0));
+  const mx = anNiceMax(Math.max(1, o.line ? o.line.value : 0, ...totals) * 1.06);
+  const gw = pw/Math.max(1,n), bw = Math.min(40, gw*0.7);
+  const f2 = v=> (+v).toFixed(2);
+  let g = "";
+  for(let t=0;t<=5;t++){
+    const v = mx*t/5, y = mT+ph-ph*t/5;
+    g += `<line x1="${mL}" x2="${W-mR}" y1="${y}" y2="${y}" stroke="currentColor" stroke-opacity=".12"/><text x="${mL-8}" y="${y+4}" text-anchor="end" font-size="11" fill="currentColor" fill-opacity=".7">${(+v).toFixed(v<10?1:0)}</text>`;
+  }
+  o.cats.forEach((c,i)=>{
+    const cx = mL+gw*i+gw/2; let acc = 0;
+    o.segs.forEach(s=>{
+      const v = s.vals[i]||0, h = ph*v/mx, y = mT+ph-ph*(acc+v)/mx; acc += v;
+      if(h > 0) g += `<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${h}" fill="${s.color}"><title>${escapeHtml(c)} — ${escapeHtml(s.name)}: ${f2(v)} Ton</title></rect>`;
+    });
+    g += `<text x="${cx}" y="${mT+ph-ph*acc/mx-5}" text-anchor="middle" font-size="9.5" font-weight="700" fill="currentColor">${f2(acc)}</text>`;
+    g += `<text transform="translate(${cx+4},${mT+ph+16}) rotate(-38)" text-anchor="end" font-size="10.5" fill="currentColor">${escapeHtml(c)}</text>`;
+  });
+  if(o.line){
+    const y = mT+ph-ph*o.line.value/mx;
+    g += `<line x1="${mL}" x2="${W-mR}" y1="${y}" y2="${y}" stroke="#D8212E" stroke-width="2" stroke-dasharray="7 5"/><text x="${W-mR}" y="${y-6}" text-anchor="end" font-size="11" font-weight="700" fill="#D8212E">${escapeHtml(o.line.label)}</text>`;
+  }
+  let lg = "", lx = mL;
+  o.segs.forEach(s=>{ lg += `<rect x="${lx}" y="12" width="12" height="12" rx="3" fill="${s.color}"/><text x="${lx+17}" y="22.5" font-size="11.5" fill="currentColor">${escapeHtml(s.name)}</text>`; lx += 30 + s.name.length*6.6; });
+  lg += `<text x="${W-mR}" y="22.5" text-anchor="end" font-size="11" fill="currentColor" fill-opacity=".65">Ton / container</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">${lg}${g}</svg>`;
+}
+
+function anRefreshSelect(){
+  const sel = $("anProductSelect"); if(!sel) return;
+  const keep = sel.value || "__current__";
+  const opts = [`<option value="__current__">● Current Spec Sheet (live)</option>`]
+    .concat((PRODUCTS_CACHE||[]).map(p=>`<option value="${escapeAttr(p.id)}">${escapeHtml((p.savedName||p.productName||"Untitled") + (p.customer ? " — "+p.customer : ""))}</option>`));
+  sel.innerHTML = opts.join("");
+  sel.value = Array.from(sel.options).some(o=>o.value===keep) ? keep : "__current__";
+}
+
+function anRender(){
+  const body = $("anBody"); if(!body) return;
+  const selVal = $("anProductSelect").value || "__current__";
+  let d;
+  try{
+    if(selVal === "__current__"){ recalc(); d = gatherData(); }
+    else d = (PRODUCTS_CACHE||[]).find(p=>p.id===selVal);
+    if(!d){ body.innerHTML = '<p class="opt-empty">That product could not be found — pick another or refresh.</p>'; return; }
+    const R = anBuild(d);
+    const nV = R.variants.length;
+    const cats = R.lib.map(p=>p.name);
+    const unitW = +d.unitWeight||0;
+    const curPt = String(d.packagingType||"").toLowerCase();
+    const curCat = cats.findIndex(n=>n.toLowerCase()===String(d.palletType||"").toLowerCase());
+    const curVar = R.variants.findIndex(v=>v.pt===curPt);
+    const row = (ci,vi)=> R.rows[ci*nV+vi];
+    const hl = (curCat>=0 && curVar>=0) ? {cat:curCat, series:curVar} : null;
+    const cur = hl ? row(curCat,curVar) : null;
+    const valid = R.rows.filter(r=>r.unitsPerContainer>0);
+    const best = valid.length ? valid.reduce((a,b)=> b.unitsPerContainer>a.unitsPerContainer?b:a) : null;
+    const bestEff = valid.length ? valid.reduce((a,b)=> b.payloadEff>a.payloadEff?b:a) : null;
+    const worst = valid.length ? valid.reduce((a,b)=> b.unitsPerContainer<a.unitsPerContainer?b:a) : null;
+    $("anSubtitle").innerHTML = `<strong>${escapeHtml(d.savedName||d.productName||"Current product")}</strong>${d.customer?" · "+escapeHtml(d.customer):""} — container <strong>${escapeHtml(d.containerType||"")}</strong> (${escapeHtml(d.containerDestination||"")}), unit weight ${fmtTol(unitW,d.unitWeightTol)} gm, unit height ${fmtTol(d.unitHeight,d.unitHeightTol)} mm${R.isBox?", box packing":""}${R.fixedLayer?" · packing tool off: Units/Layer fixed for every pallet":""}.`;
+
+    const card=(cls,label,val,unit)=>`<article class="kpi-card ${cls}"><span class="kpi-label">${label}</span><strong class="kpi-value">${val}</strong><span class="kpi-unit">${unit}</span></article>`;
+    let kpis = "";
+    kpis += card("teal","Best units / container", best?anNum(best.unitsPerContainer):"—", best?`${escapeHtml(best.pallet)} · ${escapeHtml(best.variant)} · ${best.layers} layers`:"no valid configuration");
+    kpis += card("magenta","Current configuration", cur?anNum(cur.unitsPerContainer):"—", cur?`${escapeHtml(cur.pallet)} · ${escapeHtml(cur.variant)}${best&&best.unitsPerContainer>0?` · ${anPct(cur.unitsPerContainer/best.unitsPerContainer)} of best`:""}`:"packaging type is not Full/Half (or Box FP/HP)");
+    kpis += card("lime","Best payload efficiency", bestEff?anPct(bestEff.payloadEff):"—", bestEff?`${escapeHtml(bestEff.pallet)} · ${escapeHtml(bestEff.variant)} (product ÷ gross weight)`:"");
+    if(best){
+      const extra = unitW>0 && best.spareTon>0 ? Math.floor(best.spareTon*1e6/unitW) : 0;
+      kpis += card("gold","Weight headroom (best)", (best.spareTon).toFixed(2)+" Ton", `${anPct(best.weightUtil)} of ${best.allowance} Ton used · limited by ${escapeHtml(best.limit)}${extra?` · ≈${anNum(extra)} more units by weight alone`:""}`);
+    }
+    let html = `<div class="an-kpis">${kpis}</div>`;
+
+    // Chart A
+    html += `<div class="an-chart"><h4>Units per container — all pallet types</h4><p class="an-sub">${escapeHtml(R.variants.map(v=>v.label).join(" vs "))}; layers auto-maximised within height &amp; weight limits${hl?" · outlined bar = current configuration":""}</p>${anSvgGrouped({
+      cats: cats.map((c,i)=>c+(i===curCat?" ★":"")), unit:"units / container",
+      series: R.variants.map((v,j)=>({name:v.label,color:AN_COLORS[j],vals:cats.map((_,ci)=>row(ci,j).unitsPerContainer)})), hl})}</div>`;
+
+    // Chart B stacked weight
+    const labels=[], prod=[], over=[], spare=[];
+    R.rows.forEach(r=>{ labels.push(r.pallet+" · "+(r.variant.replace("Pallet","").trim())); prod.push(r.netTon); over.push(r.overheadTon); spare.push(Math.max(0,r.spareTon)); });
+    const alw = R.rows.length ? R.rows[0].allowance : 0;
+    html += `<div class="an-chart"><h4>Container weight breakdown vs allowance</h4><p class="an-sub">Product weight + pallet/packaging weight + unused capacity up to the ${escapeHtml(d.containerType||"")} allowance (${alw} Ton) — big grey = weight optimisation potential</p>${anSvgStacked({
+      cats:labels, segs:[{name:"Product (net)",color:AN_COLORS[0],vals:prod},{name:"Pallets & packaging",color:AN_COLORS[2],vals:over},{name:"Unused capacity",color:"#B8BEC4",vals:spare}],
+      line:{value:alw,label:"Allowance "+alw+" Ton"}})}</div>`;
+
+    // Chart C payload efficiency
+    html += `<div class="an-chart"><h4>Payload efficiency — product weight ÷ gross container weight</h4><p class="an-sub">Higher = less weight wasted on pallets and packaging</p>${anSvgGrouped({
+      cats, unit:"%", fmt:v=>(v).toFixed(v<10?1:0)+"%", series:R.variants.map((v,j)=>({name:v.label,color:AN_COLORS[j],vals:cats.map((_,ci)=>row(ci,j).payloadEff*100)})), hl, height:320})}</div>`;
+
+    // Chart D containers
+    const ctNames = containerTypeLibrary().map(c=>c.name);
+    html += `<div class="an-chart"><h4>Container type comparison — ${escapeHtml(R.curP.name)} pallet</h4><p class="an-sub">Same product and pallet across every container type in the library</p>${anSvgGrouped({
+      cats: ctNames, unit:"units / container", series:R.variants.map((v,j)=>({name:v.label,color:AN_COLORS[j],vals:ctNames.map((_,ci)=>R.ctRows[ci*nV+j].unitsPerContainer)})), height:300})}</div>`;
+
+    // Table
+    const hasTol = (+d.unitWeightTol||0) > 0;
+    const thead = `<tr><th>Pallet</th><th>Packaging</th><th>Units/ Layer</th><th>Layers</th><th>Units/ Pallet</th><th>Pallets/ Cont.</th><th>Units/ Container</th><th>Gross wt (Ton)</th><th>Net product (Ton)</th><th>Payload eff.</th><th>Weight used</th><th>Height used</th><th>Limited by</th>${hasTol?`<th>Gross @ +${(+d.unitWeightTol)} gm (Ton)</th>`:""}</tr>`;
+    let tb = "";
+    R.rows.forEach(r=>{
+      const isBest = best && r===best;
+      const isCur = cur && r===cur;
+      tb += `<tr class="${isBest?"an-best":""} ${isCur?"an-cur":""}"><td>${escapeHtml(r.pallet)}${isCur?" ★":""}</td><td>${escapeHtml(r.variant)}</td><td>${anNum(r.upl)}</td><td>${r.layers}</td><td>${anNum(r.unitsPerPallet)}</td><td>${r.ppc}</td><td><strong>${anNum(r.unitsPerContainer)}</strong></td><td>${r.gross.toFixed(2)}</td><td>${r.netTon.toFixed(2)}</td><td>${anPct(r.payloadEff)}</td><td>${anPct(r.weightUtil)}</td><td>${anPct(r.heightUtil)}</td><td>${escapeHtml(r.limit)}</td>${hasTol?`<td style="${r.tolGross>r.allowance?"color:#D8212E;font-weight:800;":""}">${r.tolGross.toFixed(2)}${r.tolGross>r.allowance?" ⚠":""}</td>`:""}</tr>`;
+    });
+    html += `<div class="section-banner" style="margin-top:6px;">Detailed breakdown</div><div class="an-scroll"><table class="bom-table"><thead>${thead}</thead><tbody>${tb}</tbody></table></div><p class="hint">Green row = most units per container · ★ / outlined row = this product's current pallet &amp; packaging type.</p>`;
+
+    // Insights
+    const ins = [];
+    if(best && worst && worst!==best) ins.push(`Spread between best and worst configuration: <strong>${anNum(best.unitsPerContainer-worst.unitsPerContainer)} units</strong> per container (${anPct((best.unitsPerContainer-worst.unitsPerContainer)/worst.unitsPerContainer)} more with ${escapeHtml(best.pallet)} · ${escapeHtml(best.variant)} than ${escapeHtml(worst.pallet)} · ${escapeHtml(worst.variant)}).`);
+    R.variants.forEach((v,j)=>{ const rs = R.rows.filter(r=>r.vpt===v.pt && r.unitsPerContainer>0); if(rs.length){ const b = rs.reduce((a,c)=>c.unitsPerContainer>a.unitsPerContainer?c:a); ins.push(`Best <strong>${escapeHtml(v.label)}</strong> option: ${escapeHtml(b.pallet)} with ${anNum(b.unitsPerContainer)} units / container (${b.layers} layers).`); } });
+    if(cur && best && cur!==best && best.unitsPerContainer>cur.unitsPerContainer) ins.push(`Switching from the current setup to ${escapeHtml(best.pallet)} · ${escapeHtml(best.variant)} would add <strong>${anNum(best.unitsPerContainer-cur.unitsPerContainer)} units</strong> per container (${anPct((best.unitsPerContainer-cur.unitsPerContainer)/Math.max(1,cur.unitsPerContainer))}).`);
+    const wl = valid.filter(r=>/Weight/.test(r.limit)).length, hlc = valid.filter(r=>/Height/.test(r.limit)).length;
+    ins.push(`${wl} of ${valid.length} configurations are limited by <strong>weight</strong>, ${hlc} by <strong>height</strong>${valid.length-wl-hlc>0?`, ${valid.length-wl-hlc} by pallet count only`:""}.`);
+    if(bestEff && bestEff.overheadTon>0) ins.push(`Pallets &amp; packaging take ${bestEff.overheadTon.toFixed(2)} Ton of the best-efficiency container (${anPct(1-bestEff.payloadEff)} of gross weight) — a lighter pallet/frame is the main weight-optimisation lever when a configuration is weight-limited.`);
+    if(hasTol){ const over = R.rows.filter(r=>r.tolGross!=null && r.tolGross>r.allowance); ins.push(over.length ? `⚠ At the heaviest unit weight (+${+d.unitWeightTol} gm) <strong>${over.length}</strong> configuration(s) exceed the container weight allowance.` : `At the heaviest unit weight (+${+d.unitWeightTol} gm) every configuration stays within the container weight allowance.`); }
+    html += `<div class="field-group group-lime"><h3>Key insights</h3><ul class="an-insights" style="margin:6px 0 0;padding-left:18px;">${ins.map(t=>`<li>${t}</li>`).join("")}</ul></div>`;
+    body.innerHTML = html;
+  }catch(err){
+    console.error(err);
+    body.innerHTML = '<p class="opt-empty">Could not build analytics: '+escapeHtml(err.message)+'</p>';
+  }
+}
+if($("anProductSelect")){
+  anRefreshSelect();
+  $("anProductSelect").addEventListener("change", anRender);
+  $("anRefreshBtn").addEventListener("click", ()=>{ anRefreshSelect(); anRender(); });
+  document.querySelector('.tab-btn[data-tab="analytics"]').addEventListener("click", ()=>{ anRefreshSelect(); anRender(); });
+}
+
+["brimfulCapacity","brimfulCapacityTol"].forEach(id=>{ if($(id)) $(id).addEventListener("input", ()=>{ if($("pmBrimful")) $("pmBrimful").value = brimfulText($("brimfulCapacity").value, $("brimfulCapacityTol").value); }); });
 initKpiCardUi();
 recalc();
 renderCoreFormulasTab(); // after recalc so LAST_CALC is populated for previews
@@ -8429,7 +8783,7 @@ function pmDeleteSection(key){
     }
   }
 
-  window.addEventListener("beforeinstallprompt"window.addEventListener("beforeinstallprompt"window.addEventListener("beforeinstallprompt", (e)=>{
+  window.addEventListener("beforeinstallprompt", (e)=>{
     e.preventDefault();
     deferredPrompt = e;
     const bar = document.getElementById("installAppBar");
