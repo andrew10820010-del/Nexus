@@ -1021,6 +1021,9 @@
     <div class="section-banner">Manage Dropdown Options</div>
     <p class="hint">Add as many extra options as you need to any list below — they'll show up immediately in the Spec Sheet's dropdowns, and are saved in this browser.</p>
     <div class="formulas-toolbar">
+      <button type="button" class="btn btn-ghost btn-sm" id="exportBackupBtn" title="Download all settings, prices and presets as a file">⬇ Export settings backup</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="importBackupBtn">⬆ Import backup</button>
+      <input type="file" id="importBackupInput" accept=".json,application/json" style="display:none;">
       <button type="button" class="btn btn-ghost btn-sm" id="resetOptionsBtn">↺ Reset all option lists to defaults</button>
     </div>
     <div id="optionsContainer"></div>
@@ -1261,6 +1264,18 @@
           <button type="button" class="btn btn-teal btn-sm" id="saveCloudConfigBtn">Connect</button>
           <button type="button" class="btn btn-ghost btn-sm" id="clearCloudConfigBtn">Disconnect</button>
         </div>
+      </div>
+    </details>
+
+    <details class="opt-card" id="cloudUsageCard" open>
+      <summary>📊 Cloud &amp; storage usage <span class="cloud-pill" id="cloudUsagePill">—</span></summary>
+      <div class="opt-card-body">
+        <div id="cloudUsageBox" style="margin-top:12px;font-size:.86rem;"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+          <button type="button" class="btn btn-gold btn-sm" id="slimCloudBtn">🪶 Slim down images (products &amp; presets)</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="usageRefreshBtn">🔄 Recalculate</button>
+        </div>
+        <p class="hint" style="margin-top:10px;">Photos are the heavy part: each app start downloads every saved product (with its photos) once. “Slim down” shrinks every stored photo to ≤1000 px JPEG and removes pallet/frame photos that are duplicated inside products (they come from the presets).</p>
       </div>
     </details>
 
@@ -1735,9 +1750,27 @@ function mergeShallow(def, stored){
 function loadJSON(key){
   try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
 }
+const SETTINGS_SYNC_KEYS = ["kandilSpecOptions_v1","kandilSpecFormulas_v1","kandilCoreFormulas_v1","kandilCustomFields_v1",
+  "kandilCustomReqFields_v1","kandilCustomPmSections_v1","kandilReportVis_v1","kandilKpiCards_v1","kandilPmLayout_v1","kandilBomPrices_v1"];
+const SETTINGS_REV_KEY = "kandilSettingsRev_v1";
 function saveJSON(key, obj){
-  try{ localStorage.setItem(key, JSON.stringify(obj)); }catch(e){ /* ignore quota errors */ }
+  try{ localStorage.setItem(key, JSON.stringify(obj)); }
+  catch(e){
+    // Previously swallowed silently — which is why Manage Options changes "didn't stick" once storage was full.
+    if(!window.__storageWarned){
+      window.__storageWarned = true;
+      setTimeout(()=> alert("⚠ This browser's storage is full, so your latest changes (" + key + ") could NOT be saved on this device.\n\nFix: Products tab → “Cloud & storage usage” → Slim down images, and export a settings backup from Manage Options."), 50);
+    }
+    console.error("saveJSON failed for", key, e);
+    return false;
+  }
+  if(SETTINGS_SYNC_KEYS.indexOf(key) >= 0 && !window.__applyingSettings){
+    try{ localStorage.setItem(SETTINGS_REV_KEY, String(Date.now())); }catch(e){}
+    try{ scheduleSettingsPush(); }catch(e){}
+  }
+  return true;
 }
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 
 let OPTIONS = mergeShallow(DEFAULT_OPTIONS, loadJSON(OPT_KEY));
 let FORMULAS = mergeShallow(DEFAULT_FORMULAS, loadJSON(FORMULA_KEY));
@@ -5275,6 +5308,34 @@ function optSort(key, dir){
   optAfterListChange(key);
 }
 
+$("exportBackupBtn").addEventListener("click", ()=>{
+  const out = {_kandilBackup:1, savedAt:new Date().toISOString(), settings:{}, palletProfiles:PM_PALLET_PROFILES, frameProfiles:PM_FRAME_PROFILES, tombstones:PM_TOMBS};
+  SETTINGS_SYNC_KEYS.forEach(k=>{ const v = localStorage.getItem(k); if(v != null) out.settings[k] = v; });
+  const blob = new Blob([JSON.stringify(out)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "NEXUS-settings-backup-" + new Date().toISOString().slice(0,10) + ".json"; a.click(); URL.revokeObjectURL(a.href);
+  setStatus("Settings backup downloaded ✓");
+});
+$("importBackupBtn").addEventListener("click", ()=> $("importBackupInput").click());
+$("importBackupInput").addEventListener("change", e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{
+    try{
+      const j = JSON.parse(rd.result); if(!j._kandilBackup) throw new Error("not a NEXUS backup file");
+      if(!confirm("Replace this device's settings, prices and presets with the backup from " + (j.savedAt||"?") + "?")) return;
+      window.__applyingSettings = true;
+      Object.keys(j.settings||{}).forEach(k=>{ if(SETTINGS_SYNC_KEYS.indexOf(k) >= 0) localStorage.setItem(k, j.settings[k]); });
+      if(j.palletProfiles) localStorage.setItem(PM_PALLET_PROFILES_KEY, JSON.stringify(j.palletProfiles));
+      if(j.frameProfiles) localStorage.setItem(PM_FRAME_PROFILES_KEY, JSON.stringify(j.frameProfiles));
+      if(j.tombstones) localStorage.setItem(PM_TOMB_KEY, JSON.stringify(j.tombstones));
+      localStorage.setItem(SETTINGS_REV_KEY, String(Date.now())); window.__applyingSettings = false;
+      setStatus("Backup restored — reloading…"); setTimeout(()=> location.reload(), 600);
+    }catch(err){ alert("Couldn't import that file: " + err.message); }
+  };
+  rd.readAsText(f); e.target.value = "";
+});
+
 $("resetOptionsBtn").addEventListener("click", ()=>{
   if(!confirm("Reset every dropdown list back to the Kandil default catalogue? Any custom options you added will be removed.")) return;
   OPTIONS = JSON.parse(JSON.stringify(DEFAULT_OPTIONS));
@@ -5819,6 +5880,7 @@ async function fetchProductsFromCloud(){
     PRODUCTS_CACHE.sort((a,b)=> (b.savedAtLocal||0) - (a.savedAtLocal||0));
     setCloudStatus("Connected — synced", true);
     renderProductList();
+    if(typeof renderCloudUsage === "function") renderCloudUsage();
   }catch(err){
     console.error(err);
     setCloudStatus("Sync error: " + err.message, false);
@@ -5840,7 +5902,9 @@ async function pushProductsToCloud(){
       : "";
     throw new Error("HTTP " + res.status + hint + (detail ? ` (${detail})` : ""));
   }
-  return res.json();
+  const out = await res.json();
+  await bumpRev("products");
+  return out;
 }
 
 /* Live push updates via Firebase's REST SSE stream — no SDK required.
@@ -5878,10 +5942,81 @@ function stopCloudStream(){
 
 function startCloudPolling(){
   if(cloudPollTimer) clearInterval(cloudPollTimer);
-  // Safety-net refresh alongside the live stream, in case SSE gets
-  // silently blocked by a proxy/firewall without ever firing onerror.
-  cloudPollTimer = setInterval(()=>{ if(CLOUD_CONFIG) fetchProductsFromCloud(); }, 60000);
+  // Only polls while the tab is visible, and only downloads a few bytes (the revision numbers).
+  cloudPollTimer = setInterval(()=>{ if(CLOUD_CONFIG && document.visibilityState !== "hidden") pollRevs(); }, 45000);
 }
+/* ---- revision numbers (tiny) ---- */
+let REV_SEEN = {products:null, presets:null, settings:null};
+function firebaseBase(){ return CLOUD_CONFIG.dbUrl.replace(/\/+$/, ""); }
+async function bumpRev(name, val){
+  if(!CLOUD_CONFIG) return;
+  try{
+    const rev = val || Date.now(); REV_SEEN[name] = rev;
+    await fetch(firebaseBase() + "/meta/" + name + "Rev.json", {method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify(rev)});
+  }catch(e){ console.error(e); }
+}
+async function pollRevs(){
+  if(!CLOUD_CONFIG) return;
+  try{
+    const r = await fetch(firebaseBase() + "/meta.json"); if(!r.ok) return;
+    const m = (await r.json()) || {};
+    const upd = (name, fn)=>{
+      const v = m[name + "Rev"]; if(!v) return;
+      const first = REV_SEEN[name] === null;
+      if(REV_SEEN[name] !== v){ REV_SEEN[name] = v; if(!first) fn(); }
+    };
+    upd("products", fetchProductsFromCloud);
+    upd("presets", fetchPresetsFromCloud);
+    upd("settings", ()=>{ if(Number(m.settingsRev) > Number(localStorage.getItem(SETTINGS_REV_KEY)||0)) setStatus("Settings were changed on another device - reload the page to apply them."); });
+  }catch(e){ console.error(e); }
+}
+/* ---- settings (Manage Options, formulas, custom fields, prices ...) mirrored to the cloud as ONE small JSON string ---- */
+function firebaseSettingsUrl(){ return firebaseBase() + "/settings.json"; }
+let _settingsPushTimer = null;
+function scheduleSettingsPush(){
+  try{ if(!CLOUD_CONFIG) return; }catch(e){ return; }
+  clearTimeout(_settingsPushTimer);
+  _settingsPushTimer = setTimeout(()=>{ pushSettingsToCloud().catch(e=>console.error(e)); }, 1500);
+}
+async function pushSettingsToCloud(){
+  if(!CLOUD_CONFIG) return;
+  const data = {};
+  SETTINGS_SYNC_KEYS.forEach(k=>{ const v = localStorage.getItem(k); if(v != null) data[k] = v; });
+  let rev = Number(localStorage.getItem(SETTINGS_REV_KEY) || 0);
+  if(!rev){ rev = Date.now(); try{ localStorage.setItem(SETTINGS_REV_KEY, String(rev)); }catch(e){} }
+  const res = await fetch(firebaseSettingsUrl(), {method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify({updatedAt: rev, json: JSON.stringify(data)})});
+  if(!res.ok) throw new Error("settings sync HTTP " + res.status);
+  await bumpRev("settings", rev);
+}
+async function pullSettingsFromCloud(){
+  if(!CLOUD_CONFIG) return;
+  try{
+    const r = await fetch(firebaseSettingsUrl()); if(!r.ok) return;
+    const j = await r.json();
+    const localRev = Number(localStorage.getItem(SETTINGS_REV_KEY) || 0);
+    const hasLocal = SETTINGS_SYNC_KEYS.some(k=> localStorage.getItem(k) != null);
+    if(j && j.json){
+      const cloudRev = Number(j.updatedAt || 0);
+      let useCloud = cloudRev > localRev;
+      if(useCloud && localRev === 0 && hasLocal){
+        useCloud = confirm("The cloud already holds saved settings (Manage Options, formulas, prices...) from another device.\n\nOK = use the cloud settings on this device\nCancel = keep THIS device's settings and upload them instead");
+      }
+      if(useCloud){
+        const data = JSON.parse(j.json); window.__applyingSettings = true;
+        Object.keys(data).forEach(k=>{ if(SETTINGS_SYNC_KEYS.indexOf(k) >= 0) localStorage.setItem(k, data[k]); });
+        localStorage.setItem(SETTINGS_REV_KEY, String(cloudRev)); window.__applyingSettings = false;
+        setStatus("Settings loaded from the cloud - reloading..."); setTimeout(()=> location.reload(), 700);
+      } else if(localRev > cloudRev || (localRev === 0 && hasLocal)){
+        if(localRev === 0) localStorage.setItem(SETTINGS_REV_KEY, String(Date.now()));
+        await pushSettingsToCloud();
+      }
+    } else if(hasLocal){
+      if(!localRev) localStorage.setItem(SETTINGS_REV_KEY, String(Date.now()));
+      await pushSettingsToCloud();
+    }
+  }catch(e){ console.error(e); }
+}
+
 
 
 /* ---------- Cloud sync: pallet/frame presets (+ photos on each preset) ---------- */
@@ -5981,6 +6116,7 @@ async function pushPresetsToCloud(){
     throw new Error(what + " cloud write failed: HTTP " + res.status + (detail ? " ("+detail+")" : ""));
   };
   await chk(pr, "Pallet presets"); await chk(fr, "Frame presets"); await chk(tr, "Preset deletions");
+  await bumpRev("presets");
 }
 let _presetCloudPushTimer = null;
 function schedulePushPresetsToCloud(){
@@ -6002,14 +6138,15 @@ function schedulePushPresetsToCloud(){
 function connectFirebase(cfg){
   CLOUD_CONFIG = cfg;
   setCloudStatus("Connecting…", true);
+  // One download at start-up; afterwards only a tiny "revision" number is polled and data is re-downloaded
+  // only when someone actually changed it (previously the full product list incl. photos was re-downloaded
+  // every 60 s by every open client, plus a live stream - the main cause of exceeding the free quota).
+  REV_SEEN = {products:null, presets:null, settings:null};
   fetchProductsFromCloud();
   fetchPresetsFromCloud();
-  if(typeof fetchPricesFromCloud === "function") fetchPricesFromCloud();
-  startCloudStream();
+  pullSettingsFromCloud();
+  pollRevs();
   startCloudPolling();
-  // Refresh presets periodically with products
-  if(window._presetPollTimer) clearInterval(window._presetPollTimer);
-  window._presetPollTimer = setInterval(()=>{ if(CLOUD_CONFIG){ fetchPresetsFromCloud(); if(typeof fetchPricesFromCloud === "function") fetchPricesFromCloud(); } }, 60000);
 }
 
 (function bootCloud(){
@@ -6039,6 +6176,79 @@ $("clearCloudConfigBtn").addEventListener("click", ()=>{
   PRODUCTS_CACHE = []; renderProductList();
   setCloudStatus("Not connected", false);
 });
+function renderCloudUsage(){
+  const box = $("cloudUsageBox"); if(!box) return;
+  const sz = o=>{ try{ return JSON.stringify(o == null ? null : o).length; }catch(e){ return 0; } };
+  const mb = v=> (v/1048576).toFixed(2) + " MB";
+  const prods = PRODUCTS_CACHE || [];
+  const pTotal = sz(prods);
+  const presets = sz(PM_PALLET_PROFILES) + sz(PM_FRAME_PROFILES);
+  const top = prods.map(p=>({n:p.savedName||p.productName||"Untitled", s:sz(p)})).sort((a,b)=>b.s-a.s).slice(0,3);
+  let ls = 0; try{ for(let i=0;i<localStorage.length;i++){ const k = localStorage.key(i); ls += k.length + (localStorage.getItem(k)||"").length; } }catch(e){}
+  const lsPct = Math.min(100, ls/5000000*100);
+  const cloudTotal = pTotal + presets;
+  $("cloudUsagePill").textContent = CLOUD_CONFIG ? ("≈ " + mb(cloudTotal) + " per start-up download") : "cloud not connected";
+  box.innerHTML = `
+    <div><strong>Cloud data</strong> (free plan: 1 GB stored · 10 GB / month downloaded):</div>
+    <ul style="margin:6px 0 10px;padding-left:18px;">
+      <li>${prods.length} saved products: <strong>${mb(pTotal)}</strong>${top.length ? " — largest: " + top.map(t=>escapeHtml(t.n)+" ("+mb(t.s)+")").join(", ") : ""}</li>
+      <li>Pallet &amp; frame presets: <strong>${mb(presets)}</strong></li>
+      <li>One app start-up downloads ≈ <strong>${mb(cloudTotal)}</strong> — ${[5,20].map(n=>n+" starts/day ≈ "+mb(cloudTotal*n*30)+" / month").join(" · ")} per person.</li>
+    </ul>
+    <div><strong>This browser's storage</strong> (≈5 MB limit): ${mb(ls)} used (${lsPct.toFixed(0)}%)
+      <div style="height:8px;border-radius:6px;background:rgba(0,0,0,.08);overflow:hidden;margin-top:4px;"><div style="height:100%;width:${lsPct}%;background:${lsPct>85?"#D8212E":lsPct>60?"#FABB15":"#4FC6CB"};"></div></div>
+      ${lsPct>85 ? '<span style="color:#D8212E;font-weight:700;">Almost full — settings may fail to save. Use “Slim down” and remove unused presets.</span>' : ""}
+    </div>`;
+}
+async function slimDataUrl(url, maxDim, q){
+  if(!url || url.length < 120000) return url;
+  return new Promise(res=>{
+    const img = new Image();
+    img.onerror = ()=> res(url);
+    img.onload = ()=>{
+      let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+      const sc = Math.min(1, maxDim / Math.max(w,h));
+      w = Math.max(1, Math.round(w*sc)); h = Math.max(1, Math.round(h*sc));
+      const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+      const cx = cv.getContext("2d"); if(!cx) return res(url);
+      cx.fillStyle = "#fff"; cx.fillRect(0,0,w,h); cx.drawImage(img,0,0,w,h);
+      const out = cv.toDataURL("image/jpeg", q);
+      res(out.length < url.length ? out : url);
+    };
+    img.src = url;
+  });
+}
+async function slimCloudData(){
+  if(!CLOUD_CONFIG){ alert("Connect cloud sync first."); return; }
+  if(!confirm("Shrink every stored photo (products + presets) to ≤1000 px JPEG and remove pallet/frame photos duplicated inside products?\n\nThis rewrites your cloud data once. Recommended.")) return;
+  const btn = $("slimCloudBtn"); btn.disabled = true; setStatus("Slimming photos…");
+  try{
+    await fetchProductsFromCloud(); await fetchPresetsFromCloud();
+    const before = JSON.stringify(PRODUCTS_CACHE).length + JSON.stringify(PM_PALLET_PROFILES).length + JSON.stringify(PM_FRAME_PROFILES).length;
+    for(const p of PRODUCTS_CACHE){
+      p.productPhotoDataUrl = await slimDataUrl(p.productPhotoDataUrl, 1000, 0.8);
+      p.packingPhotoDataUrl = await slimDataUrl(p.packingPhotoDataUrl, 1000, 0.8);
+      const m = p.manual; if(!m) continue;
+      m.product2DPhotoDataUrl = await slimDataUrl(m.product2DPhotoDataUrl, 1000, 0.8);
+      const pp = PM_PALLET_PROFILES[(m.pmWoodPalletName||"").trim()], fp = PM_FRAME_PROFILES[(m.pmFrameTypeName||"").trim()];
+      if(m.palletPhotoDataUrl && pp && pp.photoDataUrl) m.palletPhotoDataUrl = null; else m.palletPhotoDataUrl = await slimDataUrl(m.palletPhotoDataUrl, 1000, 0.8);
+      if(m.framePhotoDataUrl && fp && fp.photoDataUrl) m.framePhotoDataUrl = null; else m.framePhotoDataUrl = await slimDataUrl(m.framePhotoDataUrl, 1000, 0.8);
+    }
+    for(const k of Object.keys(PM_PALLET_PROFILES)) PM_PALLET_PROFILES[k].photoDataUrl = await slimDataUrl(PM_PALLET_PROFILES[k].photoDataUrl, 1000, 0.8);
+    for(const k of Object.keys(PM_FRAME_PROFILES)) PM_FRAME_PROFILES[k].photoDataUrl = await slimDataUrl(PM_FRAME_PROFILES[k].photoDataUrl, 1000, 0.8);
+    const after = JSON.stringify(PRODUCTS_CACHE).length + JSON.stringify(PM_PALLET_PROFILES).length + JSON.stringify(PM_FRAME_PROFILES).length;
+    await pushProductsToCloud();
+    try{ pmSavePalletProfiles(); pmSaveFrameProfiles(); }catch(e){}
+    await pushPresetsToCloud();
+    renderCloudUsage();
+    setStatus("Done ✓ — data reduced from " + (before/1048576).toFixed(2) + " MB to " + (after/1048576).toFixed(2) + " MB");
+  }catch(err){ console.error(err); setStatus("Slim-down failed: " + err.message, true); }
+  btn.disabled = false;
+}
+if($("slimCloudBtn")) $("slimCloudBtn").addEventListener("click", slimCloudData);
+if($("usageRefreshBtn")) $("usageRefreshBtn").addEventListener("click", renderCloudUsage);
+document.querySelector('.tab-btn[data-tab="products"]').addEventListener("click", ()=> renderCloudUsage());
+
 $("refreshProductsBtn").addEventListener("click", ()=>{
   if(!CLOUD_CONFIG){ setStatus("Connect cloud sync first."); return; }
   setStatus("Refreshing…");
@@ -6605,7 +6815,7 @@ function leave3DTab(){
 $("productPhotoInput").addEventListener("change", e=>{
   const file = e.target.files[0];
   if(!file) return;
-  const reader = new FileReader();
+  const reader = pmCompressReader();
   reader.onload = ()=>{
     productPhotoDataUrl = reader.result;
     applyProductPhotoUi("📷 " + file.name);
@@ -6631,7 +6841,7 @@ $("removeProductPhoto").addEventListener("click", ()=>{
 $("packingPhotoInput").addEventListener("change", e=>{
   const file = e.target.files[0];
   if(!file) return;
-  const reader = new FileReader();
+  const reader = pmCompressReader();
   reader.onload = ()=>{
     packingPhotoDataUrl = reader.result;
     $("packingPhotoPreview").src = packingPhotoDataUrl;
@@ -6884,6 +7094,12 @@ function pmCompressImage(file, maxDim){
     };
     reader.readAsDataURL(file);
   });
+}
+/* FileReader look-alike that downsizes big photos (max 1000 px, JPEG) before they are stored / synced. */
+function pmCompressReader(){
+  const r = { result:null, onload:null, onerror:null,
+    readAsDataURL(f){ pmCompressImage(f, 1000).then(u=>{ r.result = u; if(r.onload) r.onload(); }).catch(()=>{ if(r.onerror) r.onerror(); }); } };
+  return r;
 }
 function pmWirePhoto(prefix, key, emptyLabel){
   const ids = pmPhotoIds(prefix);
@@ -7254,8 +7470,11 @@ function gatherManualData(){
   data.deckRows = gatherPmRows(pmDeckBoardsBody, ["item","desc","qty","dims","tol"]);
   data.frameRows = gatherPmRows(pmFrameDimsBody, ["std","len","w","treat"]);
   data.product2DPhotoDataUrl = pmProduct2DDataUrl;
-  data.palletPhotoDataUrl = PM_PHOTOS.pmPallet || null;
-  data.framePhotoDataUrl = PM_PHOTOS.pmFrame || null;
+  // Pallet / frame photos normally come from their preset — only store a photo with the product if it is a custom override
+  // (storing the preset photo inside every product multiplies the cloud size).
+  { const _pp = PM_PALLET_PROFILES[(data.pmWoodPalletName||"").trim()], _fp = PM_FRAME_PROFILES[(data.pmFrameTypeName||"").trim()];
+    data.palletPhotoDataUrl = (PM_PHOTOS.pmPallet && !(_pp && _pp.photoDataUrl === PM_PHOTOS.pmPallet)) ? PM_PHOTOS.pmPallet : null;
+    data.framePhotoDataUrl = (PM_PHOTOS.pmFrame && !(_fp && _fp.photoDataUrl === PM_PHOTOS.pmFrame)) ? PM_PHOTOS.pmFrame : null; }
   data.customPmValues = gatherCustomPmValues();
   return data;
 }
@@ -7556,7 +7775,7 @@ $("pmRemoveCertBadges").addEventListener("click", ()=>{
 $("pmProduct2DInput").addEventListener("change", e=>{
   const file = e.target.files[0];
   if(!file) return;
-  const reader = new FileReader();
+  const reader = pmCompressReader();
   reader.onload = ()=>{
     pmProduct2DDataUrl = reader.result;
     $("pmProduct2DPreview").src = pmProduct2DDataUrl;
@@ -8259,7 +8478,7 @@ function bomPriceFor(item, spec){
   const k = materialKeyForItem(item); if(!k) return 0;
   return +(BOM_PRICES.items[k + "||" + spec]) || 0;
 }
-function persistBomPrices(){ BOM_PRICES.updatedAt = Date.now(); saveJSON(BOM_PRICES_KEY, BOM_PRICES); schedulePushPrices(); }
+function persistBomPrices(){ BOM_PRICES.updatedAt = Date.now(); saveJSON(BOM_PRICES_KEY, BOM_PRICES); }
 function suggestedKit(name){
   const n = String(name||"").toLowerCase();
   const has = (key, v)=> (OPTIONS[key]||[]).includes(v) ? v : "";
@@ -8332,29 +8551,8 @@ function renderBomPricesTab(){
 }
 function firebasePricesUrl(){ return CLOUD_CONFIG.dbUrl.replace(/\/+$/, "") + "/bomPrices.json"; }
 let _pricePushTimer = null;
-function schedulePushPrices(){
-  if(typeof CLOUD_CONFIG === "undefined" || !CLOUD_CONFIG) return;
-  clearTimeout(_pricePushTimer);
-  _pricePushTimer = setTimeout(async ()=>{
-    try{ await fetch(firebasePricesUrl(), {method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify(BOM_PRICES)}); }
-    catch(e){ console.error(e); }
-  }, 800);
-}
-async function fetchPricesFromCloud(){
-  if(!CLOUD_CONFIG) return;
-  try{
-    const r = await fetch(firebasePricesUrl()); if(!r.ok) return;
-    const j = await r.json();
-    if(j && typeof j === "object"){
-      if(Number(j.updatedAt||0) > Number(BOM_PRICES.updatedAt||0)){
-        BOM_PRICES = Object.assign({currency:"EGP", items:{}, kits:{}, updatedAt:0}, j);
-        if(!BOM_PRICES.items) BOM_PRICES.items = {}; if(!BOM_PRICES.kits) BOM_PRICES.kits = {};
-        saveJSON(BOM_PRICES_KEY, BOM_PRICES);
-        renderBomPricesTab(); updateBomCostLine();
-      }
-    } else if(Object.keys(BOM_PRICES.items).length){ schedulePushPrices(); }
-  }catch(e){ console.error(e); }
-}
+function schedulePushPrices(){ /* prices now travel inside the settings blob (saveJSON -> scheduleSettingsPush) */ }
+async function fetchPricesFromCloud(){ /* superseded by pullSettingsFromCloud */ }
 if($("bomPricesWrap")){
   $("bomPricesWrap").addEventListener("input", e=>{
     const inp = e.target.closest(".bp-input"); if(!inp) return;
