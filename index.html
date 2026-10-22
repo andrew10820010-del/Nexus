@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="NEXUS">
 <meta name="application-name" content="NEXUS">
-<meta name="description" content="NEXUS — packaging specification and packaging manual generator">
+<meta name="description" content="NEXUS — glass packaging specification, pallet layout and packaging manual generator">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -84,15 +84,36 @@
   .tab-btn{
     background:none;border:none;padding:13px 14px;font-size:.86rem;font-weight:700;color:#999;cursor:pointer;
     text-align:left;border-radius:8px;border-left:3px solid transparent;white-space:nowrap;
+    transition:color .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease, transform .2s ease;
   }
   .tab-btn.active{color:var(--ink-dark);border-left-color:var(--magenta);background:var(--magenta-tint);box-shadow:0 2px 8px rgba(215,22,114,.12);}
   .tab-btn:hover{color:var(--ink-dark);}
+  .tab-btn:active{transform:scale(.97);}
   @media (max-width:900px){
     .tabbar{flex-direction:row;overflow-x:auto;border-bottom:1px solid var(--border);}
     .tab-btn.active{border-left-color:transparent;border-bottom:3px solid var(--magenta);border-radius:0;}
   }
-  .tab-panel{display:none;}
-  .tab-panel.active{display:block;}
+  .tab-panel{
+    display:none;
+    opacity:0;
+  }
+  .tab-panel.active{
+    display:block;
+    animation:tabPanelIn .38s ease both;
+  }
+  .tab-panel.tab-panel-out{
+    display:block;
+    animation:tabPanelOut .26s ease both;
+    pointer-events:none;
+  }
+  @keyframes tabPanelIn{
+    from{opacity:0;}
+    to{opacity:1;}
+  }
+  @keyframes tabPanelOut{
+    from{opacity:1;}
+    to{opacity:0;}
+  }
 
   /* ---------- Section banners ---------- */
   .section-banner{
@@ -507,60 +528,110 @@
   .opt-chip .opt-move:hover:not(:disabled){opacity:1;background:rgba(79,198,203,.2);}
   .opt-chip .opt-move:disabled{opacity:.15;cursor:default;}
 
-  /* ===== Intro splash ===== */
+  /* ===== Intro splash — creative glass-industry entrance (medium pace) ===== */
   #splash{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;overflow:hidden;
-    background:radial-gradient(1200px 700px at 50% 40%,#ffffff 0%,#f3fafa 55%,#eaf6f6 100%);
-    transition:opacity .6s ease, transform .7s cubic-bezier(.2,.7,.2,1), filter .6s ease;}
-  #splash.sp-out{opacity:0;transform:scale(1.06);filter:blur(6px);pointer-events:none;}
-  #splash .sp-blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.38;animation:spDrift 7s ease-in-out infinite alternate;}
-  #splash .sp-b1{width:46vmax;height:46vmax;left:-14vmax;top:-12vmax;background:#4FC6CB;}
-  #splash .sp-b2{width:38vmax;height:38vmax;right:-10vmax;top:6vmax;background:#D71672;opacity:.22;animation-delay:-2s;}
-  #splash .sp-b3{width:40vmax;height:40vmax;left:12vmax;bottom:-18vmax;background:#B9D532;opacity:.3;animation-delay:-4s;}
-  #splash .sp-b4{width:30vmax;height:30vmax;right:6vmax;bottom:-12vmax;background:#FABB15;opacity:.3;animation-delay:-1s;}
-  @keyframes spDrift{from{transform:translate3d(-2vmax,-1vmax,0) scale(1);}to{transform:translate3d(3vmax,2vmax,0) scale(1.12);}}
+    background:
+      radial-gradient(900px 520px at 50% 42%, rgba(255,255,255,.95) 0%, transparent 70%),
+      radial-gradient(1200px 700px at 18% 80%, rgba(79,198,203,.18) 0%, transparent 55%),
+      radial-gradient(1000px 600px at 85% 15%, rgba(215,22,114,.12) 0%, transparent 50%),
+      linear-gradient(160deg,#f8fcfc 0%,#eef8f8 40%,#f7f4f8 100%);
+    transition:opacity .75s ease, transform .85s cubic-bezier(.2,.7,.2,1), filter .75s ease;}
+  #splash.sp-out{opacity:0;transform:scale(1.04);filter:blur(8px);pointer-events:none;}
+  #splash .sp-blob{position:absolute;border-radius:50%;filter:blur(72px);opacity:.42;animation:spDrift 9s ease-in-out infinite alternate;will-change:transform;}
+  #splash .sp-b1{width:48vmax;height:48vmax;left:-16vmax;top:-14vmax;background:#4FC6CB;}
+  #splash .sp-b2{width:40vmax;height:40vmax;right:-12vmax;top:4vmax;background:#D71672;opacity:.26;animation-delay:-2.5s;}
+  #splash .sp-b3{width:42vmax;height:42vmax;left:10vmax;bottom:-20vmax;background:#B9D532;opacity:.32;animation-delay:-5s;}
+  #splash .sp-b4{width:32vmax;height:32vmax;right:4vmax;bottom:-14vmax;background:#FABB15;opacity:.34;animation-delay:-1.5s;}
+  @keyframes spDrift{
+    0%{transform:translate3d(-2vmax,-1vmax,0) scale(1);}
+    50%{transform:translate3d(1.5vmax,1.2vmax,0) scale(1.08);}
+    100%{transform:translate3d(3vmax,2vmax,0) scale(1.14);}
+  }
+  /* Soft shimmer sweep across the scene */
+  #splash::after{
+    content:"";position:absolute;inset:-20%;
+    background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.35) 48%,transparent 62%);
+    animation:spShimmer 4.2s ease-in-out infinite;pointer-events:none;mix-blend-mode:soft-light;
+  }
+  @keyframes spShimmer{0%{transform:translateX(-30%) rotate(8deg);}100%{transform:translateX(30%) rotate(8deg);}}
   #splash svg.sp-glass{position:absolute;inset:0;width:100%;height:100%;}
-  #splash .sp-glass path,#splash .sp-glass circle{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:spDraw 1.7s cubic-bezier(.5,0,.2,1) forwards;}
-  #splash .sp-glass g.sp-item{animation:spFloat 5s ease-in-out infinite alternate;}
+  #splash .sp-glass path,#splash .sp-glass circle{
+    fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:1;stroke-dashoffset:1;
+    animation:spDraw 2.1s cubic-bezier(.45,0,.2,1) forwards;
+    filter:drop-shadow(0 0 6px rgba(255,255,255,.35));
+  }
+  #splash .sp-glass g.sp-item{animation:spFloat 6s ease-in-out infinite alternate;}
   @keyframes spDraw{to{stroke-dashoffset:0;}}
-  @keyframes spFloat{from{transform:translateY(0);}to{transform:translateY(-10px);}}
-  #splash .sp-center{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px;}
-  #splash .sp-stage{position:relative;width:min(380px,70vw);display:flex;align-items:center;justify-content:center;padding:26px 30px;}
+  @keyframes spFloat{
+    0%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-8px) rotate(1.5deg);}
+    100%{transform:translateY(-14px) rotate(-1deg);}
+  }
+  #splash .sp-center{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px;z-index:2;}
+  #splash .sp-stage{position:relative;width:min(380px,70vw);display:flex;align-items:center;justify-content:center;padding:28px 32px;}
   #splash .sp-ring{position:absolute;inset:0;border-radius:28px;padding:3px;
     background:conic-gradient(from 0deg,#D71672,#FABB15,#B9D532,#4FC6CB,#D71672);
     -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
-    animation:spSpin 3.2s linear infinite, spFade .5s .15s ease both;}
-  #splash .sp-card{position:absolute;inset:3px;border-radius:25px;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);box-shadow:0 18px 60px rgba(31,122,126,.18);animation:spPop .8s .1s cubic-bezier(.2,1.2,.3,1) both;}
+    animation:spSpin 4.5s linear infinite, spFade .7s .2s ease both;}
+  #splash .sp-ring::before{
+    content:"";position:absolute;inset:-6px;border-radius:32px;padding:1px;
+    background:conic-gradient(from 180deg,#4FC6CB66,#D7167266,#FABB1566,#4FC6CB66);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+    animation:spSpin 7s linear infinite reverse;opacity:.7;
+  }
+  #splash .sp-card{position:absolute;inset:3px;border-radius:25px;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);
+    box-shadow:0 18px 60px rgba(31,122,126,.2), inset 0 1px 0 rgba(255,255,255,.8);
+    animation:spPop 1s .15s cubic-bezier(.2,1.2,.3,1) both;}
   @keyframes spSpin{to{transform:rotate(360deg);}}
   @keyframes spFade{from{opacity:0;}to{opacity:1;}}
-  #splash .sp-logo{position:relative;width:100%;height:auto;display:block;animation:spPop .9s .25s cubic-bezier(.2,1.2,.3,1) both;}
-  @keyframes spPop{from{opacity:0;transform:scale(.7) translateY(14px);}to{opacity:1;transform:none;}}
-  #splash .sp-title{margin-top:26px;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;letter-spacing:.38em;padding-left:.38em;color:#333334;display:flex;}
-  #splash .sp-title span{display:inline-block;opacity:0;transform:translateY(22px);animation:spLetter .6s cubic-bezier(.2,1,.3,1) forwards;}
-  #splash .sp-title span:nth-child(1){animation-delay:.9s;color:#D71672;}
-  #splash .sp-title span:nth-child(2){animation-delay:1.0s;color:#FABB15;}
-  #splash .sp-title span:nth-child(3){animation-delay:1.1s;color:#B9D532;}
-  #splash .sp-title span:nth-child(4){animation-delay:1.2s;color:#4FC6CB;}
-  #splash .sp-title span:nth-child(5){animation-delay:1.3s;color:#5B5B5C;}
-  @keyframes spLetter{to{opacity:1;transform:none;}}
-  #splash .sp-sub{margin-top:8px;font-size:.9rem;color:#7b8288;letter-spacing:.06em;opacity:0;animation:spFade .8s 1.6s ease forwards;}
-  #splash .sp-bar{margin-top:26px;width:min(280px,60vw);height:5px;border-radius:5px;background:rgba(0,0,0,.07);overflow:hidden;opacity:0;animation:spFade .4s .5s ease forwards;}
-  #splash .sp-bar span{display:block;height:100%;width:100%;transform-origin:left;transform:scaleX(0);border-radius:5px;background:linear-gradient(90deg,#D71672,#FABB15 35%,#B9D532 65%,#4FC6CB);animation:spBar 2.3s .5s cubic-bezier(.4,0,.2,1) forwards;}
+  #splash .sp-logo{position:relative;width:100%;height:auto;display:block;animation:spPop 1.05s .35s cubic-bezier(.2,1.2,.3,1) both;}
+  @keyframes spPop{
+    0%{opacity:0;transform:scale(.62) translateY(22px);}
+    70%{opacity:1;transform:scale(1.04) translateY(-2px);}
+    100%{opacity:1;transform:none;}
+  }
+  #splash .sp-title{margin-top:28px;font-size:clamp(1.9rem,5.2vw,2.75rem);font-weight:800;letter-spacing:.38em;padding-left:.38em;color:#333334;display:flex;gap:.02em;}
+  #splash .sp-title span{
+    display:inline-block;opacity:0;
+    transform:translateY(28px) scale(.85) rotateX(40deg);
+    animation:spLetter .75s cubic-bezier(.2,1.05,.3,1) forwards;
+    text-shadow:0 8px 24px rgba(0,0,0,.08);
+  }
+  #splash .sp-title span:nth-child(1){animation-delay:1.15s;color:#D71672;}
+  #splash .sp-title span:nth-child(2){animation-delay:1.3s;color:#FABB15;}
+  #splash .sp-title span:nth-child(3){animation-delay:1.45s;color:#B9D532;}
+  #splash .sp-title span:nth-child(4){animation-delay:1.6s;color:#4FC6CB;}
+  #splash .sp-title span:nth-child(5){animation-delay:1.75s;color:#5B5B5C;}
+  @keyframes spLetter{
+    0%{opacity:0;transform:translateY(28px) scale(.85) rotateX(40deg);}
+    70%{opacity:1;transform:translateY(-4px) scale(1.06) rotateX(0);}
+    100%{opacity:1;transform:none;}
+  }
+  #splash .sp-sub{
+    margin-top:10px;font-size:.92rem;color:#6a7278;letter-spacing:.08em;
+    opacity:0;animation:spSubIn 1s 2.1s ease forwards;
+  }
+  @keyframes spSubIn{from{opacity:0;transform:translateY(10px);letter-spacing:.16em;}to{opacity:1;transform:none;letter-spacing:.08em;}}
+  #splash .sp-bar{margin-top:28px;width:min(300px,62vw);height:5px;border-radius:5px;background:rgba(0,0,0,.07);overflow:hidden;opacity:0;animation:spFade .5s .7s ease forwards;}
+  #splash .sp-bar span{display:block;height:100%;width:100%;transform-origin:left;transform:scaleX(0);border-radius:5px;
+    background:linear-gradient(90deg,#D71672,#FABB15 35%,#B9D532 65%,#4FC6CB);
+    animation:spBar 3.4s .7s cubic-bezier(.4,0,.2,1) forwards;}
   @keyframes spBar{to{transform:scaleX(1);}}
-  #splash .sp-skip{position:absolute;right:18px;bottom:16px;border:none;background:transparent;color:#8a8a8a;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;padding:6px 10px;border-radius:8px;opacity:0;animation:spFade .4s 1s ease forwards;}
+  #splash .sp-skip{position:absolute;right:18px;bottom:16px;border:none;background:transparent;color:#8a8a8a;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;padding:6px 10px;border-radius:8px;opacity:0;animation:spFade .5s 1.4s ease forwards;z-index:3;}
   #splash .sp-skip:hover{background:rgba(0,0,0,.05);color:#333;}
 
   /* ===== page entrance after the splash (one-off) ===== */
   @keyframes enterUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
   @keyframes enterLeft{from{opacity:0;transform:translateX(-26px);}to{opacity:1;transform:none;}}
-  @keyframes tabIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
   body.app-enter .sidebar{animation:enterLeft .7s cubic-bezier(.2,.8,.2,1) both;}
   body.app-enter .tab-panel.active .kpi-card,
   body.app-enter .tab-panel.active .section-banner,
   body.app-enter .tab-panel.active .field-group{animation:enterUp .65s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 55ms + .1s);}
-  body.app-ready .tab-panel.active{animation:tabIn .35s ease both;}
   @media (prefers-reduced-motion: reduce){
     #splash *,#splash{animation-duration:.01s !important;animation-delay:0s !important;transition-duration:.01s !important;}
-    body.app-enter *,body.app-ready .tab-panel.active{animation:none !important;}
+    body.app-enter *,body.app-ready .tab-panel.active,.tab-panel.active,.tab-panel.tab-panel-out{animation:none !important;}
+    .tab-panel{opacity:1;transform:none;}
   }
 </style>
 </head>
@@ -578,7 +649,7 @@
   <div class="sp-center">
     <div class="sp-stage"><div class="sp-card"></div><div class="sp-ring"></div><img id="spLogo" class="sp-logo" alt="Kandil"></div>
     <div class="sp-title" aria-label="NEXUS"><span>N</span><span>E</span><span>X</span><span>U</span><span>S</span></div>
-    <div class="sp-sub">Packaging specification &amp; manual generator</div>
+    <div class="sp-sub">Glass packaging specs · pallet layout · export manuals</div>
     <div class="sp-bar"><span></span></div>
   </div>
   <button type="button" class="sp-skip" id="spSkip">Skip ›</button>
@@ -591,7 +662,7 @@
     <script>(function(){var a=document.getElementById("spLogo"),b=document.querySelector(".sidebar img.logo");if(a&&b)a.src=b.src;})();</script>
     <div class="masthead-text">
       <h1>NEXUS</h1>
-      <p>Packaging specification &amp; manual generator</p>
+      <p>Glass packaging specs · pallet layout · manuals</p>
     </div>
     <button type="button" class="dark-toggle" id="darkModeToggle" title="Toggle dark mode">🌙 Dark mode</button>
   </div>
@@ -1010,8 +1081,10 @@
           <select id="anProductSelect"></select>
         </label>
         <button type="button" class="btn btn-ghost btn-sm" id="anRefreshBtn">🔄 Refresh</button>
+        <button type="button" class="btn btn-magenta btn-sm" id="anExportPdfBtn">⬇ Export PDF Dashboard</button>
       </div>
       <p class="hint" id="anSubtitle" style="margin:8px 0 0;"></p>
+      <p class="status" id="anStatus" style="margin:6px 0 0;text-align:left;"></p>
     </div>
     <div id="anBody"></div>
   </div>
@@ -1391,12 +1464,11 @@
         <tr><th>Layer / Pallet</th><td><input id="pmLayerPallet" type="text" placeholder="auto"></td></tr>
         <tr><th>Units / Pallet</th><td><input id="pmUnitsPallet" type="text" placeholder="auto"></td></tr>
         <tr><th>Pallet Height (mm)</th><td><input id="pmPalletHeight" type="text" placeholder="auto"></td></tr>
-        <tr><th>Plastic Roll</th><td><input id="pmPlasticRoll" type="text" value="120 cm / 50 Micron"></td></tr>
-        <tr><th>Pallet Separators Type</th><td><select id="pmSeparatorsType"></select></td></tr>
-        <tr><th>Pallet Separators Size / Qty</th><td><input id="pmSeparatorsSizeQty" type="text" placeholder="auto — editable"></td></tr>
-        <tr><th>Pallet Cover</th><td><input id="pmPalletCover" type="text" placeholder="auto — editable"></td></tr>
+        <tr><th>Plastic Hood (shrink)</th><td><input id="pmSealing" type="text" placeholder="auto — from BOM Plastic Hoods (spec × qty)"></td></tr>
+        <tr><th>Pallet Separators Type</th><td><input id="pmSeparatorsType" type="text" placeholder="e.g. Carton Corrugated Tier sheets"></td></tr>
+        <tr><th>Pallet Separators Size / Qty</th><td><input id="pmSeparatorsSizeQty" type="text" placeholder="auto — from BOM Carton layer"></td></tr>
+        <tr><th>Pallet Cover</th><td><input id="pmPalletCover" type="text" placeholder="auto — from BOM Carton Cover"></td></tr>
         <tr><th>Frame</th><td><input id="pmFrame" type="text" placeholder="e.g. US Size Fumigated wood"></td></tr>
-        <tr><th>Sealing</th><td><select id="pmSealing"></select></td></tr>
         <tr><th>Strap (m)</th><td><input id="pmStrapM" type="text" placeholder="auto — editable"></td></tr>
         <tr><th>Pallet Label Color</th><td><select id="pmLabelColor"></select></td></tr>
         <tr><th>Pallet Label Dimensions</th><td><input id="pmLabelDims" type="text" value="7*15 cm"></td></tr>
@@ -1429,7 +1501,7 @@
         <tr><th>Height (mm)</th><td><input id="pmHeight" type="text" placeholder="auto"></td></tr>
         <tr><th>Diameter (mm)</th><td><input id="pmDiameter" type="text" placeholder="auto"></td></tr>
         <tr><th>Colour</th><td><select id="pmColour"></select></td></tr>
-        <tr><th>Finish</th><td><select id="pmFinish"></select></td></tr>
+        <tr><th>Finish</th><td><input id="pmFinish" type="text" placeholder="auto — from SKU after H/K grade"></td></tr>
         <tr><th>Labelling</th><td><input id="pmLabelling" type="text" value="N/A"></td></tr>
         <tr><th>Printing</th><td><input id="pmPrinting" type="text" value="N/A"></td></tr>
         <tr><th>TD Reference / Date</th><td><input id="pmTDRef" type="date"></td></tr>
@@ -2704,15 +2776,56 @@ function brimfulText(v, t){ v = String(v==null?"":v).trim(); if(v==="") return "
 function setOut(id, value, unit){ const el = $(id); el.dataset.raw = value; el.textContent = fmt(value) + (unit ? (" " + unit) : ""); }
 
 /* =====================================================================
-   Tabs
+   Tabs — animated crossfade / slide between panels
 ===================================================================== */
+let _tabSwitching = false;
 document.querySelectorAll(".tab-btn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
+    const targetId = "tab-" + btn.dataset.tab;
+    const next = $(targetId);
+    const current = document.querySelector(".tab-panel.active");
+    if(!next || (current && current === next) || _tabSwitching) return;
+
     document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
     btn.classList.add("active");
-    $("tab-" + btn.dataset.tab).classList.add("active");
-    if(btn.dataset.tab === "model3d") enter3DTab(); else leave3DTab();
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finish = ()=>{
+      if(current){
+        current.classList.remove("active","tab-panel-out");
+      }
+      // Restart enter animation even when re-selecting after out
+      next.classList.remove("active");
+      void next.offsetWidth;
+      next.classList.add("active");
+      _tabSwitching = false;
+      if(btn.dataset.tab === "model3d") enter3DTab(); else leave3DTab();
+    };
+
+    if(prefersReduced || !current){
+      if(current) current.classList.remove("active","tab-panel-out");
+      next.classList.add("active");
+      _tabSwitching = false;
+      if(btn.dataset.tab === "model3d") enter3DTab(); else leave3DTab();
+      return;
+    }
+
+    _tabSwitching = true;
+    current.classList.add("tab-panel-out");
+    current.classList.remove("active");
+    const onOutEnd = (e)=>{
+      if(e.target !== current || e.animationName !== "tabPanelOut") return;
+      current.removeEventListener("animationend", onOutEnd);
+      finish();
+    };
+    current.addEventListener("animationend", onOutEnd);
+    // Safety fallback if animationend doesn't fire
+    setTimeout(()=>{
+      if(_tabSwitching){
+        current.removeEventListener("animationend", onOutEnd);
+        finish();
+      }
+    }, 320);
   });
 });
 
@@ -2725,8 +2838,8 @@ const CORE_SELECT_IDS = {
   palletType:"palletType", containerType:"containerType", containerDestination:"containerDestination"
 };
 const PM_SELECT_IDS = {
-  pmSeparatorType:"pmSeparatorsType", pmSealing:"pmSealing", pmLabelColor:"pmLabelColor",
-  pmColour:"pmColour", pmFinish:"pmFinish"
+  pmLabelColor:"pmLabelColor",
+  pmColour:"pmColour"
 };
 function refreshPmManualDropdowns(){
   for(const optKey in PM_SELECT_IDS){
@@ -4719,7 +4832,7 @@ async function exportToExcel(){
    nothing that can render as blank pages.
 ===================================================================== */
 const PDF_COLORS = {
-  ink:[91,91,92], teal:[79,198,203], tealTint:[231,248,248], tealDark:[31,122,126],
+  ink:[91,91,92], inkDark:[51,51,52], teal:[79,198,203], tealTint:[231,248,248], tealDark:[31,122,126],
   lime:[185,213,50], limeTint:[243,249,226], limeDark:[110,138,24],
   gold:[250,187,21], goldTint:[255,246,224], goldDark:[156,106,5],
   magenta:[215,22,114], magentaTint:[252,233,241], magentaDark:[158,15,84],
@@ -5203,11 +5316,8 @@ const LIST_META = [
   {key:"boxes", label:"Boxes", group:"material"},
   {key:"separatorLong", label:"Separator - Long", group:"material"},
   {key:"separatorShort", label:"Separator - Short", group:"material"},
-  {key:"pmSeparatorType", label:"Pallet Separators Type", group:"manual"},
-  {key:"pmSealing", label:"Sealing (Pallet Level)", group:"manual"},
   {key:"pmLabelColor", label:"Pallet Label Color", group:"manual"},
-  {key:"pmColour", label:"Product Colour", group:"manual"},
-  {key:"pmFinish", label:"Product Finish", group:"manual"}
+  {key:"pmColour", label:"Product Colour", group:"manual"}
 ];
 
 function renderOptionsTab(){
@@ -7181,10 +7291,17 @@ function pmRefreshFrameTypeList(){
 function pmPopulatePalletDropdowns(keepValues){
   keepValues = keepValues || {};
   const collect = (field)=> [...new Set(Object.values(PM_PALLET_PROFILES).map(p=>p[field]).filter(Boolean))];
-  populateSelect($("pmWoodPalletType"), collect("type"), keepValues.type);
-  populateSelect($("pmWoodPalletCode"), collect("code"), keepValues.code);
-  populateSelect($("pmWoodPalletSize"), collect("size"), keepValues.size);
-  populateSelect($("pmWoodPalletMaterial"), collect("material"), keepValues.material);
+  if($("pmWoodPalletType") && $("pmWoodPalletType").tagName === "SELECT"){
+    populateSelect($("pmWoodPalletType"), collect("type"), keepValues.type);
+    populateSelect($("pmWoodPalletCode"), collect("code"), keepValues.code);
+    populateSelect($("pmWoodPalletSize"), collect("size"), keepValues.size);
+    populateSelect($("pmWoodPalletMaterial"), collect("material"), keepValues.material);
+  } else {
+    if(keepValues.type != null && $("pmWoodPalletType")) $("pmWoodPalletType").value = keepValues.type;
+    if(keepValues.code != null && $("pmWoodPalletCode")) $("pmWoodPalletCode").value = keepValues.code;
+    if(keepValues.size != null && $("pmWoodPalletSize")) $("pmWoodPalletSize").value = keepValues.size;
+    if(keepValues.material != null && $("pmWoodPalletMaterial")) $("pmWoodPalletMaterial").value = keepValues.material;
+  }
 }
 
 function pmRestorePhotosFromPresets(){
@@ -7200,7 +7317,7 @@ function pmRestorePhotosFromPresets(){
 function pmApplyPalletProfile(name){
   const p = PM_PALLET_PROFILES[name];
   if(!p){ pmPopulatePalletDropdowns(); return; }
-  pmPopulatePalletDropdowns({type:p.type, code:p.code, size:p.size, material:p.material});
+  pmPopulatePalletDropdowns({type:p.type||"", code:p.code||"", size:p.size||"", material:p.material||""});
   $("pmWoodPalletRefDoc").value = p.refDoc || "";
   $("pmComplianceText").value = p.compliance != null && p.compliance !== "" ? p.compliance : PM_STANDARD_COMPLIANCE_TEXT;
   pmSetPhoto("pmPalletPhoto", "pmPallet", p.photoDataUrl || null, "📷 Attach pallet photo");
@@ -7452,7 +7569,7 @@ $("pmLoadStandardBtn").addEventListener("click", ()=>{
 const PM_MANUAL_FIELD_IDS = [
   "pmProductName","pmProductCode","pmCustomer","pmSKU","pmIssueDate","pmRevisedDate",
   "pmPalletSize","pmProductDimension","pmUsableArea","pmLayout","pmEdgeClearance","pmQtyPerLayer","pmUnitsPerPack","pmPacksPerLayer",
-  "pmPalletTypeName","pmUnitsLayer","pmLayerPallet","pmUnitsPallet","pmPalletHeight","pmPlasticRoll",
+  "pmPalletTypeName","pmUnitsLayer","pmLayerPallet","pmUnitsPallet","pmPalletHeight",
   "pmSeparatorsType","pmSeparatorsSizeQty","pmPalletCover","pmFrame","pmSealing","pmStrapM",
   "pmLabelColor","pmLabelDims","pmCSR",
   "pmContType","pmPalletsPerCont","pmPalletNetWeight","pmPalletGrossWeight","pmUnitsPerCont",
@@ -7535,12 +7652,27 @@ function pmFinishFromSku(sku){
   return (m && m[2]) ? m[2].trim() : "";
 }
 /* Pulls the current Spec Sheet values into the auto-fill fields. Manual-only
-   fields (Plastic Roll, Colour, CSR, etc.) are left untouched. */
+   fields (Colour, CSR, etc.) are left untouched. */
 function pmSyncFromSpec(){
   recalc();
   const data = gatherData();
   const pt = (data.packagingType||"").toLowerCase();
   const isBoxMode = pkgIsBox(pt);
+  const bom = data.bom || [];
+  const findBom = (names)=>{
+    const set = names.map(n=>n.toLowerCase());
+    return bom.find(r => set.includes((r.item||"").trim().toLowerCase()));
+  };
+  const bomQtySpec = (row)=>{
+    if(!row) return "";
+    const q = parseFloat(row.qty);
+    const qtyStr = isFinite(q) ? (Math.round(q)===q ? String(Math.round(q)) : String(q)) : String(row.qty||"");
+    const spec = (row.spec||"").trim();
+    if(!spec && !qtyStr) return "";
+    if(!spec) return qtyStr;
+    if(!qtyStr || qtyStr==="0") return spec;
+    return `${qtyStr} × ${spec}`;
+  };
 
   $("pmProductName").value = data.productName || "";
   $("pmCustomer").value = data.customer || "";
@@ -7601,42 +7733,28 @@ function pmSyncFromSpec(){
   $("pmUnitsPallet").value = fmt(LAST_CALC.unitsPerPallet);
   $("pmPalletHeight").value = fmt(LAST_CALC.palletHeight) + " mm";   // Pallet Height field (not Total Pallet Height) — also for every half-pallet case
 
-  const sepThickness = 3; // mm, standard corrugated tier sheet
-  $("pmSeparatorsSizeQty").value = `${fmt(data.layersPerPallet)} x (${fmt(L)} x ${fmt(W)} x ${sepThickness}) mm`;
-  $("pmPalletCover").value = `2 x (${fmt(L)} x ${fmt(W)} x ${sepThickness}) mm`;
+  // Pallet Separators Size / Qty ← BOM Carton layer (qty × spec)
+  const cartonLayerRow = findBom(["carton layer"]);
+  if($("pmSeparatorsSizeQty")){
+    $("pmSeparatorsSizeQty").value = bomQtySpec(cartonLayerRow) || "";
+  }
+
+  // Pallet Cover ← BOM Carton Cover (qty × spec)
+  const cartonCoverRow = findBom(["carton cover"]);
+  if($("pmPalletCover")){
+    $("pmPalletCover").value = bomQtySpec(cartonCoverRow) || "";
+  }
+
   $("pmStrapM").value = `${fmt(LAST_CALC.strapLength)} m / ${fmt(data.strapsLongSide)} straps (long) + ${fmt(data.strapsShortSide)} straps (short) per side`;
 
   // Frame is pulled from the BOM's "Wood Frame" row specification, if present.
-  const frameBomRow = (data.bom||[]).find(r => (r.item||"").trim().toLowerCase() === "wood frame");
+  const frameBomRow = findBom(["wood frame"]);
   $("pmFrame").value = frameBomRow ? (frameBomRow.spec || "N/A") : "N/A";
 
-  // Sealing number comes from BOM Quantity of "Plastic Hoods"
-  // e.g. qty 1 → "1 x (Outer Plastic Bag)", qty 2 → "2 x (Outer Plastic Bag)", qty 0 → "None"
-  const hoodBomRow = (data.bom||[]).find(r => {
-    const n = (r.item||"").trim().toLowerCase();
-    return n === "plastic hoods" || n === "plastic hood";
-  });
-  const hoodQty = hoodBomRow ? (parseFloat(hoodBomRow.qty) || 0) : 0;
-  const sealingEl = $("pmSealing");
-  if(sealingEl){
-    let sealingVal;
-    if(hoodQty <= 0) sealingVal = "None";
-    else {
-      const n = Math.round(hoodQty) === hoodQty ? String(Math.round(hoodQty)) : String(hoodQty);
-      sealingVal = n + " x (Outer Plastic Bag)";
-    }
-    // Ensure the option exists in the select, then select it
-    if(sealingEl.tagName === "SELECT"){
-      const exists = Array.from(sealingEl.options).some(o => o.value === sealingVal);
-      if(!exists){
-        const opt = document.createElement("option");
-        opt.value = sealingVal; opt.textContent = sealingVal;
-        sealingEl.appendChild(opt);
-      }
-      sealingEl.value = sealingVal;
-    } else {
-      sealingEl.value = sealingVal;
-    }
+  // Plastic Hood (shrink) on Pallet Setup ← BOM Plastic Hoods (spec × qty)
+  const hoodBomRow = findBom(["plastic hoods","plastic hood"]);
+  if($("pmSealing")){
+    $("pmSealing").value = bomQtySpec(hoodBomRow) || (hoodBomRow ? ((hoodBomRow.spec||"").trim() || "None") : "None");
   }
 
   $("pmPalletsPerCont").value = fmt(data.palletPerContainer * ((pt === "half pallet" || pkgIsHP(pt)) ? 2 : 1));
@@ -7663,14 +7781,18 @@ function pmSyncFromSpec(){
   $("pmWeight").value = fmtTol(data.unitWeight, data.unitWeightTol) + " gm";
   $("pmHeight").value = fmtTol(data.unitHeight, data.unitHeightTol) + " mm";
   $("pmDiameter").value = isBoxMode ? "N/A" : fmtTol(data.unitMaxDiameter, data.unitMaxDiameterTol) + " mm";
-  if(String(data.brimfulCapacity||"").trim() !== "") $("pmBrimful").value = brimfulText(data.brimfulCapacity, data.brimfulCapacityTol);
+  // Brimful Capacity always mirrors Spec Sheet (with tolerance when present)
+  $("pmBrimful").value = String(data.brimfulCapacity||"").trim() !== ""
+    ? brimfulText(data.brimfulCapacity, data.brimfulCapacityTol)
+    : "";
 
   // Product photo from Spec Sheet → Packaging Manual product image
   if(typeof syncProductPhotoToManual === "function") syncProductPhotoToManual(true);
 
   $("pmOnlineProcess").value = $("pmSKU").value || "";
+  // Finish = portion of SKU after the grade symbol (H or K), e.g. …-H-T-70 → T-70
   { const fin = pmFinishFromSku(data.productCode);
-    if(fin && $("pmFinish")){ const el = $("pmFinish"); if(!Array.from(el.options).some(o=>o.value===fin)){ const o = document.createElement("option"); o.value = fin; o.textContent = fin; el.appendChild(o); } el.value = fin; } }
+    if($("pmFinish")) $("pmFinish").value = fin || ""; }
 
   // Pallet Name mirrors Pallet Type — auto-applies its saved construction
   // preset (Type/Code/Size/Material + deck boards) if one exists for it.
@@ -7913,12 +8035,11 @@ async function exportManualToPdf(){
       P.field(PML("pmLayerPallet","Layer / Pallet"), val("pmLayerPallet"), C.magenta, C.magentaTint);
       P.field(PML("pmUnitsPallet","Units / Pallet"), val("pmUnitsPallet"), C.magenta, C.magentaTint);
       P.field(PML("pmPalletHeight","Pallet Height (mm)"), val("pmPalletHeight"), C.magenta, C.magentaTint);
-      P.field(PML("pmPlasticRoll","Plastic Roll"), val("pmPlasticRoll"), C.magenta, C.magentaTint);
+      P.field(PML("pmSealing","Plastic Hood (shrink)"), val("pmSealing"), C.magenta, C.magentaTint);
       P.field(PML("pmSeparatorsType","Pallet Separators Type"), val("pmSeparatorsType"), C.magenta, C.magentaTint);
       P.field(PML("pmSeparatorsSizeQty","Pallet Separators Size / Qty"), val("pmSeparatorsSizeQty"), C.magenta, C.magentaTint);
       P.field(PML("pmPalletCover","Pallet Cover"), val("pmPalletCover"), C.magenta, C.magentaTint);
       P.field(PML("pmFrame","Frame"), hasFrame ? val("pmFrame") : "N/A — Top Frame Wooden = No", C.magenta, C.magentaTint);
-      P.field(PML("pmSealing","Sealing"), val("pmSealing"), C.magenta, C.magentaTint);
       P.field(PML("pmStrapM","Strap (m)"), val("pmStrapM"), C.magenta, C.magentaTint);
       P.field(PML("pmLabelColor","Pallet Label Color"), val("pmLabelColor"), C.magenta, C.magentaTint);
       P.field(PML("pmLabelDims","Pallet Label Dimensions"), val("pmLabelDims"), C.magenta, C.magentaTint);
@@ -8275,12 +8396,11 @@ async function exportManualToWord(){
       [PML("pmLayerPallet","Layer / Pallet"), val("pmLayerPallet"), C.magenta, C.magentaTint],
       [PML("pmUnitsPallet","Units / Pallet"), val("pmUnitsPallet"), C.magenta, C.magentaTint],
       [PML("pmPalletHeight","Pallet Height (mm)"), val("pmPalletHeight"), C.magenta, C.magentaTint],
-      [PML("pmPlasticRoll","Plastic Roll"), val("pmPlasticRoll"), C.magenta, C.magentaTint],
+      [PML("pmSealing","Plastic Hood (shrink)"), val("pmSealing"), C.magenta, C.magentaTint],
       [PML("pmSeparatorsType","Pallet Separators Type"), val("pmSeparatorsType"), C.magenta, C.magentaTint],
       [PML("pmSeparatorsSizeQty","Pallet Separators Size / Qty"), val("pmSeparatorsSizeQty"), C.magenta, C.magentaTint],
       [PML("pmPalletCover","Pallet Cover"), val("pmPalletCover"), C.magenta, C.magentaTint],
       [PML("pmFrame","Frame"), hasFrame ? val("pmFrame") : "N/A — Top Frame Wooden = No", C.magenta, C.magentaTint],
-      [PML("pmSealing","Sealing"), val("pmSealing"), C.magenta, C.magentaTint],
       [PML("pmStrapM","Strap (m)"), val("pmStrapM"), C.magenta, C.magentaTint],
       [PML("pmLabelColor","Pallet Label Color"), val("pmLabelColor"), C.magenta, C.magentaTint],
       [PML("pmLabelDims","Pallet Label Dimensions"), val("pmLabelDims"), C.magenta, C.magentaTint],
@@ -8867,10 +8987,478 @@ function anRender(){
     body.innerHTML = '<p class="opt-empty">Could not build analytics: '+escapeHtml(err.message)+'</p>';
   }
 }
+function anStripHtml(s){
+  return String(s||"").replace(/<[^>]+>/g," ").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim();
+}
+function anSetStatus(msg, isErr){
+  const el = $("anStatus"); if(!el) return;
+  el.textContent = msg || "";
+  el.style.color = isErr ? "#D8212E" : "#888";
+}
+
+/** Build the same analytics model + insights used by the on-screen dashboard. */
+function anComputeDashboard(d){
+  const R = anBuild(d);
+  const nV = R.variants.length;
+  const cats = R.lib.map(p=>p.name);
+  const unitW = +d.unitWeight||0;
+  const curPt = String(d.packagingType||"").toLowerCase();
+  const curCat = cats.findIndex(n=>n.toLowerCase()===String(d.palletType||"").toLowerCase());
+  const curVar = R.variants.findIndex(v=>v.pt===curPt);
+  const row = (ci,vi)=> R.rows[ci*nV+vi];
+  const hl = (curCat>=0 && curVar>=0) ? {cat:curCat, series:curVar} : null;
+  const cur = hl ? row(curCat,curVar) : null;
+  const valid = R.rows.filter(r=>r.unitsPerContainer>0);
+  const best = valid.length ? valid.reduce((a,b)=> b.unitsPerContainer>a.unitsPerContainer?b:a) : null;
+  const bestEff = valid.length ? valid.reduce((a,b)=> b.payloadEff>a.payloadEff?b:a) : null;
+  const worst = valid.length ? valid.reduce((a,b)=> b.unitsPerContainer<a.unitsPerContainer?b:a) : null;
+  const hasCost = R.rows.some(r=>r.cost && r.cost.perPallet > 0);
+  const cur$ = bomCur();
+  let cheapest = null;
+  if(hasCost){
+    const cv = R.rows.filter(r=>r.unitsPerContainer>0 && r.cost.per1000>0);
+    const cvFull = cv.filter(r=>!r.cost.missing);
+    const pool = cvFull.length ? cvFull : cv;
+    cheapest = pool.length ? pool.reduce((a,b)=> b.cost.per1000<a.cost.per1000?b:a) : null;
+  }
+  const ins = [];
+  if(best && worst && worst!==best) ins.push(`Spread between best and worst configuration: ${anNum(best.unitsPerContainer-worst.unitsPerContainer)} units per container (${anPct((best.unitsPerContainer-worst.unitsPerContainer)/worst.unitsPerContainer)} more with ${best.pallet} · ${best.variant} than ${worst.pallet} · ${worst.variant}).`);
+  R.variants.forEach((v)=>{
+    const rs = R.rows.filter(r=>r.vpt===v.pt && r.unitsPerContainer>0);
+    if(rs.length){
+      const b = rs.reduce((a,c)=>c.unitsPerContainer>a.unitsPerContainer?c:a);
+      ins.push(`Best ${v.label} option: ${b.pallet} with ${anNum(b.unitsPerContainer)} units / container (${b.layers} layers).`);
+    }
+  });
+  if(cur && best && cur!==best && best.unitsPerContainer>cur.unitsPerContainer){
+    ins.push(`Switching from the current setup to ${best.pallet} · ${best.variant} would add ${anNum(best.unitsPerContainer-cur.unitsPerContainer)} units per container (${anPct((best.unitsPerContainer-cur.unitsPerContainer)/Math.max(1,cur.unitsPerContainer))}).`);
+  }
+  const wl = valid.filter(r=>/Weight/.test(r.limit)).length, hlc = valid.filter(r=>/Height/.test(r.limit)).length;
+  ins.push(`${wl} of ${valid.length} configurations are limited by weight, ${hlc} by height${valid.length-wl-hlc>0?`, ${valid.length-wl-hlc} by pallet count only`:""}.`);
+  if(bestEff && bestEff.overheadTon>0){
+    ins.push(`Pallets & packaging take ${bestEff.overheadTon.toFixed(2)} Ton of the best-efficiency container (${anPct(1-bestEff.payloadEff)} of gross weight) — a lighter pallet/frame is the main weight-optimisation lever when a configuration is weight-limited.`);
+  }
+  if(hasCost && cheapest){
+    if(best && best!==cheapest && best.cost.per1000>0){
+      ins.push(`Cheapest packaging: ${cheapest.pallet} · ${cheapest.variant} at ${bomMoney(cheapest.cost.per1000)} ${cur$} / 1,000 units — the most-units option (${best.pallet} · ${best.variant}) costs ${bomMoney(best.cost.per1000)} (${anPct((best.cost.per1000-cheapest.cost.per1000)/cheapest.cost.per1000)} more) but ships ${anNum(best.unitsPerContainer-cheapest.unitsPerContainer)} ${best.unitsPerContainer>=cheapest.unitsPerContainer?"more":"fewer"} units per container.`);
+    } else {
+      ins.push(`The cheapest packaging option is also the best for units per container: ${cheapest.pallet} · ${cheapest.variant}.`);
+    }
+    const miss = R.rows.filter(r=>r.cost.missing>0).length;
+    if(miss) ins.push(`⚠ ${miss} configuration(s) use BOM components without a price — their cost is understated. Complete the price table in Manage Options.`);
+  }
+  const hasTol = (+d.unitWeightTol||0) > 0;
+  if(hasTol){
+    const over = R.rows.filter(r=>r.tolGross!=null && r.tolGross>r.allowance);
+    ins.push(over.length
+      ? `At the heaviest unit weight (+${+d.unitWeightTol} gm) ${over.length} configuration(s) exceed the container weight allowance.`
+      : `At the heaviest unit weight (+${+d.unitWeightTol} gm) every configuration stays within the container weight allowance.`);
+  }
+  return {R, nV, cats, unitW, cur, best, bestEff, worst, hasCost, cur$, cheapest, ins, hasTol, row, hl, curCat, curVar};
+}
+
+async function exportAnalyticsToPdf(){
+  if(typeof window.jspdf === "undefined"){
+    anSetStatus("Couldn't load the PDF engine — check your internet connection and try again.", true);
+    return;
+  }
+  const selVal = ($("anProductSelect") && $("anProductSelect").value) || "__current__";
+  let d;
+  try{
+    if(selVal === "__current__"){ recalc(); d = gatherData(); }
+    else d = (PRODUCTS_CACHE||[]).find(p=>p.id===selVal);
+  }catch(err){
+    anSetStatus("Could not load product data: "+(err.message||err), true);
+    return;
+  }
+  if(!d){ anSetStatus("No product selected — pick one and try again.", true); return; }
+
+  anSetStatus("Building landscape Analytics PDF dashboard…");
+  try{
+    const { jsPDF } = window.jspdf;
+    // Landscape A4
+    const doc = new jsPDF({unit:"mm", format:"a4", orientation:"landscape"});
+    const C = PDF_COLORS;
+    const pageW = 297, pageH = 210, marginX = 10, marginY = 10;
+    const contentW = pageW - marginX*2;
+    let y = marginY;
+
+    const hexRgb = (arr)=> arr;
+    const model = anComputeDashboard(d);
+    const {R, cur, best, bestEff, hasCost, cur$, cheapest, ins, cats, nV, row, curCat} = model;
+    const unitW = model.unitW;
+    const productTitle = d.savedName || d.productName || "Current product";
+
+    function ensure(h){
+      if(y + h > pageH - 12){
+        doc.addPage();
+        y = marginY;
+        drawPageChrome(false);
+      }
+    }
+    function drawPageChrome(isFirst){
+      // thin top accent
+      doc.setFillColor(...C.teal);
+      doc.rect(0, 0, pageW, isFirst ? 18 : 8, "F");
+      if(isFirst){
+        doc.setTextColor(...C.white);
+        doc.setFont("helvetica","bold"); doc.setFontSize(13);
+        doc.text("NEXUS · Analytics Dashboard", marginX, 8);
+        doc.setFont("helvetica","normal"); doc.setFontSize(8);
+        doc.text("Glass packaging · units / container · weight optimisation  ·  Landscape report", marginX, 14);
+        doc.setFontSize(7.5);
+        doc.text(new Date().toLocaleString(), pageW - marginX, 8, {align:"right"});
+        y = 24;
+      } else {
+        doc.setTextColor(...C.white);
+        doc.setFont("helvetica","bold"); doc.setFontSize(8);
+        doc.text("NEXUS Analytics  ·  "+productTitle, marginX, 5.5);
+        y = 14;
+      }
+    }
+    function sectionBar(title, color){
+      ensure(10);
+      doc.setFillColor(...color);
+      doc.roundedRect(marginX, y, contentW, 7, 1.2, 1.2, "F");
+      doc.setTextColor(...C.white);
+      doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
+      doc.text(String(title).toUpperCase(), marginX+3, y+4.6);
+      y += 10;
+    }
+    /** Grouped bar chart drawn natively in jsPDF */
+    function drawGroupedBars(opts){
+      const {title, cats:labels, series, unit, chartH} = opts;
+      const h = chartH || 62;
+      ensure(h + 12);
+      const boxY = y;
+      doc.setFillColor(255,255,255);
+      doc.setDrawColor(228,228,228);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(marginX, boxY, contentW, h+8, 2, 2, "FD");
+      doc.setTextColor(...C.inkDark);
+      doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
+      doc.text(title, marginX+4, boxY+5.5);
+      if(unit){
+        doc.setFont("helvetica","normal"); doc.setFontSize(7);
+        doc.setTextColor(...C.ink);
+        doc.text(unit, pageW-marginX-4, boxY+5.5, {align:"right"});
+      }
+      const plotL = marginX+14, plotR = pageW-marginX-6, plotT = boxY+10, plotB = boxY+h+2;
+      const plotW = plotR - plotL, plotH = plotB - plotT;
+      const allVals = series.flatMap(s=>s.vals);
+      const mx = Math.max(1, ...allVals) * 1.08;
+      // grid
+      doc.setDrawColor(230,230,230); doc.setLineWidth(0.2);
+      for(let t=0;t<=4;t++){
+        const gy = plotB - plotH*t/4;
+        doc.line(plotL, gy, plotR, gy);
+        doc.setTextColor(140,140,140); doc.setFontSize(6);
+        const v = mx*t/4;
+        const label = v>=1000 ? anNum(Math.round(v)) : (v<10?v.toFixed(1):String(Math.round(v)));
+        doc.text(label, plotL-1.5, gy+1.5, {align:"right"});
+      }
+      const n = Math.max(1, labels.length);
+      const ns = Math.max(1, series.length);
+      const groupW = plotW / n;
+      const barW = Math.min(10, groupW * 0.7 / ns);
+      labels.forEach((lab,i)=>{
+        const cx = plotL + groupW*i + groupW/2;
+        series.forEach((s,j)=>{
+          const v = +s.vals[i]||0;
+          const bh = plotH * v / mx;
+          const bx = cx - (ns*barW)/2 + j*barW;
+          const by = plotB - bh;
+          doc.setFillColor(...s.color);
+          doc.roundedRect(bx, by, Math.max(0.8, barW-0.6), Math.max(0.3, bh), 0.4, 0.4, "F");
+        });
+        doc.setTextColor(...C.inkDark); doc.setFontSize(5.8);
+        const short = String(lab).length>14 ? String(lab).slice(0,13)+"…" : String(lab);
+        doc.text(short, cx, plotB+3.5, {align:"center"});
+      });
+      // legend
+      let lx = plotL;
+      series.forEach(s=>{
+        doc.setFillColor(...s.color);
+        doc.roundedRect(lx, boxY+h+2.5, 3.5, 2.5, 0.4, 0.4, "F");
+        doc.setTextColor(...C.inkDark); doc.setFontSize(6.2);
+        doc.text(s.name, lx+4.5, boxY+h+4.5);
+        lx += 8 + s.name.length*1.5;
+      });
+      y = boxY + h + 12;
+    }
+    function drawStackedBars(opts){
+      const {title, labels, segs, lineVal, lineLabel, chartH} = opts;
+      const h = chartH || 62;
+      ensure(h + 12);
+      const boxY = y;
+      doc.setFillColor(255,255,255);
+      doc.setDrawColor(228,228,228);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(marginX, boxY, contentW, h+8, 2, 2, "FD");
+      doc.setTextColor(...C.inkDark);
+      doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
+      doc.text(title, marginX+4, boxY+5.5);
+      const plotL = marginX+14, plotR = pageW-marginX-6, plotT = boxY+10, plotB = boxY+h+2;
+      const plotW = plotR - plotL, plotH = plotB - plotT;
+      const totals = labels.map((_,i)=> segs.reduce((a,s)=>a+(+s.vals[i]||0),0));
+      const mx = Math.max(1, lineVal||0, ...totals) * 1.08;
+      doc.setDrawColor(230,230,230); doc.setLineWidth(0.2);
+      for(let t=0;t<=4;t++){
+        const gy = plotB - plotH*t/4;
+        doc.line(plotL, gy, plotR, gy);
+        doc.setTextColor(140,140,140); doc.setFontSize(6);
+        doc.text((mx*t/4).toFixed(1), plotL-1.5, gy+1.5, {align:"right"});
+      }
+      if(lineVal!=null){
+        const ly = plotB - plotH*lineVal/mx;
+        doc.setDrawColor(...C.red); doc.setLineWidth(0.6);
+        doc.setLineDash([2,1.5],0);
+        doc.line(plotL, ly, plotR, ly);
+        doc.setLineDash([],0);
+        doc.setTextColor(...C.red); doc.setFontSize(6.2);
+        doc.text(lineLabel||("Allowance "+lineVal), plotR-1, ly-1.2, {align:"right"});
+      }
+      const n = Math.max(1, labels.length);
+      const groupW = plotW / n;
+      const barW = Math.min(14, groupW * 0.55);
+      labels.forEach((lab,i)=>{
+        const cx = plotL + groupW*i + groupW/2;
+        let acc = 0;
+        segs.forEach(s=>{
+          const v = +s.vals[i]||0;
+          const bh = plotH * v / mx;
+          const by = plotB - plotH*(acc+v)/mx;
+          acc += v;
+          if(bh>0.2){
+            doc.setFillColor(...s.color);
+            doc.rect(cx-barW/2, by, barW, bh, "F");
+          }
+        });
+        doc.setTextColor(...C.inkDark); doc.setFontSize(5.4);
+        const short = String(lab).length>12 ? String(lab).slice(0,11)+"…" : String(lab);
+        doc.text(short, cx, plotB+3.5, {align:"center"});
+      });
+      let lx = plotL;
+      segs.forEach(s=>{
+        doc.setFillColor(...s.color);
+        doc.roundedRect(lx, boxY+h+2.5, 3.5, 2.5, 0.4, 0.4, "F");
+        doc.setTextColor(...C.inkDark); doc.setFontSize(6.2);
+        doc.text(s.name, lx+4.5, boxY+h+4.5);
+        lx += 10 + s.name.length*1.45;
+      });
+      y = boxY + h + 12;
+    }
+
+    drawPageChrome(true);
+
+    // Product context strip
+    doc.setFillColor(246,247,247);
+    doc.roundedRect(marginX, y, contentW, 12, 1.5, 1.5, "F");
+    doc.setTextColor(...C.inkDark);
+    doc.setFont("helvetica","bold"); doc.setFontSize(9.5);
+    doc.text(productTitle, marginX+3.5, y+4.8);
+    doc.setFont("helvetica","normal"); doc.setFontSize(7.2);
+    doc.setTextColor(...C.ink);
+    const ctxBits = [
+      d.customer ? "Customer: "+d.customer : null,
+      d.containerType ? "Container: "+d.containerType+(d.containerDestination?" ("+d.containerDestination+")":"") : null,
+      "Unit wt: "+fmtTol(unitW, d.unitWeightTol)+" gm",
+      "Unit ht: "+fmtTol(d.unitHeight, d.unitHeightTol)+" mm",
+      d.palletType ? "Pallet: "+d.palletType : null,
+      d.packagingType ? "Packaging: "+d.packagingType : null
+    ].filter(Boolean).join("   ·   ");
+    doc.text(ctxBits, marginX+3.5, y+9.5);
+    y += 16;
+
+    // KPI cards — 3 columns landscape
+    const kpis = [];
+    kpis.push({label:"Best units / container", value: best?anNum(best.unitsPerContainer):"—", unit: best?`${best.pallet} · ${best.variant} · ${best.layers} layers`:"—", color:C.teal});
+    kpis.push({label:"Current configuration", value: cur?anNum(cur.unitsPerContainer):"—", unit: cur?`${cur.pallet} · ${cur.variant}${best&&best.unitsPerContainer>0?` · ${anPct(cur.unitsPerContainer/best.unitsPerContainer)} of best`:""}`:"—", color:C.magenta});
+    kpis.push({label:"Best payload efficiency", value: bestEff?anPct(bestEff.payloadEff):"—", unit: bestEff?`${bestEff.pallet} · ${bestEff.variant}`:"—", color:C.lime});
+    if(best){
+      const extra = unitW>0 && best.spareTon>0 ? Math.floor(best.spareTon*1e6/unitW) : 0;
+      kpis.push({label:"Weight headroom (best)", value: best.spareTon.toFixed(2)+" Ton", unit: `${anPct(best.weightUtil)} of ${best.allowance} T · ${best.limit}${extra?` · ≈${anNum(extra)} u by wt`:""}`, color:C.gold});
+    }
+    if(hasCost && cheapest) kpis.push({label:"Lowest cost / 1,000 u", value: bomMoney(cheapest.cost.per1000)+" "+cur$, unit: `${cheapest.pallet} · ${cheapest.variant}`, color:C.lime});
+    if(hasCost && cur && cur.cost && cur.cost.per1000>0) kpis.push({label:"Current cost / 1,000 u", value: bomMoney(cur.cost.per1000)+" "+cur$, unit: `${bomMoney(cur.cost.perPallet)} ${cur$}/pallet`, color:C.magenta});
+
+    sectionBar("Key performance indicators", C.teal);
+    const cols = 3, gap = 3, cardH = 18;
+    const cardW = (contentW - gap*(cols-1)) / cols;
+    kpis.forEach((k,i)=>{
+      const col = i % cols;
+      if(col === 0 && i > 0) y += cardH + gap;
+      ensure(cardH + 2);
+      const x = marginX + col * (cardW + gap);
+      doc.setFillColor(255,255,255);
+      doc.setDrawColor(228,228,228); doc.setLineWidth(0.3);
+      doc.roundedRect(x, y, cardW, cardH, 1.5, 1.5, "FD");
+      doc.setFillColor(...k.color); doc.rect(x, y, cardW, 1.4, "F");
+      doc.setTextColor(...C.ink); doc.setFont("helvetica","bold"); doc.setFontSize(6.2);
+      doc.text(String(k.label).toUpperCase(), x+2.5, y+5.5);
+      doc.setTextColor(...k.color); doc.setFontSize(11);
+      doc.text(String(k.value), x+2.5, y+11);
+      doc.setTextColor(...C.ink); doc.setFont("helvetica","normal"); doc.setFontSize(6);
+      const ul = doc.splitTextToSize(String(k.unit||""), cardW-5);
+      doc.text(ul.slice(0,1), x+2.5, y+15);
+    });
+    y += cardH + 6;
+
+    // Charts row — units/container + payload efficiency side by side conceptually (stacked vertically for clarity)
+    const seriesColors = [C.teal, C.magenta, C.gold, C.lime];
+    const unitSeries = R.variants.map((v,j)=>({
+      name: v.label,
+      color: seriesColors[j % seriesColors.length],
+      vals: cats.map((_,ci)=> row(ci,j).unitsPerContainer)
+    }));
+    drawGroupedBars({
+      title: "Units per container — all pallet types",
+      cats: cats.map((c,i)=> c+(i===curCat?" ★":"")),
+      series: unitSeries,
+      unit: "units / container",
+      chartH: 58
+    });
+
+    const effSeries = R.variants.map((v,j)=>({
+      name: v.label,
+      color: seriesColors[j % seriesColors.length],
+      vals: cats.map((_,ci)=> row(ci,j).payloadEff * 100)
+    }));
+    drawGroupedBars({
+      title: "Payload efficiency — product weight ÷ gross container weight",
+      cats: cats.map((c,i)=> c+(i===curCat?" ★":"")),
+      series: effSeries,
+      unit: "%",
+      chartH: 52
+    });
+
+    // Weight breakdown stacked
+    const stackLabels = [], prod=[], over=[], spare=[];
+    R.rows.forEach(r=>{
+      stackLabels.push(r.pallet+" · "+r.variant.replace(/Pallet/g,"").trim());
+      prod.push(r.netTon); over.push(r.overheadTon); spare.push(Math.max(0, r.spareTon));
+    });
+    const alw = R.rows.length ? R.rows[0].allowance : 0;
+    drawStackedBars({
+      title: "Container weight breakdown vs allowance",
+      labels: stackLabels,
+      segs: [
+        {name:"Product (net)", color:C.teal, vals:prod},
+        {name:"Pallets & packaging", color:C.gold, vals:over},
+        {name:"Unused capacity", color:[184,190,196], vals:spare}
+      ],
+      lineVal: alw,
+      lineLabel: "Allowance "+alw+" T",
+      chartH: 58
+    });
+
+    if(hasCost){
+      const costSeries = R.variants.map((v,j)=>({
+        name: v.label,
+        color: seriesColors[j % seriesColors.length],
+        vals: cats.map((_,ci)=> row(ci,j).cost.per1000)
+      }));
+      drawGroupedBars({
+        title: "Packaging cost per 1,000 units",
+        cats: cats.map((c,i)=> c+(i===curCat?" ★":"")),
+        series: costSeries,
+        unit: cur$+" / 1,000 units",
+        chartH: 52
+      });
+    }
+
+    // Key insights
+    sectionBar("Key insights", C.lime);
+    ins.forEach((raw, idx)=>{
+      const text = anStripHtml(raw);
+      doc.setFont("helvetica","normal"); doc.setFontSize(7.6);
+      const lines = doc.splitTextToSize((idx+1)+".  "+text, contentW-6);
+      const blockH = lines.length * 3.5 + 1.8;
+      ensure(blockH + 1);
+      if(idx % 2 === 0){
+        doc.setFillColor(243,249,226);
+        doc.roundedRect(marginX, y-0.5, contentW, blockH, 1, 1, "F");
+      }
+      doc.setTextColor(...C.inkDark);
+      doc.text(lines, marginX+3, y+2.5);
+      y += blockH;
+    });
+    y += 3;
+
+    // Comparison table
+    sectionBar("Configuration comparison", C.magenta);
+    const headers = hasCost
+      ? ["Pallet","Packaging","U/Layer","Layers","U/Cont.","Gross T","Payload","Limit","Cost/1k"]
+      : ["Pallet","Packaging","U/Layer","Layers","U/Cont.","Gross T","Payload","Limit"];
+    const widths = hasCost
+      ? [48, 36, 20, 16, 24, 20, 20, 28, 24]
+      : [52, 40, 22, 18, 28, 22, 22, 32];
+    const drawRow = (cells, isHeader, isBest, isCur)=>{
+      const rowH = 5.6;
+      ensure(rowH + 0.5);
+      let x = marginX;
+      if(isHeader){
+        doc.setFillColor(58,58,58); doc.rect(marginX, y, contentW, rowH, "F");
+        doc.setTextColor(...C.white); doc.setFont("helvetica","bold"); doc.setFontSize(6.4);
+      } else if(isBest){
+        doc.setFillColor(243,249,226); doc.rect(marginX, y, contentW, rowH, "F");
+        doc.setTextColor(...C.inkDark); doc.setFont("helvetica","bold"); doc.setFontSize(6.2);
+      } else if(isCur){
+        doc.setFillColor(252,233,241); doc.rect(marginX, y, contentW, rowH, "F");
+        doc.setTextColor(...C.inkDark); doc.setFont("helvetica","bold"); doc.setFontSize(6.2);
+      } else {
+        doc.setTextColor(...C.inkDark); doc.setFont("helvetica","normal"); doc.setFontSize(6.2);
+      }
+      cells.forEach((cell,i)=>{
+        const w = widths[i];
+        const t = doc.splitTextToSize(String(cell), w-1.2)[0] || "";
+        doc.text(t, x+0.8, y+3.8);
+        x += w;
+      });
+      doc.setDrawColor(228,228,228); doc.setLineWidth(0.15);
+      doc.line(marginX, y+rowH, marginX+contentW, y+rowH);
+      y += rowH;
+    };
+    drawRow(headers, true, false, false);
+    R.rows.forEach(r=>{
+      const isBest = best && r===best;
+      const isCur = cur && r===cur;
+      const cells = [
+        r.pallet+(isCur?" ★":""), r.variant, anNum(r.upl), String(r.layers),
+        anNum(r.unitsPerContainer), r.gross.toFixed(2), anPct(r.payloadEff), r.limit
+      ];
+      if(hasCost) cells.push(bomMoney(r.cost.per1000));
+      drawRow(cells, false, isBest, isCur);
+    });
+    y += 3;
+    doc.setFont("helvetica","normal"); doc.setFontSize(6.4);
+    doc.setTextColor(...C.ink);
+    doc.text("Green = best units/container   ·   Pink ★ = current configuration", marginX, y);
+
+    // Footers
+    const pageCount = doc.internal.getNumberOfPages();
+    for(let p=1;p<=pageCount;p++){
+      doc.setPage(p);
+      doc.setFont("helvetica","normal"); doc.setFontSize(6.5);
+      doc.setTextColor(150,150,150);
+      doc.text("NEXUS Analytics · glass packaging optimisation", marginX, pageH-5);
+      doc.text(`Page ${p} / ${pageCount}`, pageW-marginX, pageH-5, {align:"right"});
+    }
+
+    const safeName = String(productTitle).replace(/[^\w\-]+/g,"_").slice(0,40) || "product";
+    doc.save(`NEXUS_Analytics_${safeName}.pdf`);
+    anSetStatus("Analytics PDF dashboard (landscape) downloaded ✓");
+  }catch(err){
+    console.error(err);
+    anSetStatus("PDF export failed: "+(err.message||err), true);
+  }
+}
+
 if($("anProductSelect")){
   anRefreshSelect();
   $("anProductSelect").addEventListener("change", anRender);
   $("anRefreshBtn").addEventListener("click", ()=>{ anRefreshSelect(); anRender(); });
+  if($("anExportPdfBtn")) $("anExportPdfBtn").addEventListener("click", exportAnalyticsToPdf);
   document.querySelector('.tab-btn[data-tab="analytics"]').addEventListener("click", ()=>{ anRefreshSelect(); anRender(); });
 }
 
@@ -8901,7 +9489,7 @@ $("exportPdf").addEventListener("click", exportToPdf);
   document.body.classList.add("app-ready");
   if(!el) return;
   const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const minMs = reduce ? 500 : 2900;
+  const minMs = reduce ? 500 : 4200;
   const t0 = window.__splashT0 || performance.now();
   let done = false;
   function finish(){
