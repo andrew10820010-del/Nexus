@@ -633,18 +633,131 @@
     body.app-enter *,body.app-ready .tab-panel.active,.tab-panel.active,.tab-panel.tab-panel-out{animation:none !important;}
     .tab-panel{opacity:1;transform:none;}
   }
+  .an-case-btn.active{background:var(--teal);color:#fff;border:1.5px solid var(--teal);}
+  /* ===== Glass-forming intro: molten gob -> blow mould -> crisp glass ===== */
+  #splash{background:radial-gradient(900px 560px at 50% 45%,#232a33 0%,#12161c 70%,#0b0e12 100%);}
+  #splash .sp-glass{display:none;}
+  #splash .sp-blob{opacity:.14;}
+  #splash::after{opacity:.25;}
+  .sp-forge{position:absolute;left:50%;top:50%;width:min(300px,62vw);height:auto;overflow:visible;z-index:1;transform:translate(-50%,-50%);animation:forgeZoom 1.5s .05s cubic-bezier(.5,0,.3,1) both,forgeOut .5s 2.95s ease both;scale:1.3;}
+  @keyframes forgeZoom{from{scale:1.35}to{scale:1}}
+  .fg-moon{transform-box:view-box;animation:fgMoonSpin linear infinite;}
+  @keyframes fgMoonSpin{to{transform:rotate(360deg)}}
+  @keyframes forgeOut{to{opacity:0;transform:translate(-50%,-50%) scale(1.12);filter:blur(6px);}}
+  .sp-forge *{transform-box:fill-box;}
+  .fg-furn{transform-origin:50% 50%;animation:fgFurn 1.3s ease both;}
+  @keyframes fgFurn{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+  .fg-o{transform-box:view-box;transform-origin:150px 200px;opacity:0;animation:fgSwirl 1.2s .05s cubic-bezier(.55,0,.75,.4) both;}
+  .fg-o2{animation-duration:1.1s;animation-delay:.12s;}
+  .fg-o3{animation-duration:1.05s;animation-delay:.16s;}
+  .fg-o4{animation-duration:1s;animation-delay:.2s;}
+  .fg-sun{transform-box:fill-box;transform-origin:50% 50%;opacity:0;animation:fgSun 1.4s ease both;}
+  @keyframes fgSun{0%{opacity:0;transform:scale(.3)}15%{opacity:1;transform:scale(1)}65%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.8)}}
+  @keyframes fgSwirl{0%{transform:rotate(0) scale(1.25);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:rotate(var(--rot)) scale(.03);opacity:0}}
+  .fg-labels text{opacity:0;animation:fgLabel 1.3s ease both;}
+  .fg-labels text:nth-child(2){animation-delay:.1s}.fg-labels text:nth-child(3){animation-delay:.2s}
+  @keyframes fgLabel{0%{opacity:0;transform:translateY(4px)}20%,70%{opacity:1;transform:none}100%{opacity:0}}
+  .fg-gob{transform-origin:50% 50%;opacity:0;animation:fgForm 1.45s .1s ease-out both;}
+  @keyframes fgForm{0%,62%{transform:scale(.1);opacity:0}80%{transform:scale(1);opacity:1}100%{transform:scale(1.7);opacity:0}}
+  .fg-sparks circle{opacity:0;animation:fgSpark .65s 1.1s ease-out both;}
+  @keyframes fgSpark{0%{opacity:0;transform:translate(0,0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy))}}
+  .fg-ml{animation:fgML 2.9s cubic-bezier(.7,0,.3,1) both;}
+  .fg-mr{animation:fgMR 2.9s cubic-bezier(.7,0,.3,1) both;}
+  @keyframes fgML{0%,30%{transform:translateX(-150px)}40%,66%{transform:translateX(0)}82%,100%{transform:translateX(-150px)}}
+  @keyframes fgMR{0%,30%{transform:translateX(150px)}40%,66%{transform:translateX(0)}82%,100%{transform:translateX(150px)}}
+  .fg-hot{transform-origin:50% 35%;animation:fgBlow 2.9s ease both;}
+  @keyframes fgBlow{0%,38%{transform:scale(.05);opacity:0}40%{transform:scale(.18);opacity:1}62%,66%{transform:scale(1);opacity:1}88%,100%{transform:scale(1);opacity:0}}
+  .fg-glass{animation:fgGlassIn 2.9s ease both;}
+  @keyframes fgGlassIn{0%,64%{opacity:0}86%,100%{opacity:1}}
+  .fg-sweep{animation:fgSweep .75s 2.3s ease-in-out both;}
+  @keyframes fgSweep{from{transform:skewX(-18deg) translateX(0)}to{transform:skewX(-18deg) translateX(300px)}}
+  .fg-halo{transform-origin:50% 50%;animation:fgHalo 2.9s ease both;}
+  @keyframes fgHalo{0%,38%{opacity:0}50%{opacity:.9}84%{opacity:.25}100%{opacity:0}}
+  .fg-haloc{animation:fgHaloC 2.9s ease both;opacity:0;}
+  @keyframes fgHaloC{0%,70%{opacity:0}92%,100%{opacity:.7}}
+  .fg-sp{transform-origin:50% 50%;opacity:0;animation:fgStar .55s ease-out both;}
+  @keyframes fgStar{0%{opacity:0;transform:translate(var(--x,0),var(--y,0)) scale(0)}40%{opacity:1}100%{opacity:0}}
+  /* centre content waits for the forge, then reveals */
+  #splash .sp-center{opacity:0;animation:spFade .45s 2.9s ease both;}
+  #splash .sp-ring{animation:spSpin 4.5s linear infinite, spFade .7s 2.95s ease both;}
+  #splash .sp-card{animation:spPop 1s 2.9s cubic-bezier(.2,1.2,.3,1) both;}
+  #splash .sp-logo{animation:spPop 1.05s 3.05s cubic-bezier(.2,1.2,.3,1) both;}
+  #splash .sp-title span:nth-child(1){animation-delay:3.5s;color:#D71672;}
+  #splash .sp-title span:nth-child(2){animation-delay:3.65s;color:#FABB15;}
+  #splash .sp-title span:nth-child(3){animation-delay:3.8s;color:#B9D532;}
+  #splash .sp-title span:nth-child(4){animation-delay:3.95s;color:#4FC6CB;}
+  #splash .sp-title span:nth-child(5){animation-delay:4.1s;color:#e6eaf0;}
+  #splash .sp-sub{color:#9aa3b0;animation:spSubIn 1s 4.2s ease forwards;}
+  #splash .sp-bar{background:rgba(255,255,255,.12);animation:spFade .5s 3.2s ease forwards;}
+  #splash .sp-bar span{animation:spBar 2.4s 3.2s cubic-bezier(.4,0,.2,1) forwards;}
+  #splash .sp-skip{color:#9aa3b0;}
+  #splash .sp-skip:hover{background:rgba(255,255,255,.08);color:#fff;}
 </style>
 </head>
 <body>
 <div id="splash" role="presentation">
   <div class="sp-blob sp-b1"></div><div class="sp-blob sp-b2"></div><div class="sp-blob sp-b3"></div><div class="sp-blob sp-b4"></div>
-  <svg class="sp-glass" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <g class="sp-item" style="animation-delay:-1s" transform="translate(110 150) rotate(-12) scale(2.6)"><path pathLength="1" stroke="#4FC6CB" style="animation-delay:.2s" d="M-22 60V-10Q-22 -24 -10 -30V-70H10V-30Q22 -24 22 -10V60Q22 68 14 68H-14Q-22 68 -22 60Z"/><path pathLength="1" stroke="#4FC6CB" style="animation-delay:.9s" d="M-12 -4V50"/></g>
-    <g class="sp-item" style="animation-delay:-2.5s" transform="translate(880 130) rotate(10) scale(2.4)"><path pathLength="1" stroke="#D71672" style="animation-delay:.4s" d="M-24 -50H24Q26 -10 0 4Q-26 -10 -24 -50Z"/><path pathLength="1" stroke="#D71672" style="animation-delay:1s" d="M0 4V44M-16 48H16"/></g>
-    <g class="sp-item" style="animation-delay:-.5s" transform="translate(170 470) rotate(8) scale(2.3)"><path pathLength="1" stroke="#B9D532" style="animation-delay:.3s" d="M-30 -52H30V-38H-30Z"/><path pathLength="1" stroke="#B9D532" style="animation-delay:.6s" d="M-26 -38H26Q34 -30 34 -16V44Q34 54 24 54H-24Q-34 54 -34 44V-16Q-34 -30 -26 -38Z"/></g>
-    <g class="sp-item" style="animation-delay:-3.5s" transform="translate(850 480) rotate(-8) scale(2.3)"><path pathLength="1" stroke="#FABB15" style="animation-delay:.5s" d="M-28 -50H28L22 50Q22 56 16 56H-16Q-22 56 -22 50Z"/><path pathLength="1" stroke="#FABB15" style="animation-delay:1.1s" d="M-16 -30L-12 36"/></g>
-    <g class="sp-item" style="animation-delay:-1.8s" transform="translate(500 70) scale(1.1)"><circle pathLength="1" cx="0" cy="0" r="44" stroke="#4FC6CB" style="animation-delay:.7s;opacity:.7"/><circle pathLength="1" cx="0" cy="0" r="30" stroke="#4FC6CB" style="animation-delay:1s;opacity:.7"/></g>
-    <g class="sp-item" style="animation-delay:-2.2s" transform="translate(520 545) scale(1)"><circle pathLength="1" cx="0" cy="0" r="40" stroke="#D71672" style="animation-delay:.8s;opacity:.6"/></g>
+  <svg class="sp-forge" viewBox="0 0 300 330" aria-hidden="true" shape-rendering="geometricPrecision">
+    <defs>
+      <radialGradient id="fgFurn" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFD36B" stop-opacity=".9"/><stop offset=".5" stop-color="#FF7A1A" stop-opacity=".35"/><stop offset="1" stop-color="#FF7A1A" stop-opacity="0"/></radialGradient>
+      <radialGradient id="fgGob" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#FFF6C8"/><stop offset=".45" stop-color="#FFB02E"/><stop offset="1" stop-color="#E8480C"/></radialGradient>
+      <linearGradient id="fgHot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1A8"/><stop offset=".4" stop-color="#FFA21F"/><stop offset="1" stop-color="#E03A08"/></linearGradient>
+      <linearGradient id="fgGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E7FBFC" stop-opacity=".85"/><stop offset=".5" stop-color="#4FC6CB" stop-opacity=".45"/><stop offset="1" stop-color="#1F7A7E" stop-opacity=".6"/></linearGradient>
+      <linearGradient id="fgSteel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#59626d"/><stop offset="1" stop-color="#262b32"/></linearGradient>
+      <radialGradient id="fgHalo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FF9A2E" stop-opacity=".75"/><stop offset="1" stop-color="#FF9A2E" stop-opacity="0"/></radialGradient>
+      <radialGradient id="fgHaloC" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#4FC6CB" stop-opacity=".6"/><stop offset="1" stop-color="#4FC6CB" stop-opacity="0"/></radialGradient>
+      <radialGradient id="fgPSand" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFF1C2"/><stop offset=".55" stop-color="#E3B85F"/><stop offset="1" stop-color="#9C6A05"/></radialGradient>
+      <radialGradient id="fgPAsh" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#D9DEE3"/><stop offset="1" stop-color="#8F99A3"/></radialGradient>
+      <radialGradient id="fgPLime" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#E7F8F8"/><stop offset=".55" stop-color="#8FB8BA"/><stop offset="1" stop-color="#1F7A7E"/></radialGradient>
+      <path id="fgBottle" d="M138 100H162V150C162 165 200 175 200 200V280Q200 292 188 292H112Q100 292 100 280V200C100 175 138 165 138 150Z"/>
+      <clipPath id="fgBottleClip"><use href="#fgBottle"/></clipPath>
+      <clipPath id="fgClipL"><rect x="-200" y="0" width="350" height="330"/></clipPath>
+      <clipPath id="fgClipR"><rect x="150" y="0" width="350" height="330"/></clipPath>
+      <path id="fgMold" fill-rule="evenodd" d="M20 85H280V312H20ZM138 100H162V150C162 165 200 175 200 200V280Q200 292 188 292H112Q100 292 100 280V200C100 175 138 165 138 150Z"/>
+    </defs>
+    <ellipse class="fg-furn" cx="150" cy="10" rx="120" ry="60" fill="url(#fgFurn)"/>
+    <circle class="fg-halo" cx="150" cy="200" r="130" fill="url(#fgHalo)"/>
+    <circle class="fg-haloc" cx="150" cy="200" r="130" fill="url(#fgHaloC)"/>
+    <g class="fg-orbits">
+      <circle class="fg-sun" cx="150" cy="200" r="34" fill="url(#fgHalo)"/>
+      <circle class="fg-sun fg-sun2" cx="150" cy="200" r="10" fill="url(#fgGob)"/>
+      <g class="fg-o fg-o1" style="--rot:360deg"><circle cx="150" cy="200" r="112" fill="none" stroke="#E3C27A" stroke-opacity=".5" stroke-width="1"/>
+        <ellipse cx="235.8" cy="128.0" rx="17" ry="4.6" fill="none" stroke="#E3C27A" stroke-width="1.4" transform="rotate(-20 235.8 128.0)"/>
+        <circle cx="235.8" cy="128.0" r="10" fill="url(#fgPSand)"/>
+        <g class="fg-moon" style="transform-origin:235.8px 128.0px;animation-duration:0.9s;"><circle cx="252.8" cy="128.0" r="2.4" fill="#F4E3B0"/></g><g class="fg-moon" style="transform-origin:235.8px 128.0px;animation-duration:1.4s;animation-direction:reverse;"><circle cx="259.8" cy="128.0" r="1.8" fill="#fff"/></g></g>
+      <g class="fg-o fg-o2" style="--rot:540deg"><circle cx="150" cy="200" r="99" fill="none" stroke="#E3C27A" stroke-opacity=".5" stroke-width="1"/><circle cx="249.0" cy="200.0" r="1.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="75.2" cy="268.6" r="2.0" fill="#E3C27A" fill-opacity=".9"/><circle cx="159.1" cy="96.4" r="2.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="210.3" cy="278.5" r="1.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="50.0" cy="182.4" r="2.0" fill="#E3C27A" fill-opacity=".9"/><circle cx="237.7" cy="144.1" r="2.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="124.4" cy="295.6" r="1.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="103.1" cy="110.0" r="2.0" fill="#E3C27A" fill-opacity=".9"/><circle cx="247.7" cy="235.6" r="2.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="58.5" cy="237.9" r="1.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="192.9" cy="108.0" r="2.0" fill="#E3C27A" fill-opacity=".9"/><circle cx="181.3" cy="299.2" r="2.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="64.3" cy="150.5" r="1.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="249.1" cy="178.0" r="2.0" fill="#E3C27A" fill-opacity=".9"/><circle cx="90.3" cy="285.2" r="2.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="137.1" cy="101.8" r="1.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="227.8" cy="265.2" r="2.0" fill="#E3C27A" fill-opacity=".9"/><circle cx="46.1" cy="204.5" r="2.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="220.0" cy="130.0" r="1.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="145.6" cy="301.4" r="2.0" fill="#E3C27A" fill-opacity=".9"/><circle cx="83.2" cy="120.3" r="2.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="248.2" cy="212.9" r="1.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="66.9" cy="258.2" r="2.0" fill="#E3C27A" fill-opacity=".9"/><circle cx="172.5" cy="98.5" r="2.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="199.5" cy="285.7" r="1.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="53.2" cy="169.5" r="2.0" fill="#E3C27A" fill-opacity=".9"/><circle cx="244.3" cy="156.0" r="2.5" fill="#E3C27A" fill-opacity=".9"/><circle cx="112.1" cy="291.5" r="1.5" fill="#E3C27A" fill-opacity=".9"/></g>
+      <g class="fg-o fg-o3" style="--rot:720deg"><circle cx="150" cy="200" r="86" fill="none" stroke="#F4F6F8" stroke-opacity=".5" stroke-width="1"/>
+        <circle cx="75.5" cy="243.0" r="7" fill="url(#fgPAsh)"/>
+        <g class="fg-moon" style="transform-origin:75.5px 243.0px;animation-duration:0.8s;"><circle cx="86.5" cy="243.0" r="1.9" fill="#D9DEE3"/></g></g>
+      <g class="fg-o fg-o4" style="--rot:1000deg"><circle cx="150" cy="200" r="60" fill="none" stroke="#8FB8BA" stroke-opacity=".5" stroke-width="1"/>
+        <circle cx="180.0" cy="252.0" r="6.2" fill="url(#fgPLime)"/>
+        <g class="fg-moon" style="transform-origin:180.0px 252.0px;animation-duration:0.7s;animation-direction:reverse;"><circle cx="190.0" cy="252.0" r="1.7" fill="#E7F8F8"/></g></g>
+    </g>
+    <g class="fg-labels" font-family="Segoe UI,Arial" font-size="8.5" font-weight="700" text-anchor="middle">
+      <text x="150" y="16" fill="#E3C27A">● SiO₂ · silica sand (main)</text>
+      <text x="150" y="29" fill="#F4F6F8">● Na₂CO₃ · soda ash</text>
+      <text x="150" y="42" fill="#8FB8BA">● CaCO₃ · limestone</text>
+    </g>
+    <g class="fg-gobwrap"><ellipse class="fg-gob" cx="150" cy="200" rx="15" ry="15" fill="url(#fgGob)"/></g>
+    <g class="fg-sparks" fill="#FFC857">
+      <circle cx="150" cy="190" r="2" style="--dx:-70px;--dy:-60px"/><circle cx="150" cy="190" r="1.6" style="--dx:72px;--dy:-52px"/>
+      <circle cx="150" cy="190" r="2.2" style="--dx:-90px;--dy:20px"/><circle cx="150" cy="190" r="1.8" style="--dx:88px;--dy:34px"/>
+      <circle cx="150" cy="190" r="1.5" style="--dx:-40px;--dy:-100px"/><circle cx="150" cy="190" r="1.5" style="--dx:46px;--dy:-96px"/>
+    </g>
+    <use class="fg-hot" href="#fgBottle" fill="url(#fgHot)"/>
+    <g class="fg-glass">
+      <use href="#fgBottle" fill="url(#fgGlass)" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M112 205V275" stroke="#fff" stroke-opacity=".85" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M146 108V148" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <g clip-path="url(#fgBottleClip)"><rect class="fg-sweep" x="-70" y="80" width="26" height="240" fill="#fff" fill-opacity=".8" transform="skewX(-18)"/></g>
+    </g>
+    <g class="fg-ml"><g clip-path="url(#fgClipL)"><use href="#fgMold" fill="url(#fgSteel)" stroke="#9aa3ae" stroke-width="1"/><circle cx="42" cy="108" r="3" fill="#8a939e"/><circle cx="42" cy="290" r="3" fill="#8a939e"/></g></g>
+    <g class="fg-mr"><g clip-path="url(#fgClipR)"><use href="#fgMold" fill="url(#fgSteel)" stroke="#9aa3ae" stroke-width="1"/><circle cx="258" cy="108" r="3" fill="#8a939e"/><circle cx="258" cy="290" r="3" fill="#8a939e"/></g></g>
+    <g fill="#fff">
+      <g transform="translate(112 205)"><path class="fg-sp" style="animation-delay:2.55s" d="M0-10L2.4-2.4L10 0L2.4 2.4L0 10L-2.4 2.4L-10 0L-2.4-2.4Z"/></g>
+      <g transform="translate(190 232)"><path class="fg-sp" style="animation-delay:2.7s" d="M0-8L2-2L8 0L2 2L0 8L-2 2L-8 0L-2-2Z"/></g>
+      <g transform="translate(150 104)"><path class="fg-sp" style="animation-delay:2.85s" d="M0-7L1.8-1.8L7 0L1.8 1.8L0 7L-1.8 1.8L-7 0L-1.8-1.8Z"/></g>
+    </g>
   </svg>
   <div class="sp-center">
     <div class="sp-stage"><div class="sp-card"></div><div class="sp-ring"></div><img id="spLogo" class="sp-logo" alt="Kandil"></div>
@@ -1082,6 +1195,19 @@
         </label>
         <button type="button" class="btn btn-ghost btn-sm" id="anRefreshBtn">🔄 Refresh</button>
         <button type="button" class="btn btn-magenta btn-sm" id="anExportPdfBtn">⬇ Export PDF Dashboard</button>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <span class="hint" style="margin:0 6px 0 0;font-style:normal;font-weight:700;">Packaging case:</span>
+        <button type="button" class="btn btn-ghost btn-sm an-case-btn active" data-case="auto">◎ Follow product</button>
+        <button type="button" class="btn btn-ghost btn-sm an-case-btn" data-case="bulk">📦 Bulk — Full / Half Pallet</button>
+        <button type="button" class="btn btn-ghost btn-sm an-case-btn" data-case="box">🗃 Box on FP / HP</button>
+        <button type="button" class="btn btn-ghost btn-sm an-case-btn" data-case="shrink">Shrink on FP / HP</button>
+      </div>
+      <div id="anOverrides" class="field-grid four-col hidden" style="margin-top:10px;gap:10px;">
+        <label class="field an-ov-dia">Unit Max Diameter (mm)<input type="number" step="any" id="anOvDia" placeholder="from product"></label>
+        <label class="field an-ov-box">Box Length (mm)<input type="number" step="any" id="anOvBoxL" placeholder="from product / 300"></label>
+        <label class="field an-ov-box">Box Width (mm)<input type="number" step="any" id="anOvBoxW" placeholder="from product / 200"></label>
+        <label class="field an-ov-box">Units / Box<input type="number" step="any" id="anOvUpb" placeholder="from product / 12"></label>
       </div>
       <p class="hint" id="anSubtitle" style="margin:8px 0 0;"></p>
       <p class="status" id="anStatus" style="margin:6px 0 0;text-align:left;"></p>
@@ -7970,254 +8096,238 @@ async function exportManualToPdf(){
   pmSetStatus("Building your Packaging Manual PDF…");
   try{
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({unit:"mm", format:"a4"});
-    const P = makePdfBuilder(doc, pmDrawHeader);
-    P.y = pmDrawHeader(doc);
-
-    const val = (id)=> $(id) ? ($(id).value || "N/A") : "N/A";
     const C = PDF_COLORS;
+    const val = id => { const el = $(id); const v = el ? String(el.value||"").trim() : ""; return v || "N/A"; };
     const hasFrame = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
-
-    const __pmChunks = {
-      header: async ()=>{
-    await P.section(async ()=>{
-      P.banner(PMT("header","Customer Data"), C.gold);
-      P.field(PML("pmProductName","Product Name"), val("pmProductName"), C.gold, C.goldTint);
-      P.field(PML("pmProductCode","Product Code"), val("pmProductCode"), C.gold, C.goldTint);
-      P.field(PML("pmCustomer","Customer"), val("pmCustomer"), C.gold, C.goldTint);
-      P.field(PML("pmSKU","SKU"), val("pmSKU"), C.gold, C.goldTint);
-      P.field(PML("pmIssueDate","Issue Date"), val("pmIssueDate"), C.gold, C.goldTint);
-      P.field(PML("pmRevisedDate","Revised / Approved Date"), val("pmRevisedDate"), C.gold, C.goldTint);
-    });
-      },
-      layerSetup: async ()=>{
-    // Fields + layout diagram kept in ONE section so they never split across pages.
-    const packingEnabled = $("cpEnabled") && $("cpEnabled").checked;
-    let layerPng = null, layerDims = null;
-    if(packingEnabled && $("cpSvgWrap").innerHTML.trim()){
-      layerPng = await svgMarkupToPngDataUrl($("cpSvgWrap").innerHTML, 1200);
-    } else if(packingPhotoDataUrl){
-      layerDims = await getImageDataUrlDimensions(packingPhotoDataUrl);
-    }
-    await P.section(async ()=>{
-      P.banner(PMT("layerSetup","1. Pallet Layer Setup"), C.teal);
-      P.field(PML("pmPalletSize","Pallet Size"), val("pmPalletSize"), C.teal, C.tealTint);
-      P.field(PML("pmProductDimension","Product Dimension"), val("pmProductDimension"), C.teal, C.tealTint);
-      P.field(PML("pmUsableArea","Usable Area"), val("pmUsableArea"), C.teal, C.tealTint);
-      P.field(PML("pmLayout","Layout"), val("pmLayout"), C.teal, C.tealTint);
-      P.field(PML("pmEdgeClearance","Edge Clearance"), val("pmEdgeClearance"), C.teal, C.tealTint);
-      P.field(PML("pmQtyPerLayer","Quantity per Layer"), val("pmQtyPerLayer"), C.teal, C.tealTint);
-      if(pkgIsBox(strFromField("packagingType"))){ const _L = pmPackLabels(strFromField("packagingType"));
-        P.field(PML("pmUnitsPerPack",_L.units), val("pmUnitsPerPack"), C.teal, C.tealTint);
-        P.field(PML("pmPacksPerLayer",_L.per), val("pmPacksPerLayer"), C.teal, C.tealTint); }
-      if(layerPng){
-        const maxW = Math.min(P.contentW * 0.92, 165), maxH = 145;
-        let w = maxW, h = w * (layerPng.height/layerPng.width);
-        if(h > maxH){ h = maxH; w = h * (layerPng.width/layerPng.height); }
-        P.spacer(2);
-        P.image(layerPng.dataUrl, w, h);
-        P.spacer(2);
-      } else if(layerDims){
-        const maxW = Math.min(P.contentW * 0.92, 165), maxH = 145;
-        let w = maxW, h = w * (layerDims.height/layerDims.width);
-        if(h > maxH){ h = maxH; w = h * (layerDims.width/layerDims.height); }
-        P.spacer(2);
-        P.image(layerDims.dataUrl, w, h);
-        P.spacer(2);
-      }
-    });
-      },
-      palletSetup: async ()=>{
-    await P.section(async ()=>{
-      P.banner(PMT("palletSetup","2. Pallet Setup"), C.magenta);
-      P.field(PML("pmPalletTypeName","Pallet Type"), val("pmPalletTypeName"), C.magenta, C.magentaTint);
-      P.field(PML("pmUnitsLayer","Units / Layer"), val("pmUnitsLayer"), C.magenta, C.magentaTint);
-      P.field(PML("pmLayerPallet","Layer / Pallet"), val("pmLayerPallet"), C.magenta, C.magentaTint);
-      P.field(PML("pmUnitsPallet","Units / Pallet"), val("pmUnitsPallet"), C.magenta, C.magentaTint);
-      P.field(PML("pmPalletHeight","Pallet Height (mm)"), val("pmPalletHeight"), C.magenta, C.magentaTint);
-      P.field(PML("pmSealing","Plastic Hood (shrink)"), val("pmSealing"), C.magenta, C.magentaTint);
-      P.field(PML("pmSeparatorsType","Pallet Separators Type"), val("pmSeparatorsType"), C.magenta, C.magentaTint);
-      P.field(PML("pmSeparatorsSizeQty","Pallet Separators Size / Qty"), val("pmSeparatorsSizeQty"), C.magenta, C.magentaTint);
-      P.field(PML("pmPalletCover","Pallet Cover"), val("pmPalletCover"), C.magenta, C.magentaTint);
-      P.field(PML("pmFrame","Frame"), hasFrame ? val("pmFrame") : "N/A — Top Frame Wooden = No", C.magenta, C.magentaTint);
-      P.field(PML("pmStrapM","Strap (m)"), val("pmStrapM"), C.magenta, C.magentaTint);
-      P.field(PML("pmLabelColor","Pallet Label Color"), val("pmLabelColor"), C.magenta, C.magentaTint);
-      P.field(PML("pmLabelDims","Pallet Label Dimensions"), val("pmLabelDims"), C.magenta, C.magentaTint);
-      P.field(PML("pmCSR","Customer Special Request (CSR)"), val("pmCSR"), C.magenta, C.magentaTint);
-    });
-      },
-      loading: async ()=>{
-    // 3. Loading Data — compact two-fields-per-row layout.
-    await P.section(async ()=>{
-      P.banner(PMT("loading","3. Loading Data / Packaging Modifications"), C.lime);
-      P.fieldPair(PML("pmContType","Container Type"), val("pmContType"), C.lime, C.limeTint, PML("pmPalletsPerCont","No. Pallets / Container / Unit"), val("pmPalletsPerCont"), C.lime, C.limeTint);
-      P.fieldPair(PML("pmPalletNetWeight","Pallet Net Weight"), val("pmPalletNetWeight"), C.lime, C.limeTint, PML("pmPalletGrossWeight","Pallet Gross Weight"), val("pmPalletGrossWeight"), C.lime, C.limeTint);
-      P.fieldPair(PML("pmUnitsPerCont","No. of Units / Container / Unit"), val("pmUnitsPerCont"), C.lime, C.limeTint, PML("pmContNetWeight","Container Net Weight / Unit"), val("pmContNetWeight"), C.lime, C.limeTint);
-      P.fieldPair(PML("pmContGrossWeight","Container Gross Weight / Unit"), val("pmContGrossWeight"), C.lime, C.limeTint, PML("pmCushions","No. of Cushions"), val("pmCushions"), C.lime, C.limeTint);
-    });
-      },
-      product: async ()=>{
-    // 4. Product Data — compact two-fields-per-row layout, photo kept with it.
-    await P.section(async ()=>{
-      P.banner(PMT("product","4. Product Data / SKU Guidelines"), C.gold);
-      P.fieldPair(PML("pmBrimful","Brimful Capacity (ml)"), val("pmBrimful"), C.gold, C.goldTint, PML("pmWeight","Weight"), val("pmWeight"), C.gold, C.goldTint);
-      P.fieldPair(PML("pmHeight","Height"), val("pmHeight"), C.gold, C.goldTint, PML("pmDiameter","Diameter"), val("pmDiameter"), C.gold, C.goldTint);
-      P.fieldPair(PML("pmColour","Colour"), val("pmColour"), C.gold, C.goldTint, PML("pmFinish","Finish"), val("pmFinish"), C.gold, C.goldTint);
-      P.fieldPair(PML("pmLabelling","Labelling"), val("pmLabelling"), C.gold, C.goldTint, PML("pmPrinting","Printing"), val("pmPrinting"), C.gold, C.goldTint);
-      P.field(PML("pmTDRef","TD Reference / Date"), val("pmTDRef"), C.gold, C.goldTint);
-      const pmProductImage = pmProduct2DDataUrl || productPhotoDataUrl;
-      if(pmProductImage){
-        const dims = await getImageDataUrlDimensions(pmProductImage);
-        if(dims){
-          const maxW = 100, maxH = 100;
-          let w = maxW, h = w * (dims.height/dims.width);
-          if(h > maxH){ h = maxH; w = h * (dims.width/dims.height); }
-          P.image(dims.dataUrl, w, h);
-        }
-      }
-    });
-      },
-      process: async ()=>{
-    await P.section(async ()=>{
-      P.banner(PMT("process","5. Product Production Process / Codes"), C.teal);
-      // One field per row (full width) — matches the preferred Manual layout
-      P.field(PML("pmOnlineProcess","Online Process / Color"), val("pmOnlineProcess"), C.teal, C.tealTint);
-      P.field(PML("pmSprayingProcess","Spraying Process"), val("pmSprayingProcess"), C.teal, C.tealTint);
-      P.field(PML("pmPrintedProcess","Printed Process"), val("pmPrintedProcess"), C.teal, C.tealTint);
-      P.field(PML("pmOfflinePacking","Offline Packing"), val("pmOfflinePacking"), C.teal, C.tealTint);
-    });
-      },
-      material: async ()=>{
-    await P.section(async ()=>{
-      P.banner(PMT("material","6. Packaging Material Specification — Wooden Pallet"), C.magenta);
-      P.field(PML("pmWoodPalletName","Pallet Name"), val("pmWoodPalletName"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletType","Pallet Type"), val("pmWoodPalletType"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletCode","Pallet Code"), val("pmWoodPalletCode"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletSize","Pallet Size"), val("pmWoodPalletSize"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletMaterial","Pallet Material"), val("pmWoodPalletMaterial"), C.magenta, C.magentaTint);
-      P.field(PML("pmWoodPalletRefDoc","Reference Document"), val("pmWoodPalletRefDoc"), C.magenta, C.magentaTint);
-    });
-      },
-      deck: async ()=>{
-    const deckRows = gatherPmRows(pmDeckBoardsBody, ["item","desc","qty","dims","tol"]);
-    // Pre-load pallet photo so the section can measure height including the image.
-    let palletDims = null;
-    if(PM_PHOTOS.pmPallet){
-      palletDims = await getImageDataUrlDimensions(PM_PHOTOS.pmPallet);
-    }
-    // Table + photo kept together as one unsplit block.
-    if(deckRows.length || palletDims){
-      await P.section(async ()=>{
-        if(deckRows.length){
-          P.spacer(2);
-          P.banner(PMT("deck","Pallet Design & Dimensions — Deck Boards / Blocks"), C.lime);
-          P.table(
-            ["Item","Description","Qty","Dimensions (mm)","Tolerance"],
-            [0.10, 0.34, 0.10, 0.28, 0.18],
-            deckRows.map(r=>[r.item,r.desc,r.qty,r.dims,r.tol]),
-            C.lime
-          );
-        }
-        if(palletDims){
-          const maxW = P.contentW, maxH = 150;
-          let w = maxW, h = w * (palletDims.height/palletDims.width);
-          if(h > maxH){ h = maxH; w = h * (palletDims.width/palletDims.height); }
-          P.spacer(2);
-          P.image(palletDims.dataUrl, w, h);
-        }
-      });
-    }
-
-    // Compliance is its own section — always kept intact on one page when it fits.
-    await P.section(async ()=>{
-      P.banner("Compliance & Quality Requirements", C.ink);
-      P.paragraph($("pmComplianceText").value || "");
-    });
-      },
-      frame: async ()=>{
-    // Wooden Frame section — skipped entirely when Top Frame Wooden = No on
-    // the Spec Sheet, so the manual never shows frame specs for a product
-    // that isn't actually built with one.
-    if(hasFrame){
-      // Pre-load assets so one measured section can include fields + photo + table.
-      let imgW = 0, imgH = 0, imgData = null;
-      if(PM_PHOTOS.pmFrame){
-        const dims = await getImageDataUrlDimensions(PM_PHOTOS.pmFrame);
-        if(dims){
-          imgW = 48; imgH = imgW * (dims.height/dims.width);
-          if(imgH > 52){ imgH = 52; imgW = imgH * (dims.width/dims.height); }
-          imgData = dims.dataUrl;
-        }
-      }
-      const frameRows = gatherPmRows(pmFrameDimsBody, ["std","len","w","treat"]);
-      await P.section(async ()=>{
-        P.banner(PMT("frame","Wooden Frame"), C.teal);
-        const gap = 8;
-        const fieldsW = imgData ? (P.contentW - imgW - gap) : P.contentW;
-        const fieldsX = P.marginX;
-        const startY = P.y;
-        const fOpts = {width: fieldsW, x: fieldsX};
-        P.field(PML("pmFrameTypeName","Frame Type"), val("pmFrameTypeName"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameShape","Shape"), val("pmFrameShape"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameEdges","Edges"), val("pmFrameEdges"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameMaterial","Material"), val("pmFrameMaterial"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameMemberWidth","Member Width"), val("pmFrameMemberWidth"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameMemberThickness","Member Thickness"), val("pmFrameMemberThickness"), C.teal, C.tealTint, null, fOpts);
-        P.field(PML("pmFrameMoisture","Moisture Content"), val("pmFrameMoisture"), C.teal, C.tealTint, null, fOpts);
-        if(imgData){
-          const imgX = fieldsX + fieldsW + gap;
-          P.image(imgData, imgW, imgH, {x: imgX, y: startY, noAdvance: true});
-          if(startY + imgH + 4 > P.y) P.y = startY + imgH + 4;
-        }
-        if(frameRows.length){
-          P.spacer(2);
-          P.table(
-            ["Reference Pallet Standard","Frame Length (mm)","Frame Width (mm)","Treatment Required"],
-            [0.34, 0.22, 0.22, 0.22],
-            frameRows.map(r=>[r.std,r.len,r.w,r.treat]),
-            C.teal
-          );
-        }
-      });
-    }
-      },
+    const boxMode = pkgIsBox(strFromField("packagingType"));
+    const PL = pmPackLabels(strFromField("packagingType"));
+    const loadImg = async u => {
+      if(!u) return null;
+      const dm = await getImageDataUrlDimensions(u);
+      return dm ? {dataUrl:dm.dataUrl, width:dm.width, height:dm.height} : null;
     };
-    // Sections are exported in the order arranged on the Packaging Manual tab.
-    window.__pmExporting = true;
-    try{
-      for(const key of pmSectionOrder()){
-        if(key.startsWith("c:")){
-          const sec = CUSTOM_PM_SECTIONS.find(s=>s.id===key.slice(2));
-          if(!sec || !sec.fields || !sec.fields.length) continue;
-          await P.section(async ()=>{
-            P.banner(sec.title || "Custom Section", C.magenta);
-            for(let i=0;i<sec.fields.length;i+=2){
-              const f1 = sec.fields[i], f2 = sec.fields[i+1];
-              const v1 = strFromField(f1.key);
-              if(f2){
-                const v2 = strFromField(f2.key);
-                P.fieldPair(f1.label, v1, C.magenta, C.magentaTint, f2.label, v2, C.magenta, C.magentaTint);
-              } else {
-                P.field(f1.label, v1, C.magenta, C.magentaTint);
-              }
-            }
-          });
-        } else if(__pmChunks[key]){
-          pmExportBeginChunk(key);
-          await __pmChunks[key]();
-          if(!(key==="frame" && !hasFrame)) await pmPdfLeftoverFields(P, key);
+
+    /* ---- images, loaded once ---- */
+    let layerImg = null;
+    if($("cpEnabled") && $("cpEnabled").checked && $("cpSvgWrap").innerHTML.trim())
+      layerImg = await svgMarkupToPngDataUrl($("cpSvgWrap").innerHTML, 1200);
+    else layerImg = await loadImg(packingPhotoDataUrl);
+    const prodImg = await loadImg(pmProduct2DDataUrl || productPhotoDataUrl);
+    const palletImg = await loadImg(PM_PHOTOS.pmPallet);
+    const frameImg = hasFrame ? await loadImg(PM_PHOTOS.pmFrame) : null;
+
+    /* ---- field definitions per section (honours the on-tab layout editor) ---- */
+    const DEFS = {
+      header: [["pmProductName","Product Name"],["pmProductCode","Product Code"],["pmCustomer","Customer"],["pmSKU","SKU"],["pmIssueDate","Issue Date"],["pmRevisedDate","Revised / Approved"]],
+      layerSetup: [["pmPalletSize","Pallet Size"],["pmProductDimension","Product Dimension"],["pmUsableArea","Usable Area"],["pmLayout","Layout"],["pmEdgeClearance","Edge Clearance"],["pmQtyPerLayer","Quantity per Layer"]]
+        .concat(boxMode ? [["pmUnitsPerPack",PL.units],["pmPacksPerLayer",PL.per]] : []),
+      palletSetup: [["pmPalletTypeName","Pallet Type"],["pmUnitsLayer","Units / Layer"],["pmLayerPallet","Layers / Pallet"],["pmUnitsPallet","Units / Pallet"],["pmPalletHeight","Pallet Height (mm)"],["pmSealing","Plastic Hood"],["pmSeparatorsType","Separators Type"],["pmSeparatorsSizeQty","Separators Size / Qty"],["pmPalletCover","Pallet Cover"],["pmFrame","Frame"],["pmStrapM","Strap (m)"],["pmLabelColor","Label Color"],["pmLabelDims","Label Dimensions"],["pmCSR","Customer Special Request"]],
+      loading: [["pmContType","Container Type"],["pmPalletsPerCont","Pallets / Container"],["pmPalletNetWeight","Pallet Net Wt"],["pmPalletGrossWeight","Pallet Gross Wt"],["pmUnitsPerCont","Units / Container"],["pmContNetWeight","Container Net Wt"],["pmContGrossWeight","Container Gross Wt"],["pmCushions","No. of Cushions"]],
+      product: [["pmBrimful","Brimful (ml)"],["pmWeight","Weight"],["pmHeight","Height"],["pmDiameter","Diameter"],["pmColour","Colour"],["pmFinish","Finish"],["pmLabelling","Labelling"],["pmPrinting","Printing"],["pmTDRef","TD Reference / Date"]],
+      process: [["pmOnlineProcess","Online Process / Color"],["pmSprayingProcess","Spraying Process"],["pmPrintedProcess","Printed Process"],["pmOfflinePacking","Offline Packing"]],
+      material: [["pmWoodPalletName","Pallet Name"],["pmWoodPalletType","Pallet Type"],["pmWoodPalletCode","Pallet Code"],["pmWoodPalletSize","Pallet Size"],["pmWoodPalletMaterial","Material"],["pmWoodPalletRefDoc","Reference Doc"]],
+      frame: [["pmFrameTypeName","Frame Type"],["pmFrameShape","Shape"],["pmFrameEdges","Edges"],["pmFrameMaterial","Material"],["pmFrameMemberWidth","Member Width"],["pmFrameMemberThickness","Member Thickness"],["pmFrameMoisture","Moisture Content"]]
+    };
+    const rowsFor = (slot, over) => {
+      const items = DEFS[slot].filter(([id]) => !PM_LAYOUT.hidden[id]).map(([id,l]) => ({
+        id, label: PM_LAYOUT.labels[id] || l, value: (over && over[id] != null) ? over[id] : val(id)
+      }));
+      pmSlotCustomFields(slot).forEach(f => items.push({id:f.key, label:f.label, value:val(f.key)}));
+      return pmSortById(slot, items);
+    };
+    const titleOf = slot => PM_LAYOUT.titles[slot] || PM_DEFAULT_TITLES[slot];
+
+    /* ---- blocks in the user's section order ---- */
+    const blocks = [];
+    for(const key of pmSectionOrder()){
+      if(key.startsWith("c:")){
+        const sec = CUSTOM_PM_SECTIONS.find(s => s.id === key.slice(2));
+        if(!sec || !(sec.fields||[]).length) continue;
+        blocks.push({w:"half", color:C.magenta, title:sec.title || "Custom Section", rows:sec.fields.map(f => ({label:f.label, value:val(f.key)})), cols:1});
+        continue;
+      }
+      switch(key){
+        case "header":
+          blocks.push({w:"full", color:C.gold, title:titleOf("header"), rows:rowsFor("header"), cols:3}); break;
+        case "layerSetup":
+          blocks.push({w:"full", color:C.teal, title:titleOf("layerSetup"), rows:rowsFor("layerSetup"), cols:1,
+            image: layerImg ? {img:layerImg, frac:0.5, maxH:56} : null}); break;
+        case "palletSetup":
+          blocks.push({w:"half", color:C.magenta, title:titleOf("palletSetup"), rows:rowsFor("palletSetup", {pmFrame: hasFrame ? val("pmFrame") : "N/A"}), cols:1}); break;
+        case "loading":
+          blocks.push({w:"half", color:C.lime, title:titleOf("loading"), rows:rowsFor("loading"), cols:1}); break;
+        case "product":
+          blocks.push({w:"half", color:C.gold, title:titleOf("product"), rows:rowsFor("product"), cols:1,
+            image: prodImg ? {img:prodImg, frac:0.3, maxH:38} : null}); break;
+        case "process":
+          blocks.push({w:"half", color:C.teal, title:titleOf("process"), rows:rowsFor("process"), cols:1}); break;
+        case "material":
+          blocks.push({w:"full", fill:true, color:C.magenta, title:titleOf("material"), rows:rowsFor("material"), cols:1,
+            image: palletImg ? {img:palletImg, frac:0.45, maxH:38} : null}); break;
+        case "deck": {
+          const deckRows = gatherPmRows(pmDeckBoardsBody, ["item","desc","qty","dims","tol"]);
+          blocks.push({w:"full", color:C.lime, title:titleOf("deck"),
+            table: deckRows.length ? {headers:["Item","Description","Qty","Dimensions (mm)","Tolerance"], fr:[0.08,0.32,0.08,0.30,0.22], rows:deckRows.map(r => [r.item,r.desc,r.qty,r.dims,r.tol])} : null,
+            textTitle:"Compliance & Quality Requirements", text:$("pmComplianceText").value || ""}); break;
+        }
+        case "frame": {
+          if(!hasFrame) break;
+          const fr = gatherPmRows(pmFrameDimsBody, ["std","len","w","treat"]);
+          blocks.push({w:"full", color:C.teal, title:titleOf("frame"), rows:rowsFor("frame"), cols:2,
+            image: frameImg ? {img:frameImg, frac:0.25, maxH:40} : null,
+            table: fr.length ? {headers:["Reference Pallet","Length (mm)","Width (mm)","Treatment"], fr:[0.34,0.22,0.22,0.22], rows:fr.map(r => [r.std,r.len,r.w,r.treat])} : null}); break;
         }
       }
-    } finally { window.__pmExporting = false; }
+    }
 
-    const pageCount = doc.getNumberOfPages();
-    for(let i=1;i<=pageCount;i++){ doc.setPage(i); pmDrawFooter(doc); }
+    /* ---- layout engine: renders at scale S; shrinks until it fits 2 pages ---- */
+    const build = S => {
+      const doc = new jsPDF({unit:"mm", format:"a4"});
+      const fsL = 6.4*S, fsV = 6.9*S, lh = fsV*0.4056, pad = 0.9*S, bh = 4.6*S, gapB = 2.4*S;
+      const MX = 10, CW = 190, gapC = 4, HW = (CW-gapC)/2;
+      const bottom = (pmSecondaryLogoDataUrl || pmCertBadgesDataUrl) ? 278 : 285, top = 20;
+      const grey = [246,247,247], lineC = [220,222,224];
+      const header = () => {
+        doc.setDrawColor(60,60,60); doc.setLineWidth(0.5); doc.rect(6,4,198,289);
+        try{ doc.addImage("data:image/png;base64,"+LOGO_B64, "PNG", 10, 6.5, 22, 22*275/720); }catch(e){}
+        doc.setTextColor(50,50,50); doc.setFont("helvetica","bold"); doc.setFontSize(12.5);
+        doc.text("Packaging Manual", 105, 11.5, {align:"center"});
+        doc.setFont("helvetica","normal"); doc.setFontSize(7); doc.setTextColor(120,120,120);
+        doc.text([val("pmCustomer"), val("pmProductName"), val("pmSKU")].join("  ·  "), 105, 15.6, {align:"center"});
+        doc.setDrawColor(...C.ink); doc.setLineWidth(0.25); doc.line(10, 17.5, 200, 17.5);
+      };
+      const kv = (rows, x, y, w, cols, draw) => {
+        const cw = w/cols, lw = cw*0.4; let yy = y;
+        for(let i=0;i<rows.length;i+=cols){
+          const cells = rows.slice(i,i+cols).map(r => {
+            doc.setFont("helvetica","bold"); doc.setFontSize(fsL);
+            const ll = doc.splitTextToSize(String(r.label), lw-2*pad);
+            doc.setFont("helvetica","normal"); doc.setFontSize(fsV);
+            const vl = doc.splitTextToSize(String(r.value), cw-lw-2*pad);
+            return {ll, vl};
+          });
+          const n = Math.max(1, ...cells.map(c => Math.max(c.ll.length, c.vl.length)));
+          const rh = n*lh + 1.9*pad;
+          if(draw) cells.forEach((c,j) => {
+            const cx = x + j*cw;
+            doc.setFillColor(...grey); doc.rect(cx, yy, lw, rh, "F");
+            doc.setFillColor(255,255,255); doc.rect(cx+lw, yy, cw-lw, rh, "F");
+            doc.setDrawColor(...lineC); doc.setLineWidth(0.2); doc.rect(cx, yy, lw, rh); doc.rect(cx+lw, yy, cw-lw, rh);
+            doc.setFont("helvetica","bold"); doc.setFontSize(fsL); doc.setTextColor(91,91,92);
+            doc.text(c.ll, cx+pad, yy+pad*0.6+lh*0.82);
+            doc.setFont("helvetica","normal"); doc.setFontSize(fsV); doc.setTextColor(51,51,52);
+            doc.text(c.vl, cx+lw+pad, yy+pad*0.6+lh*0.82);
+          });
+          yy += rh;
+        }
+        return yy - y;
+      };
+      const table = (t, x, y, w, color, draw) => {
+        const cw = t.fr.map(f => f*w);
+        doc.setFont("helvetica","bold"); doc.setFontSize(fsL);
+        const hl = t.headers.map((h,i) => doc.splitTextToSize(String(h), cw[i]-2*pad));
+        const hh = Math.max(...hl.map(l => l.length))*lh + 1.9*pad;
+        let yy = y;
+        if(draw){
+          doc.setFillColor(...color); doc.rect(x, yy, w, hh, "F"); doc.setTextColor(255,255,255);
+          let cx = x; hl.forEach((l,i) => { doc.text(l, cx+pad, yy+pad*0.6+lh*0.82); cx += cw[i]; });
+        }
+        yy += hh;
+        doc.setFont("helvetica","normal"); doc.setFontSize(fsL);
+        t.rows.forEach((r,ri) => {
+          const cl = r.map((v,i) => doc.splitTextToSize(String(v||""), cw[i]-2*pad));
+          const rh = Math.max(...cl.map(l => l.length))*lh + 1.9*pad;
+          if(draw){
+            doc.setFillColor(ri%2 ? 248 : 255, ri%2 ? 249 : 255, ri%2 ? 250 : 255); doc.rect(x, yy, w, rh, "F");
+            doc.setDrawColor(...lineC); doc.setLineWidth(0.2); doc.rect(x, yy, w, rh);
+            let cx = x; doc.setTextColor(51,51,52);
+            cl.forEach((l,i) => { doc.text(l, cx+pad, yy+pad*0.6+lh*0.82); cx += cw[i]; });
+          }
+          yy += rh;
+        });
+        return yy - y;
+      };
+      const para = (title, text, x, y, w, draw) => {
+        const f = 5.9*S, l = f*0.4056;
+        let h = lh + 0.8*S;
+        doc.setFont("helvetica","normal"); doc.setFontSize(f);
+        const lines = doc.splitTextToSize(String(text||""), w-2*pad);
+        const bhh = lines.length*l + 2*pad;
+        if(draw){
+          doc.setFont("helvetica","bold"); doc.setFontSize(fsL); doc.setTextColor(60,60,60);
+          doc.text(title, x+0.5, y+lh*0.8);
+          doc.setDrawColor(...lineC); doc.setFillColor(255,255,255); doc.rect(x, y+h, w, bhh, "FD");
+          doc.setFont("helvetica","normal"); doc.setFontSize(f); doc.setTextColor(51,51,52);
+          doc.text(lines, x+pad, y+h+pad+l*0.8);
+        }
+        return h + bhh;
+      };
+      const drawBlock = (b, x, y, w, draw) => {
+        if(draw){
+          doc.setFillColor(...b.color); doc.rect(x, y, w, bh, "F");
+          doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(7.2*S);
+          doc.text(String(b.title).toUpperCase(), x+2, y+bh*0.68);
+        }
+        let h = bh, cw = w, iw = 0, ih = 0;
+        if(b.image){
+          iw = w*b.image.frac; ih = iw*b.image.img.height/b.image.img.width;
+          const mh = b.image.maxH*S;
+          if(ih > mh){ ih = mh; iw = ih*b.image.img.width/b.image.img.height; }
+          cw = w - iw - 2;
+        }
+        const kh = (b.rows && b.rows.length) ? kv(b.rows, x, y+h, cw, b.cols||1, draw) : 0;
+        if(draw && b.image){
+          const ix = x + w - iw, iy = y + h;
+          doc.setDrawColor(...lineC); doc.setLineWidth(0.2); doc.rect(ix, iy, iw, ih);
+          try{ doc.addImage(b.image.img.dataUrl, b.image.img.dataUrl.includes("image/png") ? "PNG" : "JPEG", ix, iy, iw, ih); }catch(e){}
+        }
+        h += Math.max(kh, ih);
+        if(b.table){ h += 1.2*S; h += table(b.table, x, y+h, w, b.color, draw); }
+        if(b.text){ h += 1.2*S; h += para(b.textTitle, b.text, x, y+h, w, draw); }
+        return h;
+      };
+      const blockH = (b, w) => drawBlock(b, 0, 0, w, false);
 
-    const cleanPart = (v)=> String(v||"").trim().replace(/[^a-z0-9\-_ ]+/gi,"_").replace(/\s+/g,"_");
+      header();
+      let yL = top, yR = top;
+      const newPage = () => { doc.addPage(); header(); yL = yR = top; };
+      for(const b of blocks){
+        if(b.w === "full"){
+          if(b.fill && b.image){ const yy = Math.max(yL,yR); b.image.maxH = Math.max(38, (bottom - yy - bh - gapB)/S); }
+          const h = blockH(b, CW);
+          let y0 = Math.max(yL, yR);
+          if(y0 + h > bottom && y0 > top + 1){ newPage(); y0 = top; }
+          drawBlock(b, MX, y0, CW, true);
+          yL = yR = y0 + h + gapB;
+        } else {
+          const h = blockH(b, HW);
+          let side = yL <= yR ? 0 : 1;
+          let y0 = side ? yR : yL;
+          if(y0 + h > bottom){
+            const o = 1 - side, yo = o ? yR : yL;
+            if(yo + h <= bottom){ side = o; y0 = yo; }
+            else if(Math.max(yL,yR) > top + 1){ newPage(); side = 0; y0 = top; }
+          }
+          drawBlock(b, MX + side*(HW+gapC), y0, HW, true);
+          if(side) yR = y0 + h + gapB; else yL = y0 + h + gapB;
+        }
+      }
+      const pages = doc.getNumberOfPages();
+      for(let p=1;p<=pages;p++){ doc.setPage(p); pmDrawFooter(doc); }
+      return doc;
+    };
+
+    let doc = null;
+    for(const S of [1, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6]){
+      doc = build(S);
+      if(doc.getNumberOfPages() <= 2) break;
+    }
+    const pageN = doc.getNumberOfPages();
+    const cleanPart = v => String(v||"").trim().replace(/[^a-z0-9\-_ ]+/gi,"_").replace(/\s+/g,"_");
     const cr = cleanPart($("codeRequest").value), pc = cleanPart(val("pmProductCode"));
     const fileCode = (cr && pc) ? `${cr}-${pc}-Manual` : (cleanPart(val("pmProductName")) || "Packaging_Manual");
     doc.save(`${fileCode}.pdf`);
-    pmSetStatus("Packaging Manual PDF downloaded ✓", false);
+    pmSetStatus(`Packaging Manual PDF downloaded ✓ (${pageN} page${pageN===1?"":"s"})`, false);
   }catch(err){
     console.error(err);
     pmSetStatus("Something went wrong building the PDF: " + err.message, true);
@@ -8870,6 +8980,28 @@ function anSvgStacked(o){
   return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">${lg}${g}</svg>`;
 }
 
+/* ---- Analytics: Bulk / Box / Shrink case navigation ---- */
+let AN_CASE = "auto";
+const AN_OV = {boxL:0, boxW:0, upb:0, dia:0};
+function anCaseData(d){
+  if(AN_CASE === "auto") return d;
+  const own = String(d.packagingType||"").toLowerCase();
+  const ownBox = pkgIsBox(own), ownShrink = pkgIsShrink(own);
+  const same = (AN_CASE==="bulk" && !ownBox) || (AN_CASE==="box" && ownBox && !ownShrink) || (AN_CASE==="shrink" && ownShrink);
+  if(same) return d;
+  const d2 = Object.assign({}, d);
+  d2.packagingType = AN_CASE==="bulk" ? "Half Pallet" : (AN_CASE==="box" ? "Box on FP" : "Shrink on FP");
+  d2._anSwitched = true;
+  const pick = (ov, own, dflt)=> ov>0 ? ov : (+own>0 ? +own : dflt);
+  if(AN_CASE === "bulk") d2.unitMaxDiameter = pick(AN_OV.dia, d.unitMaxDiameter, 65.28);
+  else {
+    d2.boxLength = pick(AN_OV.boxL, d.boxLength, 300);
+    d2.boxWidth = pick(AN_OV.boxW, d.boxWidth, 200);
+    d2.unitsPerShrinkBox = pick(AN_OV.upb, d.unitsPerShrinkBox, 12);
+  }
+  return d2;
+}
+
 function anRefreshSelect(){
   const sel = $("anProductSelect"); if(!sel) return;
   const keep = sel.value || "__current__";
@@ -8887,11 +9019,12 @@ function anRender(){
     if(selVal === "__current__"){ recalc(); d = gatherData(); }
     else d = (PRODUCTS_CACHE||[]).find(p=>p.id===selVal);
     if(!d){ body.innerHTML = '<p class="opt-empty">That product could not be found — pick another or refresh.</p>'; return; }
+    const dRaw = d; d = anCaseData(dRaw);
     const R = anBuild(d);
     const nV = R.variants.length;
     const cats = R.lib.map(p=>p.name);
     const unitW = +d.unitWeight||0;
-    const curPt = String(d.packagingType||"").toLowerCase();
+    const curPt = String(dRaw.packagingType||"").toLowerCase();
     const curCat = cats.findIndex(n=>n.toLowerCase()===String(d.palletType||"").toLowerCase());
     const curVar = R.variants.findIndex(v=>v.pt===curPt);
     const row = (ci,vi)=> R.rows[ci*nV+vi];
@@ -8954,6 +9087,19 @@ function anRender(){
         series: R.variants.map((v,j)=>({name:v.label,color:AN_COLORS[j],vals:cats.map((_,ci)=>row(ci,j).cost.per1000)})), hl, height:320})}</div>`;
     }
 
+    // Extra views: utilisation + tolerance stress test
+    html += `<div class="an-chart"><h4>Container utilisation — height vs weight</h4><p class="an-sub">The bar closer to 100% is the binding constraint; low on both means capacity is left unused (try a denser pallet type or more layers)</p>${anSvgGrouped({
+      cats:R.rows.map(r=>r.pallet+" · "+r.variant), rot:true, unit:"% of limit", fmt:v=>(+v).toFixed(0)+"%",
+      series:[{name:"Height used",color:AN_COLORS[0],vals:R.rows.map(r=>r.heightUtil*100)},{name:"Weight used",color:AN_COLORS[1],vals:R.rows.map(r=>r.weightUtil*100)}], height:360})}</div>`;
+    {
+      const hT = +d.unitHeightTol||0, wT = +d.unitWeightTol||0;
+      if(hT>0 || wT>0){
+        const wr = anBuild(Object.assign({}, d, {unitHeight:(+d.unitHeight||0)+hT, unitWeight:(+d.unitWeight||0)+wT})).rows;
+        html += `<div class="an-chart"><h4>Tolerance stress test — nominal vs worst case</h4><p class="an-sub">Units per container if every unit is at maximum height (+${hT} mm) and weight (+${wT} gm) — shows how fragile each configuration is</p>${anSvgGrouped({
+          cats:R.rows.map(r=>r.pallet+" · "+r.variant), rot:true, unit:"units / container",
+          series:[{name:"Nominal",color:AN_COLORS[0],vals:R.rows.map(r=>r.unitsPerContainer)},{name:"Worst case",color:"#D8212E",vals:wr.map(r=>r.unitsPerContainer)}], height:360})}</div>`;
+      }
+    }
     // Table
     const hasTol = (+d.unitWeightTol||0) > 0;
     const thead = `<tr><th>Pallet</th><th>Packaging</th><th>Units/ Layer</th><th>Layers</th><th>Units/ Pallet</th><th>Pallets/ Cont.</th><th>Units/ Container</th><th>Gross wt (Ton)</th><th>Net product (Ton)</th><th>Payload eff.</th><th>Weight used</th><th>Height used</th><th>Limited by</th>${hasCost?`<th>Pkg cost / pallet (${escapeHtml(cur$)})</th><th>Pkg cost / container</th><th>Cost / 1,000 units</th>`:""}${hasTol?`<th>Gross @ +${(+d.unitWeightTol)} gm (Ton)</th>`:""}</tr>`;
@@ -8996,13 +9142,14 @@ function anSetStatus(msg, isErr){
   el.style.color = isErr ? "#D8212E" : "#888";
 }
 
-/** Build the same analytics model + insights used by the on-screen dashboard. */
-function anComputeDashboard(d){
+/** Same analytics model + insights used by the on-screen dashboard (honours the Bulk / Box / Shrink case). */
+function anComputeDashboard(dRaw){
+  const d = anCaseData(dRaw);
   const R = anBuild(d);
   const nV = R.variants.length;
   const cats = R.lib.map(p=>p.name);
   const unitW = +d.unitWeight||0;
-  const curPt = String(d.packagingType||"").toLowerCase();
+  const curPt = String(dRaw.packagingType||"").toLowerCase();
   const curCat = cats.findIndex(n=>n.toLowerCase()===String(d.palletType||"").toLowerCase());
   const curVar = R.variants.findIndex(v=>v.pt===curPt);
   const row = (ci,vi)=> R.rows[ci*nV+vi];
@@ -9023,429 +9170,272 @@ function anComputeDashboard(d){
   }
   const ins = [];
   if(best && worst && worst!==best) ins.push(`Spread between best and worst configuration: ${anNum(best.unitsPerContainer-worst.unitsPerContainer)} units per container (${anPct((best.unitsPerContainer-worst.unitsPerContainer)/worst.unitsPerContainer)} more with ${best.pallet} · ${best.variant} than ${worst.pallet} · ${worst.variant}).`);
-  R.variants.forEach((v)=>{
+  R.variants.forEach(v=>{
     const rs = R.rows.filter(r=>r.vpt===v.pt && r.unitsPerContainer>0);
-    if(rs.length){
-      const b = rs.reduce((a,c)=>c.unitsPerContainer>a.unitsPerContainer?c:a);
-      ins.push(`Best ${v.label} option: ${b.pallet} with ${anNum(b.unitsPerContainer)} units / container (${b.layers} layers).`);
-    }
+    if(rs.length){ const b = rs.reduce((a,c)=>c.unitsPerContainer>a.unitsPerContainer?c:a); ins.push(`Best ${v.label} option: ${b.pallet} with ${anNum(b.unitsPerContainer)} units / container (${b.layers} layers).`); }
   });
-  if(cur && best && cur!==best && best.unitsPerContainer>cur.unitsPerContainer){
+  if(cur && best && cur!==best && best.unitsPerContainer>cur.unitsPerContainer)
     ins.push(`Switching from the current setup to ${best.pallet} · ${best.variant} would add ${anNum(best.unitsPerContainer-cur.unitsPerContainer)} units per container (${anPct((best.unitsPerContainer-cur.unitsPerContainer)/Math.max(1,cur.unitsPerContainer))}).`);
-  }
   const wl = valid.filter(r=>/Weight/.test(r.limit)).length, hlc = valid.filter(r=>/Height/.test(r.limit)).length;
   ins.push(`${wl} of ${valid.length} configurations are limited by weight, ${hlc} by height${valid.length-wl-hlc>0?`, ${valid.length-wl-hlc} by pallet count only`:""}.`);
-  if(bestEff && bestEff.overheadTon>0){
-    ins.push(`Pallets & packaging take ${bestEff.overheadTon.toFixed(2)} Ton of the best-efficiency container (${anPct(1-bestEff.payloadEff)} of gross weight) — a lighter pallet/frame is the main weight-optimisation lever when a configuration is weight-limited.`);
-  }
+  if(bestEff && bestEff.overheadTon>0) ins.push(`Pallets & packaging take ${bestEff.overheadTon.toFixed(2)} Ton of the best-efficiency container (${anPct(1-bestEff.payloadEff)} of gross weight) — a lighter pallet/frame is the main weight lever when a configuration is weight-limited.`);
   if(hasCost && cheapest){
-    if(best && best!==cheapest && best.cost.per1000>0){
-      ins.push(`Cheapest packaging: ${cheapest.pallet} · ${cheapest.variant} at ${bomMoney(cheapest.cost.per1000)} ${cur$} / 1,000 units — the most-units option (${best.pallet} · ${best.variant}) costs ${bomMoney(best.cost.per1000)} (${anPct((best.cost.per1000-cheapest.cost.per1000)/cheapest.cost.per1000)} more) but ships ${anNum(best.unitsPerContainer-cheapest.unitsPerContainer)} ${best.unitsPerContainer>=cheapest.unitsPerContainer?"more":"fewer"} units per container.`);
-    } else {
-      ins.push(`The cheapest packaging option is also the best for units per container: ${cheapest.pallet} · ${cheapest.variant}.`);
-    }
+    if(best && best!==cheapest && best.cost.per1000>0) ins.push(`Cheapest packaging: ${cheapest.pallet} · ${cheapest.variant} at ${bomMoney(cheapest.cost.per1000)} ${cur$} / 1,000 units; the most-units option (${best.pallet} · ${best.variant}) costs ${bomMoney(best.cost.per1000)} (${anPct((best.cost.per1000-cheapest.cost.per1000)/cheapest.cost.per1000)} more) but ships ${anNum(Math.abs(best.unitsPerContainer-cheapest.unitsPerContainer))} ${best.unitsPerContainer>=cheapest.unitsPerContainer?"more":"fewer"} units per container.`);
+    else ins.push(`The cheapest packaging option is also the best for units per container: ${cheapest.pallet} · ${cheapest.variant}.`);
     const miss = R.rows.filter(r=>r.cost.missing>0).length;
-    if(miss) ins.push(`⚠ ${miss} configuration(s) use BOM components without a price — their cost is understated. Complete the price table in Manage Options.`);
+    if(miss) ins.push(`${miss} configuration(s) use BOM components without a price — their cost is understated. Complete the price table in Manage Options.`);
   }
   const hasTol = (+d.unitWeightTol||0) > 0;
   if(hasTol){
     const over = R.rows.filter(r=>r.tolGross!=null && r.tolGross>r.allowance);
-    ins.push(over.length
-      ? `At the heaviest unit weight (+${+d.unitWeightTol} gm) ${over.length} configuration(s) exceed the container weight allowance.`
-      : `At the heaviest unit weight (+${+d.unitWeightTol} gm) every configuration stays within the container weight allowance.`);
+    ins.push(over.length ? `At the heaviest unit weight (+${+d.unitWeightTol} gm) ${over.length} configuration(s) exceed the container weight allowance.` : `At the heaviest unit weight (+${+d.unitWeightTol} gm) every configuration stays within the container weight allowance.`);
   }
-  return {R, nV, cats, unitW, cur, best, bestEff, worst, hasCost, cur$, cheapest, ins, hasTol, row, hl, curCat, curVar};
+  return {d, dRaw, R, nV, cats, unitW, cur, best, bestEff, worst, hasCost, cur$, cheapest, ins, hasTol, row, hl, curCat, curVar};
 }
 
 async function exportAnalyticsToPdf(){
-  if(typeof window.jspdf === "undefined"){
-    anSetStatus("Couldn't load the PDF engine — check your internet connection and try again.", true);
-    return;
-  }
+  if(typeof window.jspdf === "undefined"){ anSetStatus("Couldn't load the PDF engine — check your internet connection and try again.", true); return; }
   const selVal = ($("anProductSelect") && $("anProductSelect").value) || "__current__";
-  let d;
+  let dRaw;
   try{
-    if(selVal === "__current__"){ recalc(); d = gatherData(); }
-    else d = (PRODUCTS_CACHE||[]).find(p=>p.id===selVal);
-  }catch(err){
-    anSetStatus("Could not load product data: "+(err.message||err), true);
-    return;
-  }
-  if(!d){ anSetStatus("No product selected — pick one and try again.", true); return; }
-
+    if(selVal === "__current__"){ recalc(); dRaw = gatherData(); }
+    else dRaw = (PRODUCTS_CACHE||[]).find(p=>p.id===selVal);
+  }catch(err){ anSetStatus("Could not load product data: "+(err.message||err), true); return; }
+  if(!dRaw){ anSetStatus("No product selected — pick one and try again.", true); return; }
   anSetStatus("Building landscape Analytics PDF dashboard…");
   try{
     const { jsPDF } = window.jspdf;
-    // Landscape A4
     const doc = new jsPDF({unit:"mm", format:"a4", orientation:"landscape"});
     const C = PDF_COLORS;
-    const pageW = 297, pageH = 210, marginX = 10, marginY = 10;
-    const contentW = pageW - marginX*2;
-    let y = marginY;
+    const PW = 297, PH = 210, MX = 10, CW = PW-2*MX, TOP = 23, BOT = PH-11, GAP = 4;
+    const M = anComputeDashboard(dRaw);
+    const {d, R, cats, nV, row, cur, best, bestEff, hasCost, cur$, cheapest, ins, curCat, unitW} = M;
+    const title = dRaw.savedName || dRaw.productName || "Current product";
+    const caseLabel = R.variants.map(v=>v.label).join(" / ");
+    const SER = [C.teal, C.magenta, C.gold, C.lime];
+    let y = TOP;
 
-    const hexRgb = (arr)=> arr;
-    const model = anComputeDashboard(d);
-    const {R, cur, best, bestEff, hasCost, cur$, cheapest, ins, cats, nV, row, curCat} = model;
-    const unitW = model.unitW;
-    const productTitle = d.savedName || d.productName || "Current product";
-
-    function ensure(h){
-      if(y + h > pageH - 12){
-        doc.addPage();
-        y = marginY;
-        drawPageChrome(false);
-      }
-    }
-    function drawPageChrome(isFirst){
-      // thin top accent
-      doc.setFillColor(...C.teal);
-      doc.rect(0, 0, pageW, isFirst ? 18 : 8, "F");
-      if(isFirst){
-        doc.setTextColor(...C.white);
-        doc.setFont("helvetica","bold"); doc.setFontSize(13);
-        doc.text("NEXUS · Analytics Dashboard", marginX, 8);
-        doc.setFont("helvetica","normal"); doc.setFontSize(8);
-        doc.text("Glass packaging · units / container · weight optimisation  ·  Landscape report", marginX, 14);
-        doc.setFontSize(7.5);
-        doc.text(new Date().toLocaleString(), pageW - marginX, 8, {align:"right"});
-        y = 24;
-      } else {
-        doc.setTextColor(...C.white);
-        doc.setFont("helvetica","bold"); doc.setFontSize(8);
-        doc.text("NEXUS Analytics  ·  "+productTitle, marginX, 5.5);
-        y = 14;
-      }
-    }
-    function sectionBar(title, color){
-      ensure(10);
-      doc.setFillColor(...color);
-      doc.roundedRect(marginX, y, contentW, 7, 1.2, 1.2, "F");
-      doc.setTextColor(...C.white);
-      doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
-      doc.text(String(title).toUpperCase(), marginX+3, y+4.6);
-      y += 10;
-    }
-    /** Grouped bar chart drawn natively in jsPDF */
-    function drawGroupedBars(opts){
-      const {title, cats:labels, series, unit, chartH} = opts;
-      const h = chartH || 62;
-      ensure(h + 12);
-      const boxY = y;
-      doc.setFillColor(255,255,255);
-      doc.setDrawColor(228,228,228);
-      doc.setLineWidth(0.3);
-      doc.roundedRect(marginX, boxY, contentW, h+8, 2, 2, "FD");
-      doc.setTextColor(...C.inkDark);
-      doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
-      doc.text(title, marginX+4, boxY+5.5);
-      if(unit){
-        doc.setFont("helvetica","normal"); doc.setFontSize(7);
-        doc.setTextColor(...C.ink);
-        doc.text(unit, pageW-marginX-4, boxY+5.5, {align:"right"});
-      }
-      const plotL = marginX+14, plotR = pageW-marginX-6, plotT = boxY+10, plotB = boxY+h+2;
-      const plotW = plotR - plotL, plotH = plotB - plotT;
-      const allVals = series.flatMap(s=>s.vals);
-      const mx = Math.max(1, ...allVals) * 1.08;
-      // grid
-      doc.setDrawColor(230,230,230); doc.setLineWidth(0.2);
-      for(let t=0;t<=4;t++){
-        const gy = plotB - plotH*t/4;
-        doc.line(plotL, gy, plotR, gy);
-        doc.setTextColor(140,140,140); doc.setFontSize(6);
-        const v = mx*t/4;
-        const label = v>=1000 ? anNum(Math.round(v)) : (v<10?v.toFixed(1):String(Math.round(v)));
-        doc.text(label, plotL-1.5, gy+1.5, {align:"right"});
-      }
-      const n = Math.max(1, labels.length);
-      const ns = Math.max(1, series.length);
-      const groupW = plotW / n;
-      const barW = Math.min(10, groupW * 0.7 / ns);
-      labels.forEach((lab,i)=>{
-        const cx = plotL + groupW*i + groupW/2;
-        series.forEach((s,j)=>{
-          const v = +s.vals[i]||0;
-          const bh = plotH * v / mx;
-          const bx = cx - (ns*barW)/2 + j*barW;
-          const by = plotB - bh;
-          doc.setFillColor(...s.color);
-          doc.roundedRect(bx, by, Math.max(0.8, barW-0.6), Math.max(0.3, bh), 0.4, 0.4, "F");
-        });
-        doc.setTextColor(...C.inkDark); doc.setFontSize(5.8);
-        const short = String(lab).length>14 ? String(lab).slice(0,13)+"…" : String(lab);
-        doc.text(short, cx, plotB+3.5, {align:"center"});
-      });
-      // legend
-      let lx = plotL;
-      series.forEach(s=>{
-        doc.setFillColor(...s.color);
-        doc.roundedRect(lx, boxY+h+2.5, 3.5, 2.5, 0.4, 0.4, "F");
-        doc.setTextColor(...C.inkDark); doc.setFontSize(6.2);
-        doc.text(s.name, lx+4.5, boxY+h+4.5);
-        lx += 8 + s.name.length*1.5;
-      });
-      y = boxY + h + 12;
-    }
-    function drawStackedBars(opts){
-      const {title, labels, segs, lineVal, lineLabel, chartH} = opts;
-      const h = chartH || 62;
-      ensure(h + 12);
-      const boxY = y;
-      doc.setFillColor(255,255,255);
-      doc.setDrawColor(228,228,228);
-      doc.setLineWidth(0.3);
-      doc.roundedRect(marginX, boxY, contentW, h+8, 2, 2, "FD");
-      doc.setTextColor(...C.inkDark);
-      doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
-      doc.text(title, marginX+4, boxY+5.5);
-      const plotL = marginX+14, plotR = pageW-marginX-6, plotT = boxY+10, plotB = boxY+h+2;
-      const plotW = plotR - plotL, plotH = plotB - plotT;
-      const totals = labels.map((_,i)=> segs.reduce((a,s)=>a+(+s.vals[i]||0),0));
-      const mx = Math.max(1, lineVal||0, ...totals) * 1.08;
-      doc.setDrawColor(230,230,230); doc.setLineWidth(0.2);
-      for(let t=0;t<=4;t++){
-        const gy = plotB - plotH*t/4;
-        doc.line(plotL, gy, plotR, gy);
-        doc.setTextColor(140,140,140); doc.setFontSize(6);
-        doc.text((mx*t/4).toFixed(1), plotL-1.5, gy+1.5, {align:"right"});
-      }
-      if(lineVal!=null){
-        const ly = plotB - plotH*lineVal/mx;
-        doc.setDrawColor(...C.red); doc.setLineWidth(0.6);
-        doc.setLineDash([2,1.5],0);
-        doc.line(plotL, ly, plotR, ly);
-        doc.setLineDash([],0);
-        doc.setTextColor(...C.red); doc.setFontSize(6.2);
-        doc.text(lineLabel||("Allowance "+lineVal), plotR-1, ly-1.2, {align:"right"});
-      }
-      const n = Math.max(1, labels.length);
-      const groupW = plotW / n;
-      const barW = Math.min(14, groupW * 0.55);
-      labels.forEach((lab,i)=>{
-        const cx = plotL + groupW*i + groupW/2;
-        let acc = 0;
-        segs.forEach(s=>{
-          const v = +s.vals[i]||0;
-          const bh = plotH * v / mx;
-          const by = plotB - plotH*(acc+v)/mx;
-          acc += v;
-          if(bh>0.2){
-            doc.setFillColor(...s.color);
-            doc.rect(cx-barW/2, by, barW, bh, "F");
-          }
-        });
-        doc.setTextColor(...C.inkDark); doc.setFontSize(5.4);
-        const short = String(lab).length>12 ? String(lab).slice(0,11)+"…" : String(lab);
-        doc.text(short, cx, plotB+3.5, {align:"center"});
-      });
-      let lx = plotL;
-      segs.forEach(s=>{
-        doc.setFillColor(...s.color);
-        doc.roundedRect(lx, boxY+h+2.5, 3.5, 2.5, 0.4, 0.4, "F");
-        doc.setTextColor(...C.inkDark); doc.setFontSize(6.2);
-        doc.text(s.name, lx+4.5, boxY+h+4.5);
-        lx += 10 + s.name.length*1.45;
-      });
-      y = boxY + h + 12;
-    }
-
-    drawPageChrome(true);
-
-    // Product context strip
-    doc.setFillColor(246,247,247);
-    doc.roundedRect(marginX, y, contentW, 12, 1.5, 1.5, "F");
-    doc.setTextColor(...C.inkDark);
-    doc.setFont("helvetica","bold"); doc.setFontSize(9.5);
-    doc.text(productTitle, marginX+3.5, y+4.8);
-    doc.setFont("helvetica","normal"); doc.setFontSize(7.2);
-    doc.setTextColor(...C.ink);
-    const ctxBits = [
-      d.customer ? "Customer: "+d.customer : null,
-      d.containerType ? "Container: "+d.containerType+(d.containerDestination?" ("+d.containerDestination+")":"") : null,
-      "Unit wt: "+fmtTol(unitW, d.unitWeightTol)+" gm",
-      "Unit ht: "+fmtTol(d.unitHeight, d.unitHeightTol)+" mm",
-      d.palletType ? "Pallet: "+d.palletType : null,
-      d.packagingType ? "Packaging: "+d.packagingType : null
-    ].filter(Boolean).join("   ·   ");
-    doc.text(ctxBits, marginX+3.5, y+9.5);
-    y += 16;
-
-    // KPI cards — 3 columns landscape
-    const kpis = [];
-    kpis.push({label:"Best units / container", value: best?anNum(best.unitsPerContainer):"—", unit: best?`${best.pallet} · ${best.variant} · ${best.layers} layers`:"—", color:C.teal});
-    kpis.push({label:"Current configuration", value: cur?anNum(cur.unitsPerContainer):"—", unit: cur?`${cur.pallet} · ${cur.variant}${best&&best.unitsPerContainer>0?` · ${anPct(cur.unitsPerContainer/best.unitsPerContainer)} of best`:""}`:"—", color:C.magenta});
-    kpis.push({label:"Best payload efficiency", value: bestEff?anPct(bestEff.payloadEff):"—", unit: bestEff?`${bestEff.pallet} · ${bestEff.variant}`:"—", color:C.lime});
-    if(best){
-      const extra = unitW>0 && best.spareTon>0 ? Math.floor(best.spareTon*1e6/unitW) : 0;
-      kpis.push({label:"Weight headroom (best)", value: best.spareTon.toFixed(2)+" Ton", unit: `${anPct(best.weightUtil)} of ${best.allowance} T · ${best.limit}${extra?` · ≈${anNum(extra)} u by wt`:""}`, color:C.gold});
-    }
-    if(hasCost && cheapest) kpis.push({label:"Lowest cost / 1,000 u", value: bomMoney(cheapest.cost.per1000)+" "+cur$, unit: `${cheapest.pallet} · ${cheapest.variant}`, color:C.lime});
-    if(hasCost && cur && cur.cost && cur.cost.per1000>0) kpis.push({label:"Current cost / 1,000 u", value: bomMoney(cur.cost.per1000)+" "+cur$, unit: `${bomMoney(cur.cost.perPallet)} ${cur$}/pallet`, color:C.magenta});
-
-    sectionBar("Key performance indicators", C.teal);
-    const cols = 3, gap = 3, cardH = 18;
-    const cardW = (contentW - gap*(cols-1)) / cols;
-    kpis.forEach((k,i)=>{
-      const col = i % cols;
-      if(col === 0 && i > 0) y += cardH + gap;
-      ensure(cardH + 2);
-      const x = marginX + col * (cardW + gap);
-      doc.setFillColor(255,255,255);
-      doc.setDrawColor(228,228,228); doc.setLineWidth(0.3);
-      doc.roundedRect(x, y, cardW, cardH, 1.5, 1.5, "FD");
-      doc.setFillColor(...k.color); doc.rect(x, y, cardW, 1.4, "F");
-      doc.setTextColor(...C.ink); doc.setFont("helvetica","bold"); doc.setFontSize(6.2);
-      doc.text(String(k.label).toUpperCase(), x+2.5, y+5.5);
-      doc.setTextColor(...k.color); doc.setFontSize(11);
-      doc.text(String(k.value), x+2.5, y+11);
-      doc.setTextColor(...C.ink); doc.setFont("helvetica","normal"); doc.setFontSize(6);
-      const ul = doc.splitTextToSize(String(k.unit||""), cardW-5);
-      doc.text(ul.slice(0,1), x+2.5, y+15);
-    });
-    y += cardH + 6;
-
-    // Charts row — units/container + payload efficiency side by side conceptually (stacked vertically for clarity)
-    const seriesColors = [C.teal, C.magenta, C.gold, C.lime];
-    const unitSeries = R.variants.map((v,j)=>({
-      name: v.label,
-      color: seriesColors[j % seriesColors.length],
-      vals: cats.map((_,ci)=> row(ci,j).unitsPerContainer)
-    }));
-    drawGroupedBars({
-      title: "Units per container — all pallet types",
-      cats: cats.map((c,i)=> c+(i===curCat?" ★":"")),
-      series: unitSeries,
-      unit: "units / container",
-      chartH: 58
-    });
-
-    const effSeries = R.variants.map((v,j)=>({
-      name: v.label,
-      color: seriesColors[j % seriesColors.length],
-      vals: cats.map((_,ci)=> row(ci,j).payloadEff * 100)
-    }));
-    drawGroupedBars({
-      title: "Payload efficiency — product weight ÷ gross container weight",
-      cats: cats.map((c,i)=> c+(i===curCat?" ★":"")),
-      series: effSeries,
-      unit: "%",
-      chartH: 52
-    });
-
-    // Weight breakdown stacked
-    const stackLabels = [], prod=[], over=[], spare=[];
-    R.rows.forEach(r=>{
-      stackLabels.push(r.pallet+" · "+r.variant.replace(/Pallet/g,"").trim());
-      prod.push(r.netTon); over.push(r.overheadTon); spare.push(Math.max(0, r.spareTon));
-    });
-    const alw = R.rows.length ? R.rows[0].allowance : 0;
-    drawStackedBars({
-      title: "Container weight breakdown vs allowance",
-      labels: stackLabels,
-      segs: [
-        {name:"Product (net)", color:C.teal, vals:prod},
-        {name:"Pallets & packaging", color:C.gold, vals:over},
-        {name:"Unused capacity", color:[184,190,196], vals:spare}
-      ],
-      lineVal: alw,
-      lineLabel: "Allowance "+alw+" T",
-      chartH: 58
-    });
-
-    if(hasCost){
-      const costSeries = R.variants.map((v,j)=>({
-        name: v.label,
-        color: seriesColors[j % seriesColors.length],
-        vals: cats.map((_,ci)=> row(ci,j).cost.per1000)
-      }));
-      drawGroupedBars({
-        title: "Packaging cost per 1,000 units",
-        cats: cats.map((c,i)=> c+(i===curCat?" ★":"")),
-        series: costSeries,
-        unit: cur$+" / 1,000 units",
-        chartH: 52
-      });
-    }
-
-    // Key insights
-    sectionBar("Key insights", C.lime);
-    ins.forEach((raw, idx)=>{
-      const text = anStripHtml(raw);
-      doc.setFont("helvetica","normal"); doc.setFontSize(7.6);
-      const lines = doc.splitTextToSize((idx+1)+".  "+text, contentW-6);
-      const blockH = lines.length * 3.5 + 1.8;
-      ensure(blockH + 1);
-      if(idx % 2 === 0){
-        doc.setFillColor(243,249,226);
-        doc.roundedRect(marginX, y-0.5, contentW, blockH, 1, 1, "F");
-      }
-      doc.setTextColor(...C.inkDark);
-      doc.text(lines, marginX+3, y+2.5);
-      y += blockH;
-    });
-    y += 3;
-
-    // Comparison table
-    sectionBar("Configuration comparison", C.magenta);
-    const headers = hasCost
-      ? ["Pallet","Packaging","U/Layer","Layers","U/Cont.","Gross T","Payload","Limit","Cost/1k"]
-      : ["Pallet","Packaging","U/Layer","Layers","U/Cont.","Gross T","Payload","Limit"];
-    const widths = hasCost
-      ? [48, 36, 20, 16, 24, 20, 20, 28, 24]
-      : [52, 40, 22, 18, 28, 22, 22, 32];
-    const drawRow = (cells, isHeader, isBest, isCur)=>{
-      const rowH = 5.6;
-      ensure(rowH + 0.5);
-      let x = marginX;
-      if(isHeader){
-        doc.setFillColor(58,58,58); doc.rect(marginX, y, contentW, rowH, "F");
-        doc.setTextColor(...C.white); doc.setFont("helvetica","bold"); doc.setFontSize(6.4);
-      } else if(isBest){
-        doc.setFillColor(243,249,226); doc.rect(marginX, y, contentW, rowH, "F");
-        doc.setTextColor(...C.inkDark); doc.setFont("helvetica","bold"); doc.setFontSize(6.2);
-      } else if(isCur){
-        doc.setFillColor(252,233,241); doc.rect(marginX, y, contentW, rowH, "F");
-        doc.setTextColor(...C.inkDark); doc.setFont("helvetica","bold"); doc.setFontSize(6.2);
-      } else {
-        doc.setTextColor(...C.inkDark); doc.setFont("helvetica","normal"); doc.setFontSize(6.2);
-      }
-      cells.forEach((cell,i)=>{
-        const w = widths[i];
-        const t = doc.splitTextToSize(String(cell), w-1.2)[0] || "";
-        doc.text(t, x+0.8, y+3.8);
-        x += w;
-      });
-      doc.setDrawColor(228,228,228); doc.setLineWidth(0.15);
-      doc.line(marginX, y+rowH, marginX+contentW, y+rowH);
-      y += rowH;
+    const chrome = ()=>{
+      try{ doc.addImage("data:image/png;base64,"+LOGO_B64, "PNG", MX, 5, 24, 24*275/720); }catch(e){}
+      doc.setTextColor(50,50,50); doc.setFont("helvetica","bold"); doc.setFontSize(13);
+      doc.text("Analytics Dashboard", MX+28, 10.5);
+      doc.setFont("helvetica","normal"); doc.setFontSize(7.5); doc.setTextColor(120,120,120);
+      doc.text(title + "  ·  " + caseLabel, MX+28, 15);
+      doc.text(new Date().toLocaleString(), PW-MX, 10.5, {align:"right"});
+      const segs = [C.magenta, C.gold, C.lime, C.teal], sw = CW/segs.length;
+      segs.forEach((c,i)=>{ doc.setFillColor(...c); doc.rect(MX+i*sw, 17.2, sw, 1.5, "F"); });
     };
-    drawRow(headers, true, false, false);
-    R.rows.forEach(r=>{
-      const isBest = best && r===best;
-      const isCur = cur && r===cur;
-      const cells = [
-        r.pallet+(isCur?" ★":""), r.variant, anNum(r.upl), String(r.layers),
-        anNum(r.unitsPerContainer), r.gross.toFixed(2), anPct(r.payloadEff), r.limit
-      ];
-      if(hasCost) cells.push(bomMoney(r.cost.per1000));
-      drawRow(cells, false, isBest, isCur);
-    });
-    y += 3;
-    doc.setFont("helvetica","normal"); doc.setFontSize(6.4);
-    doc.setTextColor(...C.ink);
-    doc.text("Green = best units/container   ·   Pink ★ = current configuration", marginX, y);
+    const newPage = ()=>{ doc.addPage(); chrome(); y = TOP; };
+    const ensure = h=>{ if(y + h > BOT) newPage(); };
+    const bar = (text, color)=>{
+      ensure(11);
+      doc.setFillColor(...color); doc.rect(MX, y, CW, 5.6, "F");
+      doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(8);
+      doc.text(String(text).toUpperCase(), MX+3, y+3.9);
+      y += 8;
+    };
+    const card = (x, cy, w, h, ttl, unit, legend)=>{
+      doc.setFillColor(255,255,255); doc.setDrawColor(222,222,222); doc.setLineWidth(0.25);
+      doc.roundedRect(x, cy, w, h, 1.5, 1.5, "FD");
+      doc.setTextColor(51,51,52); doc.setFont("helvetica","bold"); doc.setFontSize(7.8);
+      doc.text(ttl, x+3, cy+5);
+      if(unit){ doc.setFont("helvetica","normal"); doc.setFontSize(6.2); doc.setTextColor(120,120,120); doc.text(unit, x+w-3, cy+5, {align:"right"}); }
+      let lx = x+3;
+      (legend||[]).forEach(s=>{
+        doc.setFillColor(...s.color); doc.roundedRect(lx, cy+7.2, 3, 2.4, 0.4, 0.4, "F");
+        doc.setFont("helvetica","normal"); doc.setFontSize(6); doc.setTextColor(51,51,52);
+        doc.text(s.name, lx+4, cy+9.2); lx += 7 + doc.getTextWidth(s.name);
+      });
+    };
+    const label = (txt, cx, by, rot, gw)=>{
+      doc.setFont("helvetica","normal"); doc.setFontSize(5.4); doc.setTextColor(51,51,52);
+      if(rot){ doc.text(String(txt).slice(0,26), cx-0.5, by+1.5, {angle:-90}); }
+      else { doc.splitTextToSize(String(txt), Math.max(8, gw-1)).slice(0,2).forEach((ln,i)=> doc.text(ln, cx, by+3+i*2.4, {align:"center"})); }
+    };
+    const axes = (L, T, Rr, B, mx, f)=>{
+      doc.setDrawColor(232,232,232); doc.setLineWidth(0.15);
+      for(let t=0;t<=4;t++){
+        const gy = B-(B-T)*t/4; doc.line(L, gy, Rr, gy);
+        doc.setFont("helvetica","normal"); doc.setFontSize(5.4); doc.setTextColor(130,130,130);
+        doc.text(f(mx*t/4), L-1.2, gy+1.4, {align:"right"});
+      }
+    };
+    const fAuto = v=> v>=1000 ? anNum(v) : (v<10 ? (+v).toFixed(1) : String(Math.round(v)));
+    const grouped = (x, cy, w, h, o)=>{
+      const f = o.fmt || fAuto;
+      card(x, cy, w, h, o.title, o.unit, o.series);
+      const L = x+11, Rr = x+w-4, T = cy+12, B = cy+h-(o.rot?25:11);
+      const mx = Math.max(1, ...o.series.flatMap(s=>s.vals)) * 1.08;
+      axes(L, T, Rr, B, mx, f);
+      const n = Math.max(1,o.cats.length), ns = o.series.length, gw = (Rr-L)/n, bw = Math.min(9, gw*0.78/ns);
+      o.cats.forEach((c,i)=>{
+        const cx = L+gw*i+gw/2;
+        if(o.hlCat===i){ doc.setFillColor(...C.magentaTint); doc.rect(L+gw*i+0.4, T, gw-0.8, B-T, "F"); }
+        o.series.forEach((s,j)=>{
+          const v = +s.vals[i]||0, bh = (B-T)*v/mx, bx = cx-(ns*bw)/2+j*bw;
+          doc.setFillColor(...s.color); doc.rect(bx+0.2, B-bh, Math.max(0.6,bw-0.4), Math.max(0.2,bh), "F");
+          if(bw >= 3.6 && v > 0){ doc.setFont("helvetica","bold"); doc.setFontSize(4.8); doc.setTextColor(51,51,52); doc.text(f(v), bx+bw/2, B-bh-0.9, {align:"center"}); }
+        });
+        label(c, cx, B+0.5, o.rot, gw);
+      });
+    };
+    const stacked = (x, cy, w, h, o)=>{
+      card(x, cy, w, h, o.title, o.unit, o.segs);
+      const L = x+11, Rr = x+w-4, T = cy+12, B = cy+h-25;
+      const totals = o.cats.map((_,i)=> o.segs.reduce((a,s)=>a+(+s.vals[i]||0),0));
+      const mx = Math.max(1, o.lineVal||0, ...totals) * 1.08;
+      axes(L, T, Rr, B, mx, v=>(+v).toFixed(1));
+      const n = Math.max(1,o.cats.length), gw = (Rr-L)/n, bw = Math.min(11, gw*0.62);
+      o.cats.forEach((c,i)=>{
+        const cx = L+gw*i+gw/2; let acc = 0;
+        o.segs.forEach(s=>{
+          const v = +s.vals[i]||0, bh = (B-T)*v/mx;
+          if(bh > 0.1){ doc.setFillColor(...s.color); doc.rect(cx-bw/2, B-(B-T)*(acc+v)/mx, bw, bh, "F"); }
+          acc += v;
+        });
+        if(bw >= 3.6){ doc.setFont("helvetica","bold"); doc.setFontSize(4.8); doc.setTextColor(51,51,52); doc.text(acc.toFixed(1), cx, B-(B-T)*acc/mx-0.9, {align:"center"}); }
+        label(c, cx, B+0.5, true, gw);
+      });
+      if(o.lineVal != null){
+        const ly = B-(B-T)*o.lineVal/mx;
+        doc.setDrawColor(...C.red); doc.setLineWidth(0.5); doc.setLineDash([2,1.4],0); doc.line(L, ly, Rr, ly); doc.setLineDash([],0);
+        doc.setFont("helvetica","bold"); doc.setFontSize(6); doc.setTextColor(...C.red);
+        doc.text(o.lineLabel, Rr-1, ly-1, {align:"right"});
+      }
+    };
 
-    // Footers
-    const pageCount = doc.internal.getNumberOfPages();
-    for(let p=1;p<=pageCount;p++){
-      doc.setPage(p);
-      doc.setFont("helvetica","normal"); doc.setFontSize(6.5);
-      doc.setTextColor(150,150,150);
-      doc.text("NEXUS Analytics · glass packaging optimisation", marginX, pageH-5);
-      doc.text(`Page ${p} / ${pageCount}`, pageW-marginX, pageH-5, {align:"right"});
+    chrome();
+
+    /* ---------- PAGE 1: context, KPIs, recommendation, core charts ---------- */
+    doc.setFillColor(246,247,247); doc.roundedRect(MX, y, CW, 11, 1.5, 1.5, "F");
+    doc.setTextColor(51,51,52); doc.setFont("helvetica","bold"); doc.setFontSize(9.5);
+    doc.text(title, MX+3.5, y+4.6);
+    doc.setFont("helvetica","normal"); doc.setFontSize(7); doc.setTextColor(91,91,92);
+    doc.text([
+      d.customer ? "Customer: "+d.customer : null,
+      "Container: "+(d.containerType||"—")+(d.containerDestination?" ("+d.containerDestination+")":""),
+      "Unit wt "+fmtTol(unitW, d.unitWeightTol)+" gm",
+      "Unit ht "+fmtTol(d.unitHeight, d.unitHeightTol)+" mm",
+      "Compared: "+caseLabel
+    ].filter(Boolean).join("   ·   "), MX+3.5, y+8.8);
+    y += 14;
+
+    const kpis = [];
+    kpis.push({l:"Best units / container", v:best?anNum(best.unitsPerContainer):"—", s:best?`${best.pallet} · ${best.variant} · ${best.layers} layers`:"—", c:C.teal});
+    kpis.push({l:"Current configuration", v:cur?anNum(cur.unitsPerContainer):"—", s:cur?`${cur.pallet} · ${cur.variant}${best&&best.unitsPerContainer>0?` · ${anPct(cur.unitsPerContainer/best.unitsPerContainer)} of best`:""}`:"not part of this case", c:C.magenta});
+    kpis.push({l:"Best payload efficiency", v:bestEff?anPct(bestEff.payloadEff):"—", s:bestEff?`${bestEff.pallet} · ${bestEff.variant}`:"—", c:C.lime});
+    if(best) kpis.push({l:"Weight headroom (best)", v:best.spareTon.toFixed(2)+" Ton", s:`${anPct(best.weightUtil)} of ${best.allowance} T · limited by ${best.limit}`, c:C.gold});
+    if(hasCost && cheapest) kpis.push({l:"Lowest cost / 1,000 units", v:bomMoney(cheapest.cost.per1000)+" "+cur$, s:`${cheapest.pallet} · ${cheapest.variant}`, c:C.lime});
+    if(hasCost && cur && cur.cost && cur.cost.per1000>0) kpis.push({l:"Current cost / 1,000 units", v:bomMoney(cur.cost.per1000)+" "+cur$, s:`${bomMoney(cur.cost.perPallet)} ${cur$} / pallet`, c:C.magenta});
+    const kn = Math.min(6, kpis.length), kw = (CW-3*(kn-1))/kn;
+    kpis.slice(0,6).forEach((k,i)=>{
+      const x = MX+i*(kw+3);
+      doc.setFillColor(255,255,255); doc.setDrawColor(222,222,222); doc.setLineWidth(0.25); doc.roundedRect(x, y, kw, 19, 1.5, 1.5, "FD");
+      doc.setFillColor(...k.c); doc.rect(x, y, kw, 1.3, "F");
+      doc.setTextColor(91,91,92); doc.setFont("helvetica","bold"); doc.setFontSize(5.8); doc.text(k.l.toUpperCase(), x+2.5, y+5.3);
+      doc.setTextColor(...k.c); doc.setFontSize(11.5); doc.text(String(k.v), x+2.5, y+11.2);
+      doc.setTextColor(91,91,92); doc.setFont("helvetica","normal"); doc.setFontSize(5.6);
+      doc.text(doc.splitTextToSize(String(k.s), kw-5).slice(0,2), x+2.5, y+14.6);
+    });
+    y += 22;
+
+    if(best){
+      let rec = `Recommendation: ${best.pallet} · ${best.variant} gives the most units per container (${anNum(best.unitsPerContainer)}, ${best.layers} layers, limited by ${best.limit.toLowerCase()}).`;
+      if(hasCost && cheapest && cheapest !== best) rec += ` For lowest packaging cost use ${cheapest.pallet} · ${cheapest.variant} (${bomMoney(cheapest.cost.per1000)} ${cur$} / 1,000 units).`;
+      doc.setFont("helvetica","normal"); doc.setFontSize(7.4);
+      const lines = doc.splitTextToSize(rec, CW-8), rh = lines.length*3.4+3.4;
+      doc.setFillColor(243,249,226); doc.setDrawColor(...C.lime); doc.setLineWidth(0.3); doc.roundedRect(MX, y, CW, rh, 1.5, 1.5, "FD");
+      doc.setTextColor(51,51,52); doc.text(lines, MX+4, y+4.6);
+      y += rh + 3;
     }
 
-    const safeName = String(productTitle).replace(/[^\w\-]+/g,"_").slice(0,40) || "product";
+    const half = (CW-GAP)/2, ch1 = Math.min(112, BOT-y);
+    grouped(MX, y, half, ch1, {title:"Units per container — all pallet types", unit:"units / container", cats:cats.map((c,i)=>c+(i===curCat?" ★":"")), hlCat:curCat,
+      series:R.variants.map((v,j)=>({name:v.label,color:SER[j],vals:cats.map((_,ci)=>row(ci,j).unitsPerContainer)}))});
+    grouped(MX+half+GAP, y, half, ch1, {title:"Payload efficiency — product ÷ gross weight", unit:"%", fmt:v=>(+v).toFixed(v<10?1:0)+"%", cats:cats.map((c,i)=>c+(i===curCat?" ★":"")), hlCat:curCat,
+      series:R.variants.map((v,j)=>({name:v.label,color:SER[j],vals:cats.map((_,ci)=>row(ci,j).payloadEff*100)}))});
+
+    /* ---------- PAGE 2: weight & utilisation ---------- */
+    newPage();
+    const labels = R.rows.map(r=>r.pallet+" · "+r.variant.replace(/ Pallet/,""));
+    const alw = R.rows.length ? R.rows[0].allowance : 0, ch2 = 84;
+    stacked(MX, y, half, ch2, {title:"Container weight vs allowance", unit:"Ton / container", cats:labels, lineVal:alw, lineLabel:"Allowance "+alw+" T",
+      segs:[{name:"Product (net)",color:C.teal,vals:R.rows.map(r=>r.netTon)},{name:"Pallets & packaging",color:C.gold,vals:R.rows.map(r=>r.overheadTon)},{name:"Unused capacity",color:[184,190,196],vals:R.rows.map(r=>Math.max(0,r.spareTon))}]});
+    grouped(MX+half+GAP, y, half, ch2, {title:"Container utilisation — height vs weight", unit:"% of limit", fmt:v=>(+v).toFixed(0)+"%", rot:true, cats:labels,
+      series:[{name:"Height used",color:C.teal,vals:R.rows.map(r=>r.heightUtil*100)},{name:"Weight used",color:C.magenta,vals:R.rows.map(r=>r.weightUtil*100)}]});
+    y += ch2 + GAP;
+
+    /* extra views: container type, cost, tolerance stress */
+    const ctNames = containerTypeLibrary().map(c=>c.name);
+    const extras = [{title:"Container type comparison — "+R.curP.name, unit:"units / container", cats:ctNames, series:R.variants.map((v,j)=>({name:v.label,color:SER[j],vals:ctNames.map((_,ci)=>R.ctRows[ci*nV+j].unitsPerContainer)}))}];
+    if(hasCost) extras.push({title:"Packaging cost per 1,000 units", unit:cur$+" / 1,000 units", fmt:v=>(+v).toFixed(v<10?2:v<100?1:0), rot:true, cats:labels, series:[{name:cur$,color:C.lime,vals:R.rows.map(r=>r.cost.per1000)}]});
+    const hTol = +d.unitHeightTol||0, wTol = +d.unitWeightTol||0;
+    if(hTol>0 || wTol>0){
+      const worstR = anBuild(Object.assign({}, d, {unitHeight:(+d.unitHeight||0)+hTol, unitWeight:(+d.unitWeight||0)+wTol})).rows;
+      extras.push({title:"Tolerance stress test (max height & weight)", unit:"units / container", rot:true, cats:labels, series:[{name:"Nominal",color:C.teal,vals:R.rows.map(r=>r.unitsPerContainer)},{name:"Worst case",color:C.red,vals:worstR.map(r=>r.unitsPerContainer)}]});
+    }
+    const en = extras.length, ew = (CW-GAP*(en-1))/en;
+    extras.forEach((o,i)=> grouped(MX+i*(ew+GAP), y, ew, ch2-4, Object.assign({}, o, en>2 && !o.rot ? {} : {})));
+    y += ch2 - 4 + GAP;
+
+    /* ---------- PAGE 3: insights + table ---------- */
+    newPage();
+    bar("Key insights", C.lime);
+    const colW = (CW-GAP)/2 - 4;
+    doc.setFont("helvetica","normal"); doc.setFontSize(7.2);
+    const items = ins.map((t,i)=>doc.splitTextToSize((i+1)+".  "+t, colW));
+    const total = items.reduce((a,l)=>a+l.length*3.2+1.6,0);
+    let acc = 0, c2 = false, cy1 = y, cy2 = y;
+    items.forEach(lines=>{
+      const h = lines.length*3.2+1.6;
+      if(!c2 && acc + h/2 > total/2 && acc > 0) c2 = true;
+      const x = MX + (c2 ? (CW-GAP)/2+GAP : 0) + 2;
+      const cy = c2 ? cy2 : cy1;
+      doc.setTextColor(51,51,52); doc.text(lines, x, cy+3);
+      if(c2) cy2 += h; else cy1 += h;
+      acc += h;
+    });
+    y = Math.max(cy1, cy2) + 4;
+
+    bar("Configuration comparison", C.magenta);
+    const heads = ["Pallet","Packaging","Units / layer","Layers","Units / pallet","Pallets / cont.","Units / container","Gross (T)","Net (T)","Payload eff.","Weight used","Height used","Limited by"];
+    let ws = [34,30,18,13,20,17,22,16,16,17,17,17,26];
+    if(hasCost){ heads.push("Cost / pallet","Cost / 1,000"); ws = ws.concat([18,18]); }
+    const sc = CW/ws.reduce((a,b)=>a+b,0); ws = ws.map(w=>w*sc);
+    const trow = (cells, kind)=>{
+      doc.setFontSize(6.2);
+      const lines = cells.map((c,i)=>doc.splitTextToSize(String(c), ws[i]-1.6));
+      const rh = Math.max(5, Math.max(...lines.map(l=>l.length))*2.9+2);
+      ensure(rh+1);
+      if(kind==="head"){ doc.setFillColor(58,58,58); doc.rect(MX,y,CW,rh,"F"); doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); }
+      else {
+        if(kind==="best"){ doc.setFillColor(243,249,226); doc.rect(MX,y,CW,rh,"F"); }
+        else if(kind==="cur"){ doc.setFillColor(252,233,241); doc.rect(MX,y,CW,rh,"F"); }
+        doc.setTextColor(51,51,52); doc.setFont("helvetica", (kind==="best"||kind==="cur") ? "bold" : "normal");
+      }
+      let x = MX;
+      lines.forEach((l,i)=>{ doc.text(l, x+0.9, y+3.3); x += ws[i]; });
+      doc.setDrawColor(228,228,228); doc.setLineWidth(0.15); doc.line(MX, y+rh, MX+CW, y+rh);
+      y += rh;
+    };
+    trow(heads, "head");
+    R.rows.forEach(r=>{
+      const cells = [r.pallet+((cur&&r===cur)?" ★":""), r.variant, anNum(r.upl), String(r.layers), anNum(r.unitsPerPallet), String(r.ppc), anNum(r.unitsPerContainer), r.gross.toFixed(2), r.netTon.toFixed(2), anPct(r.payloadEff), anPct(r.weightUtil), anPct(r.heightUtil), r.limit];
+      if(hasCost) cells.push(bomMoney(r.cost.perPallet), bomMoney(r.cost.per1000));
+      if(y + 12 > BOT){ newPage(); trow(heads, "head"); }
+      trow(cells, (best&&r===best)?"best":((cur&&r===cur)?"cur":""));
+    });
+    y += 3; ensure(5);
+    doc.setFont("helvetica","normal"); doc.setFontSize(6.2); doc.setTextColor(120,120,120);
+    doc.text("Green row = most units per container   ·   Pink row / ★ = current configuration   ·   layers auto-maximised within height & weight limits", MX, y+1);
+
+    const pn = doc.getNumberOfPages();
+    for(let p=1;p<=pn;p++){
+      doc.setPage(p); doc.setFont("helvetica","normal"); doc.setFontSize(6.4); doc.setTextColor(150,150,150);
+      doc.text("NEXUS Analytics · glass packaging optimisation", MX, PH-5);
+      doc.text(`Page ${p} / ${pn}`, PW-MX, PH-5, {align:"right"});
+    }
+    const safeName = String(title).replace(/[^\w\-]+/g,"_").slice(0,40) || "product";
     doc.save(`NEXUS_Analytics_${safeName}.pdf`);
     anSetStatus("Analytics PDF dashboard (landscape) downloaded ✓");
   }catch(err){
@@ -9489,7 +9479,7 @@ $("exportPdf").addEventListener("click", exportToPdf);
   document.body.classList.add("app-ready");
   if(!el) return;
   const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const minMs = reduce ? 500 : 4200;
+  const minMs = reduce ? 500 : 5800;
   const t0 = window.__splashT0 || performance.now();
   let done = false;
   function finish(){
@@ -10039,5 +10029,22 @@ function pmDeleteSection(key){
 </script>
 
 
+<script>
+(function(){
+  const btns = document.querySelectorAll(".an-case-btn"); let t = null;
+  function sync(){
+    btns.forEach(b=>b.classList.toggle("active", b.dataset.case === AN_CASE));
+    const box = AN_CASE === "box" || AN_CASE === "shrink";
+    $("anOverrides").classList.toggle("hidden", AN_CASE === "auto");
+    document.querySelectorAll(".an-ov-box").forEach(e=>e.classList.toggle("hidden", !box));
+    document.querySelectorAll(".an-ov-dia").forEach(e=>e.classList.toggle("hidden", box));
+  }
+  btns.forEach(b=>b.addEventListener("click", ()=>{ AN_CASE = b.dataset.case; sync(); anRender(); }));
+  [["anOvBoxL","boxL"],["anOvBoxW","boxW"],["anOvUpb","upb"],["anOvDia","dia"]].forEach(([id,k])=>{
+    $(id).addEventListener("input", ()=>{ AN_OV[k] = parseFloat($(id).value)||0; clearTimeout(t); t = setTimeout(anRender, 250); });
+  });
+  sync();
+})();
+</script>
 </body>
 </html>
