@@ -1798,7 +1798,7 @@ const DEFAULT_OPTIONS = {
   category: ["Local","Export"],
   packagingCategory: ["Standard","Special Online","Special Offline"],
   packagingType: ["Full Pallet","Half Pallet","Shrinks","Bulk/Box","Box on FP","Box on HP","Shrink on FP","Shrink on HP"],
-  separatorSetup: ["Sheet","Flap-Inverted","Flap-Normal"],
+  separatorSetup: ["Sheet","Flap-Inverted","Flap-Normal","Plastic Sheets","Chipboard Sheets"],
   woodenFrame: ["Yes","No"],
   caps: ["TO 38","TO 53","TO 63","Without","TO 82"],
   palletType: ["Local","Export","GMA","USA - A","USA - B","Euro"],
@@ -1812,6 +1812,7 @@ const DEFAULT_OPTIONS = {
   pallet: [
     "Wooden Pallet (100*120*15.4 cm) VMF","Wooden Pallet (100*120*10*7.5 cm) Local",
     "Wooden Pallet (100*120*7.5*8.5 cm) Pepsi","Wooden Pallet (121.92*101.6 cm) GMA",
+    "Wooden Pallet (142*112) US - A","Wooden Pallet (142*112) US - B",
     "Wooden Pallet (142*112) US","Wooden Pallet (100*120*10*14 cm) Anife",
     "Wooden Pallet (120*80*14.4 cm) Euro","Wooden Pallet (100*120*15 cm) Export"
   ],
@@ -1824,11 +1825,21 @@ const DEFAULT_OPTIONS = {
   ],
   cartonSeparator: [
     "Sheet with Flap (100*120*3 cm)","Sheet with Flap (100*120*5 cm)","Sheet with Flap (100*120*7 cm)",
-    "Sheet with no Flap (142*112 cm)","Sheet with Flap (142*112*3 cm)","Sheet with Flap (142*112*5 cm)",
-    "Sheet with Flap (142*112*7 cm)","Sheet with Flap (142*112*12 cm)","Sheet with Flap (100*120*7 cm) Craft",
     "Sheet with Flap (100*120*12 cm)","Sheet with Flap (100*120*14 cm)","Sheet with Flap (100*120*17 cm)",
+    "Sheet with Flap (100*120*7 cm) Craft",
+    "Sheet with inverted Flap (100*120*3 cm)","Sheet with inverted Flap (100*120*5 cm)","Sheet with inverted Flap (100*120*7 cm)",
+    "Sheet with inverted Flap (100*120*12 cm)","Sheet with inverted Flap (100*120*14 cm)","Sheet with inverted Flap (100*120*17 cm)",
+    "Sheet with no Flap (142*112 cm)","Sheet with Flap (142*112*3 cm)","Sheet with Flap (142*112*5 cm)",
+    "Sheet with Flap (142*112*7 cm)","Sheet with Flap (142*112*12 cm)",
+    "Sheet with inverted Flap (142*112*3 cm)","Sheet with inverted Flap (142*112*5 cm)",
+    "Sheet with inverted Flap (142*112*7 cm)","Sheet with inverted Flap (142*112*12 cm)",
     "Sheet with No Flap (80*120 cm)","Sheet with No Flap (100*120 cm)","Sheet with No Flap (121.92*101.6 cm) GMA",
-    "Sheet with Flap (121.92*101.6*6 cm) GMA","Sheet with Flap (121.92*101.6*12 cm) GMA"
+    "Sheet with Flap (121.92*101.6*6 cm) GMA","Sheet with Flap (121.92*101.6*12 cm) GMA",
+    "Sheet with inverted Flap (121.92*101.6*6 cm) GMA","Sheet with inverted Flap (121.92*101.6*12 cm) GMA",
+    "Sheet with Flap (80*120*3 cm)","Sheet with Flap (80*120*5 cm)","Sheet with Flap (80*120*7 cm)",
+    "Sheet with inverted Flap (80*120*3 cm)","Sheet with inverted Flap (80*120*5 cm)","Sheet with inverted Flap (80*120*7 cm)",
+    "Plastic Sheet (100*120 cm)","Plastic Sheet (80*120 cm)","Plastic Sheet (142*112 cm)","Plastic Sheet (121.92*101.6 cm) GMA",
+    "Chipboard Sheet (100*120 cm)","Chipboard Sheet (80*120 cm)","Chipboard Sheet (142*112 cm)","Chipboard Sheet (121.92*101.6 cm) GMA"
   ],
   plasticRoll: [
     "Plastic Roll (60 cm/60 Micron)","Plastic Roll (70 cm/60 Micron)","Plastic Roll (80 cm/60 Micron)",
@@ -1839,7 +1850,7 @@ const DEFAULT_OPTIONS = {
   labelKandil: ["Yellow Label","White Label"],
   labelCustomer: ["NA","Customer Logo Label","Custom Label"],
   labelProduct: ["NA","Product Label","Shrink Label"],
-  woodFrame: ["Kandil","None"],
+  woodFrame: ["Kandil","US","GMA","Euro","None"],
   boxes: ["N/A","Carton Box","Export Box"],
   separatorLong: ["N/A","Long Separator"],
   separatorShort: ["N/A","Short Separator"],
@@ -3156,7 +3167,7 @@ function recalc(){
 
   // Derive Separator Flap from Separator Setup (Flap-Inverted / Flap-Normal => with_flap)
   const sepSetup = strFromField("separatorSetup");
-  if($("separatorFlap")) $("separatorFlap").value = /^flap/i.test(sepSetup) ? "with_flap" : "no_flap";
+  if($("separatorFlap")) $("separatorFlap").value = /flap/i.test(sepSetup) ? "with_flap" : "no_flap";
 
   // Half Pallet and Box on HP always ship with exactly 2 straps per side
   // (total 4) — force the fields so the strap length and BOM stay consistent.
@@ -3340,44 +3351,135 @@ function recalc(){
   setOut("shrinkSize", shrinkSize, "mm");
   setOut("strapLength", strapLength, "m");
 
-  // BOM defaults: "Straps" qty defaults to Strap Length (m); "Carton layer"
-  // qty defaults to Layers/Pallet for Full/Half Pallet, or Layers/Pallet ÷
-  // Carton Layer Divisor for every other Packaging Type (Shrinks, Bulk/Box,
-  // Box on FP, Box on HP). "Carton Cover" spec mirrors "Carton Layer" spec,
-  // and "Label - Kandil" spec defaults to "White Label" when Pallet Type is
-  // Local. Rows the user has edited directly (dataset.touched) are left alone.
+  // BOM defaults: auto-fill specs from Spec Sheet (Pallet Type, Category,
+  // Separator Setup, Shrink Size, Unit Height, Top Frame Wooden) and qty
+  // defaults. Rows the user has edited directly (dataset.touched) are left alone.
   const cartonLayerDivisor = Math.max(0.0001, numFromField("cartonLayerDivisor") || 3);
   const cartonLayerQtyDefault = (isFullPallet || isHalfPallet)
     ? layersPerPallet
     : Math.ceil(layersPerPallet / cartonLayerDivisor);
-  let cartonLayerSpec = "";
-  Array.from(bomBody.querySelectorAll("tr")).forEach(tr=>{
-    const itemName = (tr.querySelector(".bom-item").value || "").trim().toLowerCase();
-    if(itemName === "carton layer") cartonLayerSpec = tr.querySelector(".bom-spec").value || "";
-  });
   const palletTypeLower = strFromField("palletType").trim().toLowerCase();
+  const categoryLower = strFromField("category").trim().toLowerCase();
+  const sepSetupLower = strFromField("separatorSetup").trim().toLowerCase();
+  const frameOn = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
+  const unitHeightMM = numFromField("unitHeight") || 0;
+
+  // --- helpers for default BOM specs (ALWAYS pick an exact catalogue value) ---
+  function pickFrom(list, pred, fallbackPred){
+    const arr = list || [];
+    const hit = arr.find(pred);
+    if(hit) return hit;
+    if(fallbackPred){ const f = arr.find(fallbackPred); if(f) return f; }
+    return arr[0] || "";
+  }
+  function defaultPalletSpec(){
+    const list = OPTIONS.pallet || [];
+    // Match trailing "A" / "B" only (not the "a" inside "usa"), so USA-B never
+    // hits the USA-A branch. Check B first for safety.
+    if(/usa\s*-\s*b\b|us\s*-\s*b\b|\busa\s*b\b/.test(palletTypeLower))
+      return pickFrom(list, s=> /142\s*\*\s*112/i.test(s) && /US\s*-\s*B\b/i.test(s), s=> /142\s*\*\s*112/i.test(s) && /\bUS\b/i.test(s));
+    if(/usa\s*-\s*a\b|us\s*-\s*a\b|\busa\s*a\b/.test(palletTypeLower))
+      return pickFrom(list, s=> /142\s*\*\s*112/i.test(s) && /US\s*-\s*A\b/i.test(s), s=> /142\s*\*\s*112/i.test(s) && /\bUS\b/i.test(s));
+    if(/gma/.test(palletTypeLower))
+      return pickFrom(list, s=> /GMA/i.test(s));
+    if(/euro/.test(palletTypeLower))
+      return pickFrom(list, s=> /Euro/i.test(s));
+    if(/local/.test(palletTypeLower))
+      return pickFrom(list, s=> /\bLocal\b/i.test(s));
+    if(/export/.test(palletTypeLower))
+      return pickFrom(list, s=> /\bExport\b/i.test(s));
+    return pickFrom(list, s=> /\bExport\b/i.test(s));
+  }
+  function defaultPlasticHoodSpec(){
+    const list = OPTIONS.plasticHood || [];
+    const isUS = /usa|us\s*-?\s*[ab]/.test(palletTypeLower);
+    const sizes = [2, 2.25, 2.75, 3, 3.25];
+    const shrinkM = (typeof shrinkSize === "number" && isFinite(shrinkSize) ? shrinkSize : 0) / 1000;
+    let chosen = sizes[sizes.length - 1];
+    for(const s of sizes){ if(s >= shrinkM - 1e-9){ chosen = s; break; } }
+    const sizeStr = String(chosen);
+    // Prefer exact size + US flag match from catalogue only
+    if(isUS){
+      return pickFrom(list,
+        s=> s.includes(`(${sizeStr} m`) && /142\s*\*\s*112/i.test(s),
+        s=> /142\s*\*\s*112/i.test(s) && s.includes("m/150"));
+    }
+    return pickFrom(list,
+      s=> s.includes(`(${sizeStr} m`) && !/142\s*\*\s*112/i.test(s),
+      s=> !/142\s*\*\s*112/i.test(s) && s.includes("m/150"));
+  }
+  function cartonDimPrefix(){
+    if(/usa|us\s*-?\s*[ab]/.test(palletTypeLower)) return "142*112";
+    if(/gma/.test(palletTypeLower)) return "121.92*101.6";
+    if(/euro/.test(palletTypeLower)) return "80*120";
+    return "100*120"; // Local / Export
+  }
+  function defaultCartonSpec(){
+    const list = OPTIONS.cartonSeparator || [];
+    const dim = cartonDimPrefix();
+    const isFlap = /flap-normal|flap-inverted|normal flap|inverted/.test(sepSetupLower);
+    const isInverted = /inverted/.test(sepSetupLower);
+    const isPlastic = /plastic/.test(sepSetupLower);
+    const isChip = /chipboard/.test(sepSetupLower);
+
+    if(isPlastic){
+      return pickFrom(list, s=> /^Plastic Sheet/i.test(s) && s.includes(dim), s=> /^Plastic Sheet/i.test(s));
+    }
+    if(isChip){
+      return pickFrom(list, s=> /^Chipboard Sheet/i.test(s) && s.includes(dim), s=> /^Chipboard Sheet/i.test(s));
+    }
+    if(!isFlap){
+      return pickFrom(list,
+        s=> /no\s*flap/i.test(s) && s.includes(dim),
+        s=> /no\s*flap/i.test(s));
+    }
+    // Flap (normal or inverted) — pick catalogue option whose flap height is
+    // the closest upsell of half unit height (unitHeight is mm → cm / 2).
+    const halfCm = (unitHeightMM / 10) / 2;
+    const candidates = list.filter(s=>{
+      const invOk = isInverted ? /inverted/i.test(s) : !/inverted/i.test(s);
+      return invOk && /flap/i.test(s) && !/no\s*flap/i.test(s) && s.includes(dim);
+    });
+    if(!candidates.length){
+      return pickFrom(list, s=> /flap/i.test(s) && !/no\s*flap/i.test(s) && s.includes(dim), s=> /flap/i.test(s));
+    }
+    // Extract flap height (last *N cm) and upsell
+    function flapHOf(s){
+      const m = s.match(/\*(\d+(?:\.\d+)?)\s*cm/i);
+      return m ? parseFloat(m[1]) : NaN;
+    }
+    candidates.sort((a,b)=> (flapHOf(a)||999) - (flapHOf(b)||999));
+    const upsell = candidates.find(s=> (flapHOf(s)||0) >= halfCm - 1e-9);
+    return upsell || candidates[candidates.length - 1];
+  }
+  function defaultLabelKandilSpec(){
+    const list = OPTIONS.labelKandil || [];
+    const want = categoryLower === "local" ? "White Label" : "Yellow Label";
+    return pickFrom(list, s=> s === want, s=> /label/i.test(s));
+  }
+  function defaultWoodFrameSpec(){
+    const list = OPTIONS.woodFrame || [];
+    if(!frameOn) return pickFrom(list, s=> /^None$/i.test(s));
+    if(/usa|us\s*-?\s*[ab]/.test(palletTypeLower)) return pickFrom(list, s=> /^US$/i.test(s));
+    if(/gma/.test(palletTypeLower)) return pickFrom(list, s=> /^GMA$/i.test(s));
+    if(/euro/.test(palletTypeLower)) return pickFrom(list, s=> /^Euro$/i.test(s));
+    return pickFrom(list, s=> /^Kandil$/i.test(s));
+  }
+
+  const autoCartonSpec = defaultCartonSpec();
   Array.from(bomBody.querySelectorAll("tr")).forEach(tr=>{
     const itemName = (tr.querySelector(".bom-item").value || "").trim().toLowerCase();
     const qtyInput = tr.querySelector(".bom-qty");
     const specSel = tr.querySelector(".bom-spec");
-    // Specification defaults (respect manual spec changes via dataset.touched).
-    const frameOn = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
     if(specSel && specSel.dataset.touched !== "1"){
-      if(itemName === "carton cover" && cartonLayerSpec){
-        if(specSel.value !== cartonLayerSpec){
-          populateSelect(specSel, materialListForItem("Carton Cover"), cartonLayerSpec);
-        }
-      } else if(itemName === "label - kandil"){
-        if(palletTypeLower === "local" && specSel.value !== "White Label"){
-          populateSelect(specSel, materialListForItem("Label - Kandil"), "White Label");
-        } else if(palletTypeLower !== "local" && specSel.value === "White Label"){
-          populateSelect(specSel, materialListForItem("Label - Kandil"), "Yellow Label");
-        }
-      } else if(itemName === "wood frame"){
-        // Default only — the user can still override the specification manually.
-        if(specSel.value !== (frameOn ? "Kandil" : "None")){
-          populateSelect(specSel, materialListForItem("Wood Frame"), frameOn ? "Kandil" : "None");
-        }
+      let want = null;
+      if(itemName === "pallet") want = defaultPalletSpec();
+      else if(itemName === "plastic hoods") want = defaultPlasticHoodSpec();
+      else if(itemName === "carton layer" || itemName === "carton cover") want = autoCartonSpec;
+      else if(itemName === "label - kandil") want = defaultLabelKandilSpec();
+      else if(itemName === "wood frame") want = defaultWoodFrameSpec();
+      if(want && specSel.value !== want){
+        populateSelect(specSel, materialListForItem(tr.querySelector(".bom-item").value), want);
       }
     }
     if(qtyInput.dataset.touched === "1") return;
@@ -3389,7 +3491,6 @@ function recalc(){
       // Default quantity follows Top Frame Wooden; editable afterwards.
       qtyInput.value = frameOn ? 1 : 0;
     }
-
   });
 
   // Visual gauges for built-in limit indicators
@@ -8435,22 +8536,49 @@ async function exportManualToWord(){
   }
   pmSetStatus("Building your Packaging Manual Word document…");
   try{
-    const { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, HeadingLevel } = window.docx;
+    const { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, VerticalAlign, ShadingType } = window.docx;
     const C = PDF_COLORS;
     const val = (id)=> $(id) ? ($(id).value || "N/A") : "N/A";
     const hasFrame = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
     const children = [];
 
+    // Branded header matching the PDF (logo + title + Kandil colour bar)
+    try{
+      const logoData = await dataUrlToUint8("data:image/png;base64,"+LOGO_B64);
+      const logoW = 110, logoH = Math.round(logoW * 275 / 720);
+      children.push(new Paragraph({
+        spacing:{after:60},
+        children:[
+          new ImageRun({data:logoData.bytes, type:logoData.type, transformation:{width:logoW, height:logoH}}),
+          new TextRun({text:"   Packaging Manual", bold:true, size:32, color:"333334"}),
+        ]
+      }));
+    }catch(e){
+      children.push(new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing:{after:40},
+        children:[new TextRun({text:"Packaging Manual", bold:true, size:34, color:"333334"})]
+      }));
+    }
     children.push(new Paragraph({
-      alignment: AlignmentType.CENTER,
       spacing:{after:80},
-      children:[new TextRun({text:"Packaging Manual", bold:true, size:34, color:"333334"})]
+      children:[new TextRun({text:"Kandil — Preserving Nature", size:16, color:"969696", italics:true})]
     }));
-    children.push(new Paragraph({
-      alignment: AlignmentType.CENTER,
-      spacing:{after:220},
-      children:[new TextRun({text:"Kandil — Preserving Nature", size:18, color:"969696"})]
+    // Colour strip (magenta · gold · lime · teal) — same order as PDF
+    const stripColors = [C.magenta, C.gold, C.lime, C.teal].map(rgbHex);
+    const noBorder = {style:BorderStyle.NONE, size:0, color:"FFFFFF"};
+    const noBorders = {top:noBorder, bottom:noBorder, left:noBorder, right:noBorder};
+    children.push(new Table({
+      width:{size:100, type:WidthType.PERCENTAGE},
+      borders:noBorders,
+      rows:[new TableRow({children: stripColors.map(fill=> new TableCell({
+        width:{size:25, type:WidthType.PERCENTAGE},
+        borders:noBorders,
+        shading:{fill},
+        children:[new Paragraph({spacing:{before:0, after:0}, children:[new TextRun({text:" ", size:8})]})]
+      }))})]
     }));
+    children.push(new Paragraph({spacing:{before:120, after:80}, children:[]}));
 
     const __pmChunks = {
       header: async ()=>{
@@ -8661,7 +8789,23 @@ async function exportManualToWord(){
       }
     } finally { window.__pmExporting = false; }
 
-    const wdoc = new Document({ sections:[{ properties:{}, children }] });
+    const wdoc = new Document({
+      styles:{
+        default:{
+          document:{
+            styles:[{id:"Normal", run:{font:"Calibri", size:20}}]
+          }
+        }
+      },
+      sections:[{
+        properties:{
+          page:{
+            margin:{top:720, right:720, bottom:720, left:720} // 0.5" in twips
+          }
+        },
+        children
+      }]
+    });
     const blob = await Packer.toBlob(wdoc);
     const cleanPart = (v)=> String(v||"").trim().replace(/[^a-z0-9\-_ ]+/gi,"_").replace(/\s+/g,"_");
     const cr = cleanPart($("codeRequest").value), pc = cleanPart(val("pmProductCode"));
@@ -8715,8 +8859,9 @@ function suggestedKit(name){
   let pallet="", carton="", hood="";
   if(/local/.test(n)){ pallet = has("pallet","Wooden Pallet (100*120*10*7.5 cm) Local"); carton = has("cartonSeparator","Sheet with No Flap (100*120 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
   else if(/export/.test(n)){ pallet = has("pallet","Wooden Pallet (100*120*15 cm) Export"); carton = has("cartonSeparator","Sheet with No Flap (100*120 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
-  else if(/gma/.test(n)){ pallet = has("pallet","Wooden Pallet  (121.92*101.6 cm) GMA") || has("pallet","Wooden Pallet (121.92*101.6 cm) GMA"); carton = has("cartonSeparator","Sheet with No Flap (121.92*101.6 cm) GMA"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
-  else if(/usa|\bus\b/.test(n)){ pallet = has("pallet","Wooden Pallet (142*112) US"); carton = has("cartonSeparator","Sheet with no Flap (142*112 cm)") || has("cartonSeparator","Sheet with No Flap (142*112 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
+  else if(/gma/.test(n)){ pallet = has("pallet","Wooden Pallet (121.92*101.6 cm) GMA"); carton = has("cartonSeparator","Sheet with No Flap (121.92*101.6 cm) GMA"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
+  else if(/usa\s*-\s*b\b|us\s*-\s*b\b|\busa\s*b\b/.test(n)){ pallet = has("pallet","Wooden Pallet (142*112) US - B") || has("pallet","Wooden Pallet (142*112) US"); carton = has("cartonSeparator","Sheet with no Flap (142*112 cm)") || has("cartonSeparator","Sheet with No Flap (142*112 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
+  else if(/usa\s*-\s*a\b|us\s*-\s*a\b|\busa\s*a\b/.test(n)){ pallet = has("pallet","Wooden Pallet (142*112) US - A") || has("pallet","Wooden Pallet (142*112) US"); carton = has("cartonSeparator","Sheet with no Flap (142*112 cm)") || has("cartonSeparator","Sheet with No Flap (142*112 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
   else if(/euro/.test(n)){ pallet = has("pallet","Wooden Pallet (120*80*14.4 cm) Euro"); carton = has("cartonSeparator","Sheet with No Flap (80*120 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
   return {pallet, carton, hood};
 }
@@ -9473,7 +9618,10 @@ setTimeout(()=>{
 $("exportExcel").addEventListener("click", exportToExcel);
 $("exportPdf").addEventListener("click", exportToPdf);
 
-/* Intro splash — shows for ~2.9 s (or until clicked / Esc / Enter), then the page animates in. */
+/* Intro splash — shows for ~5.8 s (or until clicked / Esc / Enter), then the page animates in.
+   Universal glass-chime theme via Web Audio (no external files).
+   Browsers block autoplay until a user gesture — we unlock on first pointer/key,
+   schedule notes only after the context is running, and do not kill audio on dismiss. */
 (function introSplash(){
   const el = document.getElementById("splash");
   document.body.classList.add("app-ready");
@@ -9482,8 +9630,96 @@ $("exportPdf").addEventListener("click", exportToPdf);
   const minMs = reduce ? 500 : 5800;
   const t0 = window.__splashT0 || performance.now();
   let done = false;
+  let audioCtx = null;
+  let masterGain = null;
+  let chimesStarted = false;
+
+  function ensureCtx(){
+    if(audioCtx) return audioCtx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    audioCtx = new AC();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.28;
+    masterGain.connect(audioCtx.destination);
+    return audioCtx;
+  }
+
+  function scheduleChimes(){
+    if(chimesStarted || !audioCtx || !masterGain) return;
+    if(audioCtx.state !== "running") return;
+    chimesStarted = true;
+    const now = audioCtx.currentTime;
+    // Soft glass-like partials (universal, non-cultural)
+    const notes = [
+      {f:523.25, t:0.05, d:0.6},
+      {f:659.25, t:0.45, d:0.6},
+      {f:783.99, t:0.85, d:0.7},
+      {f:987.77, t:1.35, d:0.85},
+      {f:1174.7, t:2.0,  d:1.2}
+    ];
+    notes.forEach(({f,t,d})=>{
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(f, now);
+      filter.type = "lowpass";
+      filter.frequency.value = Math.min(f * 4, 6000);
+      filter.Q.value = 0.6;
+      g.gain.setValueAtTime(0.0001, now + t);
+      g.gain.exponentialRampToValueAtTime(0.7, now + t + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + t + d);
+      osc.connect(filter); filter.connect(g); g.connect(masterGain);
+      osc.start(now + t);
+      osc.stop(now + t + d + 0.08);
+    });
+    // Soft noise whoosh
+    try{
+      const len = Math.floor(audioCtx.sampleRate * 1.1);
+      const noiseBuf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const data = noiseBuf.getChannelData(0);
+      for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * Math.exp(-3 * i / len);
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = noiseBuf;
+      const nG = audioCtx.createGain();
+      nG.gain.setValueAtTime(0.0001, now + 1.6);
+      nG.gain.exponentialRampToValueAtTime(0.12, now + 2.0);
+      nG.gain.exponentialRampToValueAtTime(0.0001, now + 2.9);
+      const nF = audioCtx.createBiquadFilter();
+      nF.type = "bandpass"; nF.frequency.value = 1000; nF.Q.value = 0.5;
+      noise.connect(nF); nF.connect(nG); nG.connect(masterGain);
+      noise.start(now + 1.6);
+    }catch(e){}
+  }
+
+  function startAudio(){
+    try{
+      const ctx = ensureCtx();
+      if(!ctx) return;
+      const go = ()=>{ scheduleChimes(); };
+      if(ctx.state === "suspended"){
+        ctx.resume().then(go).catch(()=>{});
+      } else {
+        go();
+      }
+    }catch(e){}
+  }
+
   function finish(){
     if(done) return; done = true;
+    // Fade audio out instead of cutting it off immediately
+    try{
+      if(masterGain && audioCtx && audioCtx.state === "running"){
+        const t = audioCtx.currentTime;
+        masterGain.gain.cancelScheduledValues(t);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, t);
+        masterGain.gain.linearRampToValueAtTime(0.0001, t + 0.45);
+        setTimeout(()=>{ try{ if(audioCtx && audioCtx.state !== "closed") audioCtx.close(); }catch(e){} }, 700);
+      } else {
+        try{ if(audioCtx && audioCtx.state !== "closed") audioCtx.close(); }catch(e){}
+      }
+    }catch(e){}
     const panel = document.querySelector(".tab-panel.active");
     if(panel) panel.querySelectorAll(".kpi-card,.section-banner,.field-group").forEach((n,i)=> n.style.setProperty("--i", Math.min(i, 18)));
     el.classList.add("sp-out");
@@ -9491,11 +9727,22 @@ $("exportPdf").addEventListener("click", exportToPdf);
     setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 800);
     setTimeout(()=> document.body.classList.remove("app-enter"), 2600);
     document.removeEventListener("keydown", onKey);
+    document.removeEventListener("pointerdown", onUnlock, true);
+    document.removeEventListener("keydown", onUnlock, true);
   }
-  function onKey(e){ if(e.key === "Escape" || e.key === "Enter" || e.key === " ") finish(); }
+  function onKey(e){
+    if(e.key === "Escape" || e.key === "Enter" || e.key === " "){ startAudio(); finish(); }
+  }
+  function onUnlock(){ startAudio(); }
+
   setTimeout(finish, Math.max(0, minMs - (performance.now() - t0)));
-  el.addEventListener("click", finish);
+  // Unlock + play on first gesture (required by browser autoplay policy)
+  document.addEventListener("pointerdown", onUnlock, true);
+  document.addEventListener("keydown", onUnlock, true);
+  el.addEventListener("click", ()=>{ startAudio(); finish(); });
   document.addEventListener("keydown", onKey);
+  // Try immediately (works when the browser allows autoplay)
+  startAudio();
 })();
 </script>
 <script>
