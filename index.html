@@ -641,7 +641,7 @@
   #splash::after{opacity:.25;}
   .sp-forge{position:absolute;left:50%;top:50%;width:min(300px,62vw);height:auto;overflow:visible;z-index:1;transform:translate(-50%,-50%);animation:forgeZoom 1.5s .05s cubic-bezier(.5,0,.3,1) both,forgeOut .5s 2.95s ease both;scale:1.3;}
   @keyframes forgeZoom{from{scale:1.35}to{scale:1}}
-  .fg-moon{transform-box:view-box;animation:fgMoonSpin linear infinite;}
+  .sp-forge .fg-moon{transform-box:view-box;animation:fgMoonSpin linear infinite;}
   @keyframes fgMoonSpin{to{transform:rotate(360deg)}}
   @keyframes forgeOut{to{opacity:0;transform:translate(-50%,-50%) scale(1.12);filter:blur(6px);}}
   .sp-forge *{transform-box:fill-box;}
@@ -692,6 +692,8 @@
   #splash .sp-bar span{animation:spBar 2.4s 3.2s cubic-bezier(.4,0,.2,1) forwards;}
   #splash .sp-skip{color:#9aa3b0;}
   #splash .sp-skip:hover{background:rgba(255,255,255,.08);color:#fff;}
+  #splash .sp-sound{position:absolute;right:18px;top:14px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#c9d1db;font:inherit;font-size:.74rem;font-weight:700;cursor:pointer;padding:6px 12px;border-radius:20px;z-index:3;opacity:0;animation:spFade .5s .6s ease forwards;}
+  #splash .sp-sound:hover{background:rgba(255,255,255,.14);color:#fff;}
 </style>
 </head>
 <body>
@@ -766,8 +768,99 @@
     <div class="sp-bar"><span></span></div>
   </div>
   <button type="button" class="sp-skip" id="spSkip">Skip ›</button>
+  <button type="button" class="sp-sound" id="spSound" title="Toggle intro sound">🔊 Sound on</button>
 </div>
 <script>window.__splashT0 = performance.now(); setTimeout(function(){ var s=document.getElementById("splash"); if(s){ s.classList.add("sp-out"); setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); },900); } }, 15000);</script>
+<script>
+/* Intro sound — synthesised with Web Audio (no files). Cosmic drone + orbit pings,
+   forge boom, mould clanks, air blow, glass chimes, logo swell and letter notes. */
+(function(){
+  var btn = document.getElementById("spSound");
+  var on = true; try{ on = localStorage.getItem("kandilIntroSound") !== "off"; }catch(e){}
+  function label(){ if(btn){ btn.textContent = on ? "🔊 Sound on" : "🔇 Sound off"; btn.setAttribute("aria-pressed", on ? "true" : "false"); } }
+  label();
+  var AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC){ if(btn) btn.style.display = "none"; return; }
+  var ctx, master, nbuf, scheduled = false, gone = false;
+  try{ ctx = new AC(); }catch(e){ if(btn) btn.style.display = "none"; return; }
+  master = ctx.createGain(); master.gain.value = on ? 0.9 : 0;
+  var comp = ctx.createDynamicsCompressor(); master.connect(comp); comp.connect(ctx.destination);
+  nbuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+  (function(){ var d = nbuf.getChannelData(0); for(var i=0;i<d.length;i++) d[i] = Math.random()*2-1; })();
+  function elapsed(){ return (performance.now() - (window.__splashT0 || performance.now()))/1000; }
+  function tone(t, f, dur, type, vol, f2, atk){
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type || "sine"; o.frequency.setValueAtTime(f, t);
+    if(f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    var a = atk || 0.01;
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + a);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
+  }
+  function noise(t, dur, vol, ftype, f0, f1, q, atk){
+    var s = ctx.createBufferSource(); s.buffer = nbuf; s.loop = true;
+    var f = ctx.createBiquadFilter(); f.type = ftype; f.Q.value = q || 1;
+    f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    var g = ctx.createGain(); var a = atk || 0.02;
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + a);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + dur + 0.05);
+  }
+  function schedule(){
+    if(scheduled || gone || ctx.state !== "running") return;
+    scheduled = true;
+    var base = ctx.currentTime - elapsed();
+    function E(t, fn){ if(base + t >= ctx.currentTime - 0.03) fn(base + t); }
+    /* 0 – 1.3 s : cosmic drone, orbit pings, spiral-in whoosh */
+    E(0, function(t){ tone(t, 55, 5.6, "sine", 0.20, 0, 1.2); tone(t, 110, 5.2, "sine", 0.07, 0, 1.4); tone(t, 164.8, 3.6, "triangle", 0.035, 0, 1.0); });
+    E(0.12, function(t){ tone(t, 880, 0.5, "sine", 0.07); });
+    E(0.22, function(t){ tone(t, 1174.7, 0.5, "sine", 0.07); });
+    E(0.32, function(t){ tone(t, 1568, 0.5, "sine", 0.07); });
+    E(0.42, function(t){ tone(t, 2093, 0.45, "sine", 0.05); });
+    E(0.1, function(t){ noise(t, 1.15, 0.2, "bandpass", 180, 3400, 1.3, 0.5); tone(t, 220, 1.1, "sine", 0.06, 1320, 0.4); });
+    /* 1.1 s : the sun ignites */
+    E(1.1, function(t){ tone(t, 95, 0.7, "sine", 0.55, 34, 0.005); noise(t, 0.55, 0.32, "lowpass", 5000, 160, 0.8, 0.005); tone(t, 1760, 0.3, "triangle", 0.07, 0, 0.005); });
+    /* 1.17 / 1.26 s : mould closes */
+    [1.17, 1.27].forEach(function(x, i){ E(x, function(t){ noise(t, 0.09, 0.34, "bandpass", 1900, 1500, 7, 0.003); tone(t, 150 - i*30, 0.14, "square", 0.1, 60, 0.003); }); });
+    /* 1.3 – 1.95 s : air blow */
+    E(1.3, function(t){ noise(t, 0.7, 0.14, "bandpass", 1400, 4200, 0.9, 0.2); tone(t, 280, 0.65, "sine", 0.05, 760, 0.2); });
+    /* 2.1 s : mould opens */
+    E(2.1, function(t){ noise(t, 0.1, 0.22, "bandpass", 1700, 1300, 6, 0.003); tone(t, 120, 0.16, "square", 0.07, 55, 0.003); noise(t, 0.4, 0.07, "highpass", 1500, 5000, 0.7, 0.05); });
+    /* 2.3 s : glass rings */
+    [1318.5, 1760, 2217.5, 2637].forEach(function(f, i){ E(2.3 + i*0.08, function(t){ tone(t, f, 1.0, "sine", 0.11); tone(t, f*2, 0.5, "triangle", 0.025); }); });
+    [2.55, 2.7, 2.85].forEach(function(x, i){ E(x, function(t){ tone(t, 3520 + i*400, 0.28, "sine", 0.05); }); });
+    /* 2.9 s : logo reveal swell */
+    E(2.85, function(t){ noise(t, 0.6, 0.1, "bandpass", 500, 5200, 1, 0.2); });
+    E(2.9, function(t){ [220, 277.2, 329.6, 440].forEach(function(f){ tone(t, f, 2.8, "sine", 0.06, 0, 0.5); tone(t, f*2.005, 2.2, "triangle", 0.018, 0, 0.6); }); tone(t, 110, 2.8, "sine", 0.1, 0, 0.4); });
+    /* 3.5 – 4.1 s : N E X U S */
+    [523.25, 587.33, 659.25, 783.99, 880].forEach(function(f, i){ E(3.5 + i*0.15, function(t){ tone(t, f, 0.5, "sine", 0.13); tone(t, f*4, 0.12, "sine", 0.03); }); });
+    /* 4.8 s : resolve */
+    E(4.8, function(t){ [440, 554.4, 659.25, 880].forEach(function(f, i){ tone(t + i*0.04, f, 1.4, "sine", 0.07, 0, 0.02); }); tone(t, 1760, 1.2, "sine", 0.05); });
+  }
+  function unlock(){
+    if(gone) return;
+    var p = ctx.resume ? ctx.resume() : null;
+    if(p && p.then) p.then(schedule); else schedule();
+  }
+  ["pointerdown","keydown","touchstart"].forEach(function(ev){ document.addEventListener(ev, unlock, {passive:true}); });
+  if(btn) btn.addEventListener("click", function(e){
+    e.stopPropagation();
+    on = !on; try{ localStorage.setItem("kandilIntroSound", on ? "on" : "off"); }catch(err){}
+    label(); master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(on ? 0.9 : 0, ctx.currentTime, 0.02);
+    unlock();
+  });
+  unlock();
+  var watch = setInterval(function(){
+    var sp = document.getElementById("splash");
+    if(!sp || sp.classList.contains("sp-out")){
+      clearInterval(watch); gone = true;
+      try{ master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, 0.12); }catch(e){}
+      setTimeout(function(){ try{ ctx.close(); }catch(e){} }, 900);
+    }
+  }, 150);
+})();
+</script>
+
 <div class="app-shell">
   <div class="sidebar">
   <div class="masthead">
@@ -1798,7 +1891,7 @@ const DEFAULT_OPTIONS = {
   category: ["Local","Export"],
   packagingCategory: ["Standard","Special Online","Special Offline"],
   packagingType: ["Full Pallet","Half Pallet","Shrinks","Bulk/Box","Box on FP","Box on HP","Shrink on FP","Shrink on HP"],
-  separatorSetup: ["Sheet","Flap-Inverted","Flap-Normal","Plastic Sheets","Chipboard Sheets"],
+  separatorSetup: ["Sheet","Flap-Inverted","Flap-Normal"],
   woodenFrame: ["Yes","No"],
   caps: ["TO 38","TO 53","TO 63","Without","TO 82"],
   palletType: ["Local","Export","GMA","USA - A","USA - B","Euro"],
@@ -1812,7 +1905,6 @@ const DEFAULT_OPTIONS = {
   pallet: [
     "Wooden Pallet (100*120*15.4 cm) VMF","Wooden Pallet (100*120*10*7.5 cm) Local",
     "Wooden Pallet (100*120*7.5*8.5 cm) Pepsi","Wooden Pallet (121.92*101.6 cm) GMA",
-    "Wooden Pallet (142*112) US - A","Wooden Pallet (142*112) US - B",
     "Wooden Pallet (142*112) US","Wooden Pallet (100*120*10*14 cm) Anife",
     "Wooden Pallet (120*80*14.4 cm) Euro","Wooden Pallet (100*120*15 cm) Export"
   ],
@@ -1825,21 +1917,11 @@ const DEFAULT_OPTIONS = {
   ],
   cartonSeparator: [
     "Sheet with Flap (100*120*3 cm)","Sheet with Flap (100*120*5 cm)","Sheet with Flap (100*120*7 cm)",
-    "Sheet with Flap (100*120*12 cm)","Sheet with Flap (100*120*14 cm)","Sheet with Flap (100*120*17 cm)",
-    "Sheet with Flap (100*120*7 cm) Craft",
-    "Sheet with inverted Flap (100*120*3 cm)","Sheet with inverted Flap (100*120*5 cm)","Sheet with inverted Flap (100*120*7 cm)",
-    "Sheet with inverted Flap (100*120*12 cm)","Sheet with inverted Flap (100*120*14 cm)","Sheet with inverted Flap (100*120*17 cm)",
     "Sheet with no Flap (142*112 cm)","Sheet with Flap (142*112*3 cm)","Sheet with Flap (142*112*5 cm)",
-    "Sheet with Flap (142*112*7 cm)","Sheet with Flap (142*112*12 cm)",
-    "Sheet with inverted Flap (142*112*3 cm)","Sheet with inverted Flap (142*112*5 cm)",
-    "Sheet with inverted Flap (142*112*7 cm)","Sheet with inverted Flap (142*112*12 cm)",
+    "Sheet with Flap (142*112*7 cm)","Sheet with Flap (142*112*12 cm)","Sheet with Flap (100*120*7 cm) Craft",
+    "Sheet with Flap (100*120*12 cm)","Sheet with Flap (100*120*14 cm)","Sheet with Flap (100*120*17 cm)",
     "Sheet with No Flap (80*120 cm)","Sheet with No Flap (100*120 cm)","Sheet with No Flap (121.92*101.6 cm) GMA",
-    "Sheet with Flap (121.92*101.6*6 cm) GMA","Sheet with Flap (121.92*101.6*12 cm) GMA",
-    "Sheet with inverted Flap (121.92*101.6*6 cm) GMA","Sheet with inverted Flap (121.92*101.6*12 cm) GMA",
-    "Sheet with Flap (80*120*3 cm)","Sheet with Flap (80*120*5 cm)","Sheet with Flap (80*120*7 cm)",
-    "Sheet with inverted Flap (80*120*3 cm)","Sheet with inverted Flap (80*120*5 cm)","Sheet with inverted Flap (80*120*7 cm)",
-    "Plastic Sheet (100*120 cm)","Plastic Sheet (80*120 cm)","Plastic Sheet (142*112 cm)","Plastic Sheet (121.92*101.6 cm) GMA",
-    "Chipboard Sheet (100*120 cm)","Chipboard Sheet (80*120 cm)","Chipboard Sheet (142*112 cm)","Chipboard Sheet (121.92*101.6 cm) GMA"
+    "Sheet with Flap (121.92*101.6*6 cm) GMA","Sheet with Flap (121.92*101.6*12 cm) GMA"
   ],
   plasticRoll: [
     "Plastic Roll (60 cm/60 Micron)","Plastic Roll (70 cm/60 Micron)","Plastic Roll (80 cm/60 Micron)",
@@ -1850,7 +1932,7 @@ const DEFAULT_OPTIONS = {
   labelKandil: ["Yellow Label","White Label"],
   labelCustomer: ["NA","Customer Logo Label","Custom Label"],
   labelProduct: ["NA","Product Label","Shrink Label"],
-  woodFrame: ["Kandil","US","GMA","Euro","None"],
+  woodFrame: ["Kandil","None"],
   boxes: ["N/A","Carton Box","Export Box"],
   separatorLong: ["N/A","Long Separator"],
   separatorShort: ["N/A","Short Separator"],
@@ -2017,7 +2099,10 @@ function normalizePackagingType(v){
   let changed = false;
   const need = {
     packagingType: ["Shrink on FP","Shrink on HP"],
-    cartonSeparator: ["Sheet with No Flap (80*120 cm)"]
+    cartonSeparator: ["Sheet with No Flap (80*120 cm)"],
+    pallet: ["Wooden Pallet (142*112 cm) US - Type A","Wooden Pallet (142*112 cm) US - Type B"],
+    separatorSetup: ["Plastic Sheet","Chipboard Sheet"],
+    woodFrame: ["US","GMA","Euro"]
   };
   Object.keys(need).forEach(k=>{
     OPTIONS[k] = Array.isArray(OPTIONS[k]) ? OPTIONS[k] : [];
@@ -3156,6 +3241,97 @@ function computeMaxLayersFitting(packagingTypeLower, palletTypeRaw, containerTyp
   return Math.max(1, maxLayers);
 }
 
+/* =====================================================================
+   BOM auto-defaults — Pallet, Plastic Hood, Carton Layer/Cover, Label-Kandil,
+   Wood Frame are filled from the Spec Sheet. Any row whose Specification the
+   user changes by hand (dataset.touched) is left alone; ↺ restores the default.
+===================================================================== */
+function bomPalletKind(pt){
+  pt = String(pt||"").trim().toLowerCase();
+  if(/^(usa|us)\b/.test(pt)) return "us";
+  if(pt === "gma") return "gma";
+  if(pt === "euro") return "euro";
+  if(pt === "local") return "local";
+  if(pt === "export") return "export";
+  return "";
+}
+function bomAutoPallet(kind, ptRaw){
+  if(kind === "us"){
+    const list = (OPTIONS.pallet||[]).filter(t=>/142\s*\*\s*112/.test(t));
+    const m = /\b(?:usa|us)\s*-\s*([ab])\b/i.exec(String(ptRaw||""));
+    const letter = m ? m[1].toLowerCase() : "";
+    if(letter){
+      const typed = list.find(t=> new RegExp("type\\s*-?\\s*"+letter+"\\b","i").test(t));
+      if(typed) return typed;
+    }
+    return list.find(t=>!/type\s*-?\s*[ab]\b/i.test(t)) || list[0] || null;
+  }
+  const rx = {us:/142\s*\*\s*112/, local:/\blocal\b/i, export:/export/i, gma:/gma/i, euro:/euro/i}[kind];
+  if(!rx) return null;
+  return (OPTIONS.pallet||[]).find(t=>rx.test(t)) || null;
+}
+function bomAutoHood(kind, shrinkMM){
+  if(!kind) return null;
+  const all = (OPTIONS.plasticHood||[]).map(t=>{
+    const m = t.match(/\(\s*([\d.]+)\s*m\s*\//);
+    return m ? {t, size:+m[1], us:/142\s*\*\s*112/.test(t)} : null;
+  }).filter(Boolean);
+  let list = all.filter(x=> x.us === (kind === "us"));
+  if(!list.length) list = all;
+  if(!list.length) return null;
+  const need = (+shrinkMM||0)/1000;
+  list.sort((a,b)=>a.size-b.size);
+  // upsell: smallest hood that is at least as long as the shrink size
+  return (list.find(x=> x.size >= need - 1e-9) || list[list.length-1]).t;
+}
+function bomAutoSheet(kind, setup, unitHeightMM){
+  const DIMS = {local:[100,120], export:[100,120], euro:[80,120], gma:[121.9,101.6], us:[142,112]};
+  if(!DIMS[kind]) return null;
+  const [L,W] = DIMS[kind];
+  const sl = String(setup||"").toLowerCase();
+  const type = /inverted/.test(sl) ? "inv" : /flap/.test(sl) ? "flap" : /plastic/.test(sl) ? "plastic" : /chip/.test(sl) ? "chip" : "noflap";
+  const items = (OPTIONS.cartonSeparator||[]).map(t=>{
+    const m = t.match(/\(\s*([\d.]+)\s*\*\s*([\d.]+)(?:\s*\*\s*([\d.]+))?\s*cm\s*\)/);
+    if(!m) return null;
+    const lt = t.toLowerCase();
+    const ty = /inverted/.test(lt) ? "inv" : /with flap/.test(lt) ? "flap" : /no flap/.test(lt) ? "noflap" : /plastic/.test(lt) ? "plastic" : /chip/.test(lt) ? "chip" : "other";
+    return {t, ty, l:+m[1], w:+m[2], h: m[3] != null ? +m[3] : null, clean:/\)\s*$/.test(t)};
+  }).filter(Boolean);
+  const sameDim = x=> Math.abs(x.l-L) < 0.15 && Math.abs(x.w-W) < 0.15;
+  const pick = (ty)=>{ const c = items.filter(x=>x.ty===ty && sameDim(x)); return c.filter(x=>x.clean).length ? c.filter(x=>x.clean) : c; };
+  const fmtN = n=> String(+n);
+  if(type === "noflap"){ const c = pick("noflap"); return c.length ? c[0].t : `Sheet with No Flap (${fmtN(L)}*${fmtN(W)} cm)`; }
+  if(type === "plastic"){ const c = pick("plastic"); return c.length ? c[0].t : `Plastic Sheet (${fmtN(L)}*${fmtN(W)} cm)`; }
+  if(type === "chip"){ const c = pick("chip"); return c.length ? c[0].t : `Chipboard Sheet (${fmtN(L)}*${fmtN(W)} cm)`; }
+  // flap types: flap height = half the unit height (cm), rounded UP to an available height
+  const need = (+unitHeightMM||0)/10/2;
+  let cands = pick(type).filter(x=>x.h != null);
+  let heights = cands.map(x=>x.h);
+  if(!heights.length) heights = pick("flap").map(x=>x.h).filter(h=>h != null);
+  if(!heights.length) heights = items.filter(x=>x.ty==="flap" && x.h != null).map(x=>x.h);
+  heights = Array.from(new Set(heights)).sort((a,b)=>a-b);
+  if(!heights.length) return null;
+  const h = heights.find(v=> v >= need - 1e-9) || heights[heights.length-1];
+  const hit = cands.find(x=> x.h === h);
+  if(hit) return hit.t;
+  return `Sheet with ${type==="inv" ? "Inverted " : ""}Flap (${fmtN(L)}*${fmtN(W)}*${fmtN(h)} cm)`;
+}
+function bomAutoWoodFrame(kind, frameOn){
+  if(!frameOn) return "None";
+  return ({local:"Kandil", export:"Kandil", us:"US", gma:"GMA", euro:"Euro"})[kind] || null;
+}
+function bomAutoSpecFor(itemName, ctx){
+  const kind = ctx.kind;
+  switch(itemName){
+    case "pallet": return bomAutoPallet(kind, ctx.palletType);
+    case "plastic hoods": return bomAutoHood(kind, ctx.shrinkSize);
+    case "carton layer": case "carton cover": return bomAutoSheet(kind, ctx.separatorSetup, ctx.unitHeight);
+    case "label - kandil": { const c = String(ctx.category||"").trim().toLowerCase(); return c==="export" ? "Yellow Label" : (c==="local" ? "White Label" : null); }
+    case "wood frame": return bomAutoWoodFrame(kind, ctx.frameOn);
+  }
+  return null;
+}
+
 function recalc(){
   // Keep the Packaging Manual's "Wooden Frame" section in lockstep with the
   // Spec Sheet's Top Frame Wooden flag — greyed out / hidden when "No", so
@@ -3167,7 +3343,7 @@ function recalc(){
 
   // Derive Separator Flap from Separator Setup (Flap-Inverted / Flap-Normal => with_flap)
   const sepSetup = strFromField("separatorSetup");
-  if($("separatorFlap")) $("separatorFlap").value = /flap/i.test(sepSetup) ? "with_flap" : "no_flap";
+  if($("separatorFlap")) $("separatorFlap").value = /^flap/i.test(sepSetup) ? "with_flap" : "no_flap";
 
   // Half Pallet and Box on HP always ship with exactly 2 straps per side
   // (total 4) — force the fields so the strap length and BOM stay consistent.
@@ -3351,136 +3527,38 @@ function recalc(){
   setOut("shrinkSize", shrinkSize, "mm");
   setOut("strapLength", strapLength, "m");
 
-  // BOM defaults: auto-fill specs from Spec Sheet (Pallet Type, Category,
-  // Separator Setup, Shrink Size, Unit Height, Top Frame Wooden) and qty
-  // defaults. Rows the user has edited directly (dataset.touched) are left alone.
+  // BOM defaults: "Straps" qty defaults to Strap Length (m); "Carton layer"
+  // qty defaults to Layers/Pallet for Full/Half Pallet, or Layers/Pallet ÷
+  // Carton Layer Divisor for every other Packaging Type (Shrinks, Bulk/Box,
+  // Box on FP, Box on HP). "Carton Cover" spec mirrors "Carton Layer" spec,
+  // and "Label - Kandil" spec defaults to "White Label" when Pallet Type is
+  // Local. Rows the user has edited directly (dataset.touched) are left alone.
   const cartonLayerDivisor = Math.max(0.0001, numFromField("cartonLayerDivisor") || 3);
   const cartonLayerQtyDefault = (isFullPallet || isHalfPallet)
     ? layersPerPallet
     : Math.ceil(layersPerPallet / cartonLayerDivisor);
+  let cartonLayerSpec = "";
+  Array.from(bomBody.querySelectorAll("tr")).forEach(tr=>{
+    const itemName = (tr.querySelector(".bom-item").value || "").trim().toLowerCase();
+    if(itemName === "carton layer") cartonLayerSpec = tr.querySelector(".bom-spec").value || "";
+  });
   const palletTypeLower = strFromField("palletType").trim().toLowerCase();
-  const categoryLower = strFromField("category").trim().toLowerCase();
-  const sepSetupLower = strFromField("separatorSetup").trim().toLowerCase();
-  const frameOn = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
-  const unitHeightMM = numFromField("unitHeight") || 0;
-
-  // --- helpers for default BOM specs (ALWAYS pick an exact catalogue value) ---
-  function pickFrom(list, pred, fallbackPred){
-    const arr = list || [];
-    const hit = arr.find(pred);
-    if(hit) return hit;
-    if(fallbackPred){ const f = arr.find(fallbackPred); if(f) return f; }
-    return arr[0] || "";
-  }
-  function defaultPalletSpec(){
-    const list = OPTIONS.pallet || [];
-    // Match trailing "A" / "B" only (not the "a" inside "usa"), so USA-B never
-    // hits the USA-A branch. Check B first for safety.
-    if(/usa\s*-\s*b\b|us\s*-\s*b\b|\busa\s*b\b/.test(palletTypeLower))
-      return pickFrom(list, s=> /142\s*\*\s*112/i.test(s) && /US\s*-\s*B\b/i.test(s), s=> /142\s*\*\s*112/i.test(s) && /\bUS\b/i.test(s));
-    if(/usa\s*-\s*a\b|us\s*-\s*a\b|\busa\s*a\b/.test(palletTypeLower))
-      return pickFrom(list, s=> /142\s*\*\s*112/i.test(s) && /US\s*-\s*A\b/i.test(s), s=> /142\s*\*\s*112/i.test(s) && /\bUS\b/i.test(s));
-    if(/gma/.test(palletTypeLower))
-      return pickFrom(list, s=> /GMA/i.test(s));
-    if(/euro/.test(palletTypeLower))
-      return pickFrom(list, s=> /Euro/i.test(s));
-    if(/local/.test(palletTypeLower))
-      return pickFrom(list, s=> /\bLocal\b/i.test(s));
-    if(/export/.test(palletTypeLower))
-      return pickFrom(list, s=> /\bExport\b/i.test(s));
-    return pickFrom(list, s=> /\bExport\b/i.test(s));
-  }
-  function defaultPlasticHoodSpec(){
-    const list = OPTIONS.plasticHood || [];
-    const isUS = /usa|us\s*-?\s*[ab]/.test(palletTypeLower);
-    const sizes = [2, 2.25, 2.75, 3, 3.25];
-    const shrinkM = (typeof shrinkSize === "number" && isFinite(shrinkSize) ? shrinkSize : 0) / 1000;
-    let chosen = sizes[sizes.length - 1];
-    for(const s of sizes){ if(s >= shrinkM - 1e-9){ chosen = s; break; } }
-    const sizeStr = String(chosen);
-    // Prefer exact size + US flag match from catalogue only
-    if(isUS){
-      return pickFrom(list,
-        s=> s.includes(`(${sizeStr} m`) && /142\s*\*\s*112/i.test(s),
-        s=> /142\s*\*\s*112/i.test(s) && s.includes("m/150"));
-    }
-    return pickFrom(list,
-      s=> s.includes(`(${sizeStr} m`) && !/142\s*\*\s*112/i.test(s),
-      s=> !/142\s*\*\s*112/i.test(s) && s.includes("m/150"));
-  }
-  function cartonDimPrefix(){
-    if(/usa|us\s*-?\s*[ab]/.test(palletTypeLower)) return "142*112";
-    if(/gma/.test(palletTypeLower)) return "121.92*101.6";
-    if(/euro/.test(palletTypeLower)) return "80*120";
-    return "100*120"; // Local / Export
-  }
-  function defaultCartonSpec(){
-    const list = OPTIONS.cartonSeparator || [];
-    const dim = cartonDimPrefix();
-    const isFlap = /flap-normal|flap-inverted|normal flap|inverted/.test(sepSetupLower);
-    const isInverted = /inverted/.test(sepSetupLower);
-    const isPlastic = /plastic/.test(sepSetupLower);
-    const isChip = /chipboard/.test(sepSetupLower);
-
-    if(isPlastic){
-      return pickFrom(list, s=> /^Plastic Sheet/i.test(s) && s.includes(dim), s=> /^Plastic Sheet/i.test(s));
-    }
-    if(isChip){
-      return pickFrom(list, s=> /^Chipboard Sheet/i.test(s) && s.includes(dim), s=> /^Chipboard Sheet/i.test(s));
-    }
-    if(!isFlap){
-      return pickFrom(list,
-        s=> /no\s*flap/i.test(s) && s.includes(dim),
-        s=> /no\s*flap/i.test(s));
-    }
-    // Flap (normal or inverted) — pick catalogue option whose flap height is
-    // the closest upsell of half unit height (unitHeight is mm → cm / 2).
-    const halfCm = (unitHeightMM / 10) / 2;
-    const candidates = list.filter(s=>{
-      const invOk = isInverted ? /inverted/i.test(s) : !/inverted/i.test(s);
-      return invOk && /flap/i.test(s) && !/no\s*flap/i.test(s) && s.includes(dim);
-    });
-    if(!candidates.length){
-      return pickFrom(list, s=> /flap/i.test(s) && !/no\s*flap/i.test(s) && s.includes(dim), s=> /flap/i.test(s));
-    }
-    // Extract flap height (last *N cm) and upsell
-    function flapHOf(s){
-      const m = s.match(/\*(\d+(?:\.\d+)?)\s*cm/i);
-      return m ? parseFloat(m[1]) : NaN;
-    }
-    candidates.sort((a,b)=> (flapHOf(a)||999) - (flapHOf(b)||999));
-    const upsell = candidates.find(s=> (flapHOf(s)||0) >= halfCm - 1e-9);
-    return upsell || candidates[candidates.length - 1];
-  }
-  function defaultLabelKandilSpec(){
-    const list = OPTIONS.labelKandil || [];
-    const want = categoryLower === "local" ? "White Label" : "Yellow Label";
-    return pickFrom(list, s=> s === want, s=> /label/i.test(s));
-  }
-  function defaultWoodFrameSpec(){
-    const list = OPTIONS.woodFrame || [];
-    if(!frameOn) return pickFrom(list, s=> /^None$/i.test(s));
-    if(/usa|us\s*-?\s*[ab]/.test(palletTypeLower)) return pickFrom(list, s=> /^US$/i.test(s));
-    if(/gma/.test(palletTypeLower)) return pickFrom(list, s=> /^GMA$/i.test(s));
-    if(/euro/.test(palletTypeLower)) return pickFrom(list, s=> /^Euro$/i.test(s));
-    return pickFrom(list, s=> /^Kandil$/i.test(s));
-  }
-
-  const autoCartonSpec = defaultCartonSpec();
+  const bomCtx = {kind: bomPalletKind(strFromField("palletType")), palletType: strFromField("palletType"), shrinkSize, separatorSetup: strFromField("separatorSetup"),
+    unitHeight, category: strFromField("category"), frameOn: (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes"};
   Array.from(bomBody.querySelectorAll("tr")).forEach(tr=>{
     const itemName = (tr.querySelector(".bom-item").value || "").trim().toLowerCase();
     const qtyInput = tr.querySelector(".bom-qty");
     const specSel = tr.querySelector(".bom-spec");
+    // Specification defaults (respect manual spec changes via dataset.touched).
+    const frameOn = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
     if(specSel && specSel.dataset.touched !== "1"){
-      let want = null;
-      if(itemName === "pallet") want = defaultPalletSpec();
-      else if(itemName === "plastic hoods") want = defaultPlasticHoodSpec();
-      else if(itemName === "carton layer" || itemName === "carton cover") want = autoCartonSpec;
-      else if(itemName === "label - kandil") want = defaultLabelKandilSpec();
-      else if(itemName === "wood frame") want = defaultWoodFrameSpec();
-      if(want && specSel.value !== want){
-        populateSelect(specSel, materialListForItem(tr.querySelector(".bom-item").value), want);
+      let want = bomAutoSpecFor(itemName, bomCtx);
+      if(itemName === "carton cover"){
+        // if the user hand-picked the Carton layer sheet, the cover follows it
+        const lt = Array.from(bomBody.querySelectorAll("tr")).find(r=>(r.querySelector(".bom-item").value||"").trim().toLowerCase()==="carton layer");
+        if(lt && lt.querySelector(".bom-spec").dataset.touched === "1") want = lt.querySelector(".bom-spec").value || want;
       }
+      if(want && specSel.value !== want) populateSelect(specSel, materialListForItem(tr.querySelector(".bom-item").value), want);
     }
     if(qtyInput.dataset.touched === "1") return;
     if(itemName === "straps"){
@@ -3491,6 +3569,7 @@ function recalc(){
       // Default quantity follows Top Frame Wooden; editable afterwards.
       qtyInput.value = frameOn ? 1 : 0;
     }
+
   });
 
   // Visual gauges for built-in limit indicators
@@ -3577,7 +3656,7 @@ function appendBomRow(data){
   const tr = document.createElement("tr");
   tr.innerHTML = `
     <td class="col-item"><select class="bom-item"></select></td>
-    <td><select class="bom-spec"></select></td>
+    <td><span style="display:flex;gap:4px;align-items:center;"><select class="bom-spec" style="flex:1;min-width:0;"></select><button type="button" class="bom-spec-auto btn btn-ghost btn-sm" title="Restore the automatic default from the Spec Sheet" style="padding:1px 6px;font-size:.72rem;">↺</button></span></td>
     <td><select class="bom-uom"></select></td>
     <td class="col-qty"><span style="display:flex;gap:4px;align-items:center;">
       <input type="number" step="any" class="bom-qty" value="${data.qty}" style="flex:1;">
@@ -3600,6 +3679,7 @@ function appendBomRow(data){
   if(data.specTouched) specSel.dataset.touched = "1";
   qtyInput.addEventListener("input", ()=>{ qtyInput.dataset.touched = "1"; });
   specSel.addEventListener("change", ()=>{ specSel.dataset.touched = "1"; recalc(); });
+  tr.querySelector(".bom-spec-auto").addEventListener("click", ()=>{ delete specSel.dataset.touched; recalc(); });
   tr.querySelector(".bom-qty-auto").addEventListener("click", ()=>{
     delete qtyInput.dataset.touched;
     recalc();
@@ -8189,14 +8269,7 @@ function pmDrawFooter(doc){
   doc.text("Customer Approval", 210 - 10, logoBottom - 1.5, {align:"right"});
 }
 
-async function exportManualToPdf(){
-  if(typeof window.jspdf === "undefined"){
-    pmSetStatus("Couldn't load the PDF engine — check your internet connection and try again.", true);
-    return;
-  }
-  pmSetStatus("Building your Packaging Manual PDF…");
-  try{
-    const { jsPDF } = window.jspdf;
+async function pmCollectBlocks(){
     const C = PDF_COLORS;
     const val = id => { const el = $(id); const v = el ? String(el.value||"").trim() : ""; return v || "N/A"; };
     const hasFrame = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
@@ -8280,6 +8353,21 @@ async function exportManualToPdf(){
         }
       }
     }
+
+    return blocks;
+}
+
+async function exportManualToPdf(){
+  if(typeof window.jspdf === "undefined"){
+    pmSetStatus("Couldn't load the PDF engine — check your internet connection and try again.", true);
+    return;
+  }
+  pmSetStatus("Building your Packaging Manual PDF…");
+  try{
+    const { jsPDF } = window.jspdf;
+    const C = PDF_COLORS;
+    const val = id => { const el = $(id); const v = el ? String(el.value||"").trim() : ""; return v || "N/A"; };
+    const blocks = await pmCollectBlocks();
 
     /* ---- layout engine: renders at scale S; shrinks until it fits 2 pages ---- */
     const build = S => {
@@ -8536,286 +8624,175 @@ async function exportManualToWord(){
   }
   pmSetStatus("Building your Packaging Manual Word document…");
   try{
-    const { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, VerticalAlign, ShadingType } = window.docx;
-    const C = PDF_COLORS;
-    const val = (id)=> $(id) ? ($(id).value || "N/A") : "N/A";
-    const hasFrame = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
-    const children = [];
-
-    // Branded header matching the PDF (logo + title + Kandil colour bar)
-    try{
-      const logoData = await dataUrlToUint8("data:image/png;base64,"+LOGO_B64);
-      const logoW = 110, logoH = Math.round(logoW * 275 / 720);
-      children.push(new Paragraph({
-        spacing:{after:60},
-        children:[
-          new ImageRun({data:logoData.bytes, type:logoData.type, transformation:{width:logoW, height:logoH}}),
-          new TextRun({text:"   Packaging Manual", bold:true, size:32, color:"333334"}),
-        ]
-      }));
-    }catch(e){
-      children.push(new Paragraph({
-        alignment: AlignmentType.CENTER,
-        spacing:{after:40},
-        children:[new TextRun({text:"Packaging Manual", bold:true, size:34, color:"333334"})]
-      }));
-    }
-    children.push(new Paragraph({
-      spacing:{after:80},
-      children:[new TextRun({text:"Kandil — Preserving Nature", size:16, color:"969696", italics:true})]
-    }));
-    // Colour strip (magenta · gold · lime · teal) — same order as PDF
-    const stripColors = [C.magenta, C.gold, C.lime, C.teal].map(rgbHex);
-    const noBorder = {style:BorderStyle.NONE, size:0, color:"FFFFFF"};
-    const noBorders = {top:noBorder, bottom:noBorder, left:noBorder, right:noBorder};
-    children.push(new Table({
-      width:{size:100, type:WidthType.PERCENTAGE},
-      borders:noBorders,
-      rows:[new TableRow({children: stripColors.map(fill=> new TableCell({
-        width:{size:25, type:WidthType.PERCENTAGE},
-        borders:noBorders,
-        shading:{fill},
-        children:[new Paragraph({spacing:{before:0, after:0}, children:[new TextRun({text:" ", size:8})]})]
-      }))})]
-    }));
-    children.push(new Paragraph({spacing:{before:120, after:80}, children:[]}));
-
-    const __pmChunks = {
-      header: async ()=>{
-    children.push(buildWordFieldTable([
-      [PML("pmProductName","Product Name"), val("pmProductName"), C.gold, C.goldTint],
-      [PML("pmProductCode","Product Code"), val("pmProductCode"), C.gold, C.goldTint],
-      [PML("pmCustomer","Customer"), val("pmCustomer"), C.gold, C.goldTint],
-      [PML("pmSKU","SKU"), val("pmSKU"), C.gold, C.goldTint],
-      [PML("pmIssueDate","Issue Date"), val("pmIssueDate"), C.gold, C.goldTint],
-      [PML("pmRevisedDate","Revised / Approved Date"), val("pmRevisedDate"), C.gold, C.goldTint]
-    ]));
-      },
-      layerSetup: async ()=>{
-    children.push(wordHeading(PMT("layerSetup","1. Pallet Layer Setup")));
-    children.push(buildWordFieldTable([
-      [PML("pmPalletSize","Pallet Size"), val("pmPalletSize"), C.teal, C.tealTint],
-      [PML("pmProductDimension","Product Dimension"), val("pmProductDimension"), C.teal, C.tealTint],
-      [PML("pmUsableArea","Usable Area"), val("pmUsableArea"), C.teal, C.tealTint],
-      [PML("pmLayout","Layout"), val("pmLayout"), C.teal, C.tealTint],
-      [PML("pmEdgeClearance","Edge Clearance"), val("pmEdgeClearance"), C.teal, C.tealTint],
-      [PML("pmQtyPerLayer","Quantity per Layer"), val("pmQtyPerLayer"), C.teal, C.tealTint]
-    ].concat(pkgIsBox(strFromField("packagingType")) ? [
-      [PML("pmUnitsPerPack",pmPackLabels(strFromField("packagingType")).units), val("pmUnitsPerPack"), C.teal, C.tealTint],
-      [PML("pmPacksPerLayer",pmPackLabels(strFromField("packagingType")).per), val("pmPacksPerLayer"), C.teal, C.tealTint]
-    ] : [])));
-
-    // Layout diagram
-    const packingEnabled = $("cpEnabled") && $("cpEnabled").checked;
-    let layoutImgDataUrl = null, layoutImgDims = null;
-    if(packingEnabled && $("cpSvgWrap").innerHTML.trim()){
-      const png = await svgMarkupToPngDataUrl($("cpSvgWrap").innerHTML, 900);
-      if(png){ layoutImgDataUrl = png.dataUrl; layoutImgDims = {w:png.width, h:png.height}; }
-    } else if(packingPhotoDataUrl){
-      const dims = await getImageDataUrlDimensions(packingPhotoDataUrl);
-      if(dims){ layoutImgDataUrl = dims.dataUrl; layoutImgDims = {w:dims.width, h:dims.height}; }
-    }
-    if(layoutImgDataUrl){
-      const maxW = 420, maxH = 320; // docx uses px-ish units here (96dpi assumed)
-      let w = maxW, h = w * (layoutImgDims.h/layoutImgDims.w);
-      if(h > maxH){ h = maxH; w = h * (layoutImgDims.w/layoutImgDims.h); }
-      const img = await dataUrlToUint8(layoutImgDataUrl);
-      children.push(new Paragraph({
-        alignment: AlignmentType.CENTER, spacing:{before:120, after:220},
-        children:[new ImageRun({data:img.bytes, type:img.type, transformation:{width:Math.round(w), height:Math.round(h)}})]
-      }));
-    }
-      },
-      palletSetup: async ()=>{
-    children.push(wordHeading(PMT("palletSetup","2. Pallet Setup")));
-    children.push(buildWordFieldTable([
-      [PML("pmPalletTypeName","Pallet Type"), val("pmPalletTypeName"), C.magenta, C.magentaTint],
-      [PML("pmUnitsLayer","Units / Layer"), val("pmUnitsLayer"), C.magenta, C.magentaTint],
-      [PML("pmLayerPallet","Layer / Pallet"), val("pmLayerPallet"), C.magenta, C.magentaTint],
-      [PML("pmUnitsPallet","Units / Pallet"), val("pmUnitsPallet"), C.magenta, C.magentaTint],
-      [PML("pmPalletHeight","Pallet Height (mm)"), val("pmPalletHeight"), C.magenta, C.magentaTint],
-      [PML("pmSealing","Plastic Hood (shrink)"), val("pmSealing"), C.magenta, C.magentaTint],
-      [PML("pmSeparatorsType","Pallet Separators Type"), val("pmSeparatorsType"), C.magenta, C.magentaTint],
-      [PML("pmSeparatorsSizeQty","Pallet Separators Size / Qty"), val("pmSeparatorsSizeQty"), C.magenta, C.magentaTint],
-      [PML("pmPalletCover","Pallet Cover"), val("pmPalletCover"), C.magenta, C.magentaTint],
-      [PML("pmFrame","Frame"), hasFrame ? val("pmFrame") : "N/A — Top Frame Wooden = No", C.magenta, C.magentaTint],
-      [PML("pmStrapM","Strap (m)"), val("pmStrapM"), C.magenta, C.magentaTint],
-      [PML("pmLabelColor","Pallet Label Color"), val("pmLabelColor"), C.magenta, C.magentaTint],
-      [PML("pmLabelDims","Pallet Label Dimensions"), val("pmLabelDims"), C.magenta, C.magentaTint],
-      [PML("pmCSR","Customer Special Request (CSR)"), val("pmCSR"), C.magenta, C.magentaTint]
-    ]));
-      },
-      loading: async ()=>{
-    children.push(wordHeading(PMT("loading","3. Loading Data")));
-    children.push(buildWordFieldTable([
-      [PML("pmContType","Container Type"), val("pmContType"), C.lime, C.limeTint],
-      [PML("pmPalletsPerCont","No. Pallets / Container / Unit"), val("pmPalletsPerCont"), C.lime, C.limeTint],
-      [PML("pmPalletNetWeight","Pallet Net Weight"), val("pmPalletNetWeight"), C.lime, C.limeTint],
-      [PML("pmPalletGrossWeight","Pallet Gross Weight"), val("pmPalletGrossWeight"), C.lime, C.limeTint],
-      [PML("pmUnitsPerCont","No. of Units / Container / Unit"), val("pmUnitsPerCont"), C.lime, C.limeTint],
-      [PML("pmContNetWeight","Container Net Weight / Unit"), val("pmContNetWeight"), C.lime, C.limeTint],
-      [PML("pmContGrossWeight","Container Gross Weight / Unit"), val("pmContGrossWeight"), C.lime, C.limeTint],
-      [PML("pmCushions","No. of Cushions"), val("pmCushions"), C.lime, C.limeTint]
-    ], {pair:true}));
-      },
-      product: async ()=>{
-    children.push(wordHeading(PMT("product","4. Product Data")));
-    children.push(buildWordFieldTable([
-      [PML("pmBrimful","Brimful Capacity (ml)"), val("pmBrimful"), C.gold, C.goldTint],
-      [PML("pmWeight","Weight"), val("pmWeight"), C.gold, C.goldTint],
-      [PML("pmHeight","Height"), val("pmHeight"), C.gold, C.goldTint],
-      [PML("pmDiameter","Diameter"), val("pmDiameter"), C.gold, C.goldTint],
-      [PML("pmColour","Colour"), val("pmColour"), C.gold, C.goldTint],
-      [PML("pmFinish","Finish"), val("pmFinish"), C.gold, C.goldTint],
-      [PML("pmLabelling","Labelling"), val("pmLabelling"), C.gold, C.goldTint],
-      [PML("pmPrinting","Printing"), val("pmPrinting"), C.gold, C.goldTint]
-    ], {pair:true}));
-    children.push(buildWordFieldTable([[PML("pmTDRef","TD Reference / Date"), val("pmTDRef"), C.gold, C.goldTint]]));
-    const pmProductImage = pmProduct2DDataUrl || productPhotoDataUrl;
-    if(pmProductImage){
-      const dims = await getImageDataUrlDimensions(pmProductImage);
-      if(dims){
-        const maxW = 300, maxH = 300;
-        let w = maxW, h = w * (dims.height/dims.width);
-        if(h > maxH){ h = maxH; w = h * (dims.width/dims.height); }
-        const img = await dataUrlToUint8(dims.dataUrl);
-        children.push(new Paragraph({
-          alignment: AlignmentType.CENTER, spacing:{before:160, after:160},
-          children:[new ImageRun({data:img.bytes, type:img.type, transformation:{width:Math.round(w), height:Math.round(h)}})]
-        }));
-      }
-    }
-      },
-      process: async ()=>{
-    children.push(wordHeading(PMT("process","5. Product Production Process / Codes")));
-    children.push(buildWordFieldTable([
-      [PML("pmOnlineProcess","Online Process / Color"), val("pmOnlineProcess"), C.teal, C.tealTint],
-      [PML("pmSprayingProcess","Spraying Process"), val("pmSprayingProcess"), C.teal, C.tealTint],
-      [PML("pmPrintedProcess","Printed Process"), val("pmPrintedProcess"), C.teal, C.tealTint],
-      [PML("pmOfflinePacking","Offline Packing"), val("pmOfflinePacking"), C.teal, C.tealTint]
-    ]));
-      },
-      material: async ()=>{
-    children.push(wordHeading(PMT("material","6. Packaging Material Specification — Wooden Pallet")));
-    children.push(buildWordFieldTable([
-      [PML("pmWoodPalletName","Pallet Name"), val("pmWoodPalletName"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletType","Pallet Type"), val("pmWoodPalletType"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletCode","Pallet Code"), val("pmWoodPalletCode"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletSize","Pallet Size"), val("pmWoodPalletSize"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletMaterial","Pallet Material"), val("pmWoodPalletMaterial"), C.magenta, C.magentaTint],
-      [PML("pmWoodPalletRefDoc","Reference Document"), val("pmWoodPalletRefDoc"), C.magenta, C.magentaTint]
-    ]));
-      },
-      deck: async ()=>{
-    const deckRows = gatherPmRows(pmDeckBoardsBody, ["item","desc","qty","dims","tol"]);
-    if(deckRows.length){
-      children.push(wordHeading(PMT("deck","Pallet Design & Dimensions — Deck Boards / Blocks")));
-      children.push(wordDataTable(
-        ["Item","Description","Qty","Dimensions (mm)","Tolerance"],
-        [0.10,0.34,0.10,0.28,0.18],
-        deckRows.map(r=>[r.item,r.desc,r.qty,r.dims,r.tol])
-      ));
-    }
-
-    if(PM_PHOTOS.pmPallet){
-      const dims = await getImageDataUrlDimensions(PM_PHOTOS.pmPallet);
-      if(dims){
-        const maxW = 460, maxH = 340;
-        let w = maxW, h = w * (dims.height/dims.width);
-        if(h > maxH){ h = maxH; w = h * (dims.width/dims.height); }
-        const img = await dataUrlToUint8(dims.dataUrl);
-        children.push(new Paragraph({
-          alignment: AlignmentType.CENTER, spacing:{before:160, after:160},
-          children:[new ImageRun({data:img.bytes, type:img.type, transformation:{width:Math.round(w), height:Math.round(h)}})]
-        }));
-      }
-    }
-
-    children.push(wordHeading("Compliance & Quality Requirements"));
-    children.push(new Paragraph({
-      spacing:{after:200},
-      children:[new TextRun({text: $("pmComplianceText").value || "", size:17})]
-    }));
-      },
-      frame: async ()=>{
-    if(hasFrame){
-      children.push(wordHeading(PMT("frame","Wooden Frame")));
-      children.push(buildWordFieldTable([
-        [PML("pmFrameTypeName","Frame Type"), val("pmFrameTypeName"), C.teal, C.tealTint],
-        [PML("pmFrameShape","Shape"), val("pmFrameShape"), C.teal, C.tealTint],
-        [PML("pmFrameEdges","Edges"), val("pmFrameEdges"), C.teal, C.tealTint],
-        [PML("pmFrameMaterial","Material"), val("pmFrameMaterial"), C.teal, C.tealTint],
-        [PML("pmFrameMemberWidth","Member Width"), val("pmFrameMemberWidth"), C.teal, C.tealTint],
-        [PML("pmFrameMemberThickness","Member Thickness"), val("pmFrameMemberThickness"), C.teal, C.tealTint],
-        [PML("pmFrameMoisture","Moisture Content"), val("pmFrameMoisture"), C.teal, C.tealTint]
-      ]));
-      const frameRows = gatherPmRows(pmFrameDimsBody, ["std","len","w","treat"]);
-      if(frameRows.length){
-        children.push(wordDataTable(
-          ["Reference Pallet Standard","Frame Length (mm)","Frame Width (mm)","Treatment Required"],
-          [0.34,0.22,0.22,0.22],
-          frameRows.map(r=>[r.std,r.len,r.w,r.treat])
-        ));
-      }
-      if(PM_PHOTOS.pmFrame){
-        const dims = await getImageDataUrlDimensions(PM_PHOTOS.pmFrame);
-        if(dims){
-          const maxW = 460, maxH = 340;
-          let w = maxW, h = w * (dims.height/dims.width);
-          if(h > maxH){ h = maxH; w = h * (dims.width/dims.height); }
-          const img = await dataUrlToUint8(dims.dataUrl);
-          children.push(new Paragraph({
-            alignment: AlignmentType.CENTER, spacing:{before:160, after:160},
-            children:[new ImageRun({data:img.bytes, type:img.type, transformation:{width:Math.round(w), height:Math.round(h)}})]
-          }));
-        }
-      }
-    }
-      },
+    const D = window.docx;
+    const { Document, Packer, Paragraph, TextRun, ImageRun, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle,
+            ShadingType, Header, Footer, VerticalAlign, TableLayoutType, TabStopType } = D;
+    const blocks = await pmCollectBlocks();
+    const val = id => { const el = $(id); const v = el ? String(el.value||"").trim() : ""; return v || "N/A"; };
+    const hex = a => a.map(v=>v.toString(16).padStart(2,"0")).join("").toUpperCase();
+    const MM = 56.7;                       // twips per mm
+    const FULL = Math.round(190*MM), GAP = Math.round(4*MM), HALF = Math.floor((FULL-GAP)/2);
+    const LINE = "DCDEE0", GREY = "F6F7F7";
+    const bd = {style:BorderStyle.SINGLE, size:4, color:LINE};
+    const borders = {top:bd, bottom:bd, left:bd, right:bd};
+    const none = {style:BorderStyle.NONE, size:0, color:"FFFFFF"};
+    const noBorders = {top:none, bottom:none, left:none, right:none, insideHorizontal:none, insideVertical:none};
+    const cellMargins = {top:25, bottom:25, left:70, right:70};
+    const run = (text, o)=> new TextRun(Object.assign({text:String(text==null?"":text), font:"Calibri"}, o||{}));
+    const para = (children, o)=> new Paragraph(Object.assign({spacing:{before:0, after:0, line:240}, children}, o||{}));
+    const spacer = (tw)=> new Paragraph({spacing:{before:0, after:tw||50, line:20}, children:[run("", {size:2})]});
+    const imgRun = async (img, wMM, hMM)=>{
+      const u = await dataUrlToUint8(img.dataUrl);
+      return new ImageRun({data:u.bytes, type:u.type, transformation:{width:Math.max(8,Math.round(wMM*3.78)), height:Math.max(8,Math.round(hMM*3.78))}});
     };
-    window.__pmExporting = true;
-    try{
-      for(const key of pmSectionOrder()){
-        if(key.startsWith("c:")){
-          const sec = CUSTOM_PM_SECTIONS.find(s=>s.id===key.slice(2));
-          if(!sec || !sec.fields || !sec.fields.length) continue;
-          children.push(wordHeading(sec.title || "Custom Section"));
-          children.push(buildWordFieldTable(sec.fields.map(f=>[f.label, strFromField(f.key), C.magenta, C.magentaTint])));
-        } else if(__pmChunks[key]){
-          pmExportBeginChunk(key);
-          await __pmChunks[key]();
-          if(!(key==="frame" && !hasFrame)) pmWordLeftoverFields(children, key);
+    const tbl = (widths, rows, o)=> new Table(Object.assign({
+      width:{size:widths.reduce((a,b)=>a+b,0), type:WidthType.DXA}, columnWidths:widths, layout:TableLayoutType.FIXED, rows}, o||{}));
+    const cell = (w, children, o)=> new TableCell(Object.assign({width:{size:w, type:WidthType.DXA}, margins:cellMargins, borders, children}, o||{}));
+
+    const banner = (b, w)=> tbl([w], [new TableRow({children:[new TableCell({
+      width:{size:w,type:WidthType.DXA}, margins:{top:30,bottom:30,left:90,right:90}, shading:{type:ShadingType.CLEAR, fill:hex(b.color)},
+      borders:{top:none,bottom:none,left:none,right:none},
+      children:[para([run(String(b.title).toUpperCase(), {bold:true, color:"FFFFFF", size:15})])]})]})]);
+    const kvTable = (rows, w, cols)=>{
+      const cw = Math.floor(w/cols), lw = Math.round(cw*0.4), vw = cw - lw;
+      const widths = []; for(let i=0;i<cols;i++){ widths.push(lw, vw); }
+      const trs = [];
+      for(let i=0;i<rows.length;i+=cols){
+        const cells = [];
+        for(let j=0;j<cols;j++){
+          const r = rows[i+j];
+          cells.push(cell(lw, [para(r ? [run(r.label, {bold:true, color:"5B5B5C", size:13})] : [run("",{size:13})])], {shading:{type:ShadingType.CLEAR, fill:GREY}, verticalAlign:VerticalAlign.CENTER}));
+          cells.push(cell(vw, [para(r ? [run(r.value, {color:"333334", size:14})] : [run("",{size:14})])], {verticalAlign:VerticalAlign.CENTER}));
         }
+        trs.push(new TableRow({children:cells, cantSplit:true}));
       }
-    } finally { window.__pmExporting = false; }
+      return tbl(widths, trs);
+    };
+    const dataTable = (t, w, color)=>{
+      const widths = t.fr.map(f=>Math.round(f*w)); widths[widths.length-1] += w - widths.reduce((a,b)=>a+b,0);
+      const head = new TableRow({tableHeader:true, children:t.headers.map((h,i)=> cell(widths[i], [para([run(h, {bold:true, color:"FFFFFF", size:13})])], {shading:{type:ShadingType.CLEAR, fill:hex(color)}}))});
+      const body = t.rows.map((r,ri)=> new TableRow({cantSplit:true, children:r.map((v,i)=> cell(widths[i], [para([run(v||"", {size:13, color:"333334"})])], ri%2 ? {shading:{type:ShadingType.CLEAR, fill:"F8F9FA"}} : {}))}));
+      return tbl(widths, [head, ...body]);
+    };
+    const textBox = async (title, text, w)=>{
+      const lines = String(text||"").split("\n");
+      return [para([run(title, {bold:true, color:"3C3C3C", size:13})], {spacing:{before:40, after:20}}),
+        tbl([w], [new TableRow({children:[cell(w, lines.map(l=> para([run(l, {size:12, color:"333334"})])))]})])];
+    };
+
+    /* estimated mm height — only used to decide where a page break is needed */
+    const estH = (b, w)=>{
+      const wMM = w/MM; let h = 5;
+      const cols = b.cols || 1;
+      let cwMM = wMM; let ih = 0;
+      if(b.image){ let iw = wMM*b.image.frac; ih = Math.min(iw*b.image.img.height/b.image.img.width, b.image.maxH); iw = ih*b.image.img.width/b.image.img.height; cwMM = wMM - iw - 2; }
+      const per = cwMM/cols;
+      const kh = (b.rows||[]).reduce((a,r,i)=>{ if(i % cols) return a; const lines = Math.max(1, Math.ceil(String(r.value).length/Math.max(8, (per*0.6)/1.5)), Math.ceil(String(r.label).length/Math.max(6,(per*0.4)/1.5))); return a + 2.2 + lines*3; }, 0);
+      h += Math.max(kh, ih);
+      if(b.table) h += 4 + (b.table.rows.length+1)*5;
+      if(b.text) h += 8 + String(b.text).split("\n").length*2.6;
+      return h;
+    };
+
+    const blockEls = async (b, w)=>{
+      const out = [banner(b, w)];
+      let kvW = w, imgCell = null;
+      if(b.image){
+        let iwMM = (w/MM)*b.image.frac, ihMM = iwMM*b.image.img.height/b.image.img.width;
+        const mh = b.image.maxH;
+        if(ihMM > mh){ ihMM = mh; iwMM = ihMM*b.image.img.width/b.image.img.height; }
+        const iwTw = Math.round(iwMM*MM) + 120;
+        kvW = w - iwTw;
+        const ir = await imgRun(b.image.img, iwMM, ihMM);
+        const imgCellEl = new TableCell({width:{size:iwTw, type:WidthType.DXA}, margins:{top:30,bottom:30,left:60,right:30}, verticalAlign:VerticalAlign.TOP,
+          borders:{top:none,bottom:none,left:none,right:none}, children:[para([ir], {alignment:AlignmentType.CENTER})]});
+        const left = new TableCell({width:{size:kvW, type:WidthType.DXA}, margins:{top:0,bottom:0,left:0,right:0}, borders:{top:none,bottom:none,left:none,right:none},
+          children:[(b.rows && b.rows.length) ? kvTable(b.rows, kvW, b.cols||1) : para([run("")])]});
+        out.push(tbl([kvW, iwTw], [new TableRow({children:[left, imgCellEl]})], {borders:noBorders}));
+      } else if(b.rows && b.rows.length){
+        out.push(kvTable(b.rows, w, b.cols||1));
+      }
+      if(b.table){ out.push(spacer(40)); out.push(dataTable(b.table, w, b.color)); }
+      if(b.text){ (await textBox(b.textTitle, b.text, w)).forEach(e=> out.push(e)); }
+      return out;
+    };
+
+    /* ---- flow: half blocks stack in two columns, full blocks span the page ---- */
+    const body = [];
+    let L = [], R = [], hL = 0, hR = 0, pageUsed = 0;
+    const CAP = 252;
+    const pageBreak = ()=> body.push(new Paragraph({pageBreakBefore:true, spacing:{before:0,after:0,line:20}, children:[run("",{size:2})]}));
+    const need = (h)=>{ if(pageUsed > 0 && pageUsed + h > CAP){ pageBreak(); pageUsed = 0; } pageUsed += h; };
+    const colCell = (w, els)=> new TableCell({width:{size:w, type:WidthType.DXA}, margins:{top:0,bottom:0,left:0,right:0}, borders:{top:none,bottom:none,left:none,right:none},
+      children: els.length ? els : [para([run("")])]});
+    const flush = ()=>{
+      if(!L.length && !R.length) return;
+      need(Math.max(hL, hR) + 3);
+      body.push(tbl([HALF, GAP, HALF], [new TableRow({children:[colCell(HALF, L), colCell(GAP, [para([run("")])]), colCell(HALF, R)]})], {borders:noBorders}));
+      body.push(spacer(60));
+      L = []; R = []; hL = hR = 0;
+    };
+    for(const b of blocks){
+      if(b.w === "full"){
+        flush();
+        const h = estH(b, FULL);
+        need(h + 3);
+        (await blockEls(b, FULL)).forEach(e=> body.push(e));
+        body.push(spacer(60));
+      } else {
+        const h = estH(b, HALF) + 3;
+        const els = await blockEls(b, HALF); els.push(spacer(50));
+        const side = hL <= hR ? 0 : 1;
+        const cur = side ? hR : hL;
+        if(pageUsed + Math.max(hL,hR,cur + h) > CAP && (L.length || R.length)){ flush(); }
+        if(hL <= hR){ L.push(...els); hL += h; } else { R.push(...els); hR += h; }
+      }
+    }
+    flush();
+
+    /* ---- header / footer (same theme as the PDF) ---- */
+    const logoBytes = (()=>{ const bin = atob(LOGO_B64); const u = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i); return u; })();
+    const header = new Header({children:[
+      tbl([Math.round(40*MM), FULL-Math.round(80*MM), Math.round(40*MM)], [new TableRow({children:[
+        new TableCell({width:{size:Math.round(40*MM),type:WidthType.DXA}, borders:{top:none,bottom:none,left:none,right:none}, children:[para([new ImageRun({data:logoBytes, type:"png", transformation:{width:84, height:32}})])]}),
+        new TableCell({width:{size:FULL-Math.round(80*MM),type:WidthType.DXA}, borders:{top:none,bottom:none,left:none,right:none}, verticalAlign:VerticalAlign.CENTER, children:[
+          para([run("Packaging Manual", {bold:true, size:25, color:"323232"})], {alignment:AlignmentType.CENTER}),
+          para([run([val("pmCustomer"), val("pmProductName"), val("pmSKU")].join("  ·  "), {size:14, color:"787878"})], {alignment:AlignmentType.CENTER})]}),
+        new TableCell({width:{size:Math.round(40*MM),type:WidthType.DXA}, borders:{top:none,bottom:none,left:none,right:none}, children:[para([run("")])]})
+      ]})], {borders:noBorders}),
+      new Paragraph({spacing:{before:0,after:0,line:20}, border:{bottom:{style:BorderStyle.SINGLE, size:6, color:"5B5B5C", space:1}}, children:[run("",{size:2})]})
+    ]});
+    const fchildren = [];
+    const flogos = [];
+    for(const u of [pmSecondaryLogoDataUrl, pmCertBadgesDataUrl]){
+      if(!u) continue;
+      const dm = await getImageDataUrlDimensions(u); if(!dm) continue;
+      let hh = 11, ww = hh*dm.width/dm.height; if(ww > 90){ ww = 90; hh = ww*dm.height/dm.width; }
+      flogos.push(await imgRun(dm, ww, hh)); flogos.push(run("   "));
+    }
+    flogos.push(new TextRun({text:"\tCustomer Approval", italics:true, size:16, color:"A0A0A0", font:"Calibri"}));
+    fchildren.push(new Paragraph({tabStops:[{type:TabStopType.RIGHT, position:FULL}], spacing:{before:0,after:0}, children:flogos}));
+    const footer = new Footer({children:fchildren});
 
     const wdoc = new Document({
-      styles:{
-        default:{
-          document:{
-            styles:[{id:"Normal", run:{font:"Calibri", size:20}}]
-          }
-        }
-      },
+      creator:"NEXUS", title:"Packaging Manual",
       sections:[{
-        properties:{
-          page:{
-            margin:{top:720, right:720, bottom:720, left:720} // 0.5" in twips
-          }
-        },
-        children
+        properties:{page:{size:{width:11906, height:16838}, margin:{top:1100, bottom:900, left:567, right:567, header:360, footer:300},
+          borders:{pageBorders:{display:"allPages", offsetFrom:"page"},
+            pageBorderTop:{style:BorderStyle.SINGLE, size:8, color:"3C3C3C", space:14}, pageBorderBottom:{style:BorderStyle.SINGLE, size:8, color:"3C3C3C", space:14},
+            pageBorderLeft:{style:BorderStyle.SINGLE, size:8, color:"3C3C3C", space:14}, pageBorderRight:{style:BorderStyle.SINGLE, size:8, color:"3C3C3C", space:14}}}},
+        headers:{default:header}, footers:{default:footer}, children:body
       }]
     });
     const blob = await Packer.toBlob(wdoc);
-    const cleanPart = (v)=> String(v||"").trim().replace(/[^a-z0-9\-_ ]+/gi,"_").replace(/\s+/g,"_");
+    const cleanPart = v => String(v||"").trim().replace(/[^a-z0-9\-_ ]+/gi,"_").replace(/\s+/g,"_");
     const cr = cleanPart($("codeRequest").value), pc = cleanPart(val("pmProductCode"));
     const fileCode = (cr && pc) ? `${cr}-${pc}-Manual` : (cleanPart(val("pmProductName")) || "Packaging_Manual");
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `${fileCode}.docx`;
+    const a = document.createElement("a"); a.href = url; a.download = `${fileCode}.docx`;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(()=> URL.revokeObjectURL(url), 4000);
-    pmSetStatus("Packaging Manual Word document downloaded ✓", false);
+    pmSetStatus("Packaging Manual Word document downloaded ✓ (same layout as the PDF)", false);
   }catch(err){
     console.error(err);
     pmSetStatus("Something went wrong building the Word document: " + err.message, true);
@@ -8859,9 +8836,8 @@ function suggestedKit(name){
   let pallet="", carton="", hood="";
   if(/local/.test(n)){ pallet = has("pallet","Wooden Pallet (100*120*10*7.5 cm) Local"); carton = has("cartonSeparator","Sheet with No Flap (100*120 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
   else if(/export/.test(n)){ pallet = has("pallet","Wooden Pallet (100*120*15 cm) Export"); carton = has("cartonSeparator","Sheet with No Flap (100*120 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
-  else if(/gma/.test(n)){ pallet = has("pallet","Wooden Pallet (121.92*101.6 cm) GMA"); carton = has("cartonSeparator","Sheet with No Flap (121.92*101.6 cm) GMA"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
-  else if(/usa\s*-\s*b\b|us\s*-\s*b\b|\busa\s*b\b/.test(n)){ pallet = has("pallet","Wooden Pallet (142*112) US - B") || has("pallet","Wooden Pallet (142*112) US"); carton = has("cartonSeparator","Sheet with no Flap (142*112 cm)") || has("cartonSeparator","Sheet with No Flap (142*112 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
-  else if(/usa\s*-\s*a\b|us\s*-\s*a\b|\busa\s*a\b/.test(n)){ pallet = has("pallet","Wooden Pallet (142*112) US - A") || has("pallet","Wooden Pallet (142*112) US"); carton = has("cartonSeparator","Sheet with no Flap (142*112 cm)") || has("cartonSeparator","Sheet with No Flap (142*112 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
+  else if(/gma/.test(n)){ pallet = has("pallet","Wooden Pallet  (121.92*101.6 cm) GMA") || has("pallet","Wooden Pallet (121.92*101.6 cm) GMA"); carton = has("cartonSeparator","Sheet with No Flap (121.92*101.6 cm) GMA"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
+  else if(/usa|\bus\b/.test(n)){ pallet = has("pallet","Wooden Pallet (142*112) US"); carton = has("cartonSeparator","Sheet with no Flap (142*112 cm)") || has("cartonSeparator","Sheet with No Flap (142*112 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
   else if(/euro/.test(n)){ pallet = has("pallet","Wooden Pallet (120*80*14.4 cm) Euro"); carton = has("cartonSeparator","Sheet with No Flap (80*120 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
   return {pallet, carton, hood};
 }
@@ -9618,10 +9594,7 @@ setTimeout(()=>{
 $("exportExcel").addEventListener("click", exportToExcel);
 $("exportPdf").addEventListener("click", exportToPdf);
 
-/* Intro splash — shows for ~5.8 s (or until clicked / Esc / Enter), then the page animates in.
-   Universal glass-chime theme via Web Audio (no external files).
-   Browsers block autoplay until a user gesture — we unlock on first pointer/key,
-   schedule notes only after the context is running, and do not kill audio on dismiss. */
+/* Intro splash — shows for ~2.9 s (or until clicked / Esc / Enter), then the page animates in. */
 (function introSplash(){
   const el = document.getElementById("splash");
   document.body.classList.add("app-ready");
@@ -9630,96 +9603,8 @@ $("exportPdf").addEventListener("click", exportToPdf);
   const minMs = reduce ? 500 : 5800;
   const t0 = window.__splashT0 || performance.now();
   let done = false;
-  let audioCtx = null;
-  let masterGain = null;
-  let chimesStarted = false;
-
-  function ensureCtx(){
-    if(audioCtx) return audioCtx;
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if(!AC) return null;
-    audioCtx = new AC();
-    masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0.28;
-    masterGain.connect(audioCtx.destination);
-    return audioCtx;
-  }
-
-  function scheduleChimes(){
-    if(chimesStarted || !audioCtx || !masterGain) return;
-    if(audioCtx.state !== "running") return;
-    chimesStarted = true;
-    const now = audioCtx.currentTime;
-    // Soft glass-like partials (universal, non-cultural)
-    const notes = [
-      {f:523.25, t:0.05, d:0.6},
-      {f:659.25, t:0.45, d:0.6},
-      {f:783.99, t:0.85, d:0.7},
-      {f:987.77, t:1.35, d:0.85},
-      {f:1174.7, t:2.0,  d:1.2}
-    ];
-    notes.forEach(({f,t,d})=>{
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      const filter = audioCtx.createBiquadFilter();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(f, now);
-      filter.type = "lowpass";
-      filter.frequency.value = Math.min(f * 4, 6000);
-      filter.Q.value = 0.6;
-      g.gain.setValueAtTime(0.0001, now + t);
-      g.gain.exponentialRampToValueAtTime(0.7, now + t + 0.05);
-      g.gain.exponentialRampToValueAtTime(0.0001, now + t + d);
-      osc.connect(filter); filter.connect(g); g.connect(masterGain);
-      osc.start(now + t);
-      osc.stop(now + t + d + 0.08);
-    });
-    // Soft noise whoosh
-    try{
-      const len = Math.floor(audioCtx.sampleRate * 1.1);
-      const noiseBuf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-      const data = noiseBuf.getChannelData(0);
-      for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * Math.exp(-3 * i / len);
-      const noise = audioCtx.createBufferSource();
-      noise.buffer = noiseBuf;
-      const nG = audioCtx.createGain();
-      nG.gain.setValueAtTime(0.0001, now + 1.6);
-      nG.gain.exponentialRampToValueAtTime(0.12, now + 2.0);
-      nG.gain.exponentialRampToValueAtTime(0.0001, now + 2.9);
-      const nF = audioCtx.createBiquadFilter();
-      nF.type = "bandpass"; nF.frequency.value = 1000; nF.Q.value = 0.5;
-      noise.connect(nF); nF.connect(nG); nG.connect(masterGain);
-      noise.start(now + 1.6);
-    }catch(e){}
-  }
-
-  function startAudio(){
-    try{
-      const ctx = ensureCtx();
-      if(!ctx) return;
-      const go = ()=>{ scheduleChimes(); };
-      if(ctx.state === "suspended"){
-        ctx.resume().then(go).catch(()=>{});
-      } else {
-        go();
-      }
-    }catch(e){}
-  }
-
   function finish(){
     if(done) return; done = true;
-    // Fade audio out instead of cutting it off immediately
-    try{
-      if(masterGain && audioCtx && audioCtx.state === "running"){
-        const t = audioCtx.currentTime;
-        masterGain.gain.cancelScheduledValues(t);
-        masterGain.gain.setValueAtTime(masterGain.gain.value, t);
-        masterGain.gain.linearRampToValueAtTime(0.0001, t + 0.45);
-        setTimeout(()=>{ try{ if(audioCtx && audioCtx.state !== "closed") audioCtx.close(); }catch(e){} }, 700);
-      } else {
-        try{ if(audioCtx && audioCtx.state !== "closed") audioCtx.close(); }catch(e){}
-      }
-    }catch(e){}
     const panel = document.querySelector(".tab-panel.active");
     if(panel) panel.querySelectorAll(".kpi-card,.section-banner,.field-group").forEach((n,i)=> n.style.setProperty("--i", Math.min(i, 18)));
     el.classList.add("sp-out");
@@ -9727,22 +9612,11 @@ $("exportPdf").addEventListener("click", exportToPdf);
     setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 800);
     setTimeout(()=> document.body.classList.remove("app-enter"), 2600);
     document.removeEventListener("keydown", onKey);
-    document.removeEventListener("pointerdown", onUnlock, true);
-    document.removeEventListener("keydown", onUnlock, true);
   }
-  function onKey(e){
-    if(e.key === "Escape" || e.key === "Enter" || e.key === " "){ startAudio(); finish(); }
-  }
-  function onUnlock(){ startAudio(); }
-
+  function onKey(e){ if(e.key === "Escape" || e.key === "Enter" || e.key === " ") finish(); }
   setTimeout(finish, Math.max(0, minMs - (performance.now() - t0)));
-  // Unlock + play on first gesture (required by browser autoplay policy)
-  document.addEventListener("pointerdown", onUnlock, true);
-  document.addEventListener("keydown", onUnlock, true);
-  el.addEventListener("click", ()=>{ startAudio(); finish(); });
+  el.addEventListener("click", finish);
   document.addEventListener("keydown", onKey);
-  // Try immediately (works when the browser allows autoplay)
-  startAudio();
 })();
 </script>
 <script>
