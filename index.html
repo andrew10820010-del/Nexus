@@ -126,10 +126,16 @@
   /* ---------- Field grids ---------- */
   .field-grid{display:grid;gap:16px;}
   .field-grid.four-col{grid-template-columns:repeat(4,1fr);}
+  .field-grid.three-col{grid-template-columns:1fr 1.45fr 1fr;}
   .field-grid.two-col{grid-template-columns:repeat(2,1fr);}
-  @media (max-width:980px){ .field-grid.four-col{grid-template-columns:repeat(2,1fr);} }
+  .field-group .inner-two-col{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;align-items:start;}
+  @media (max-width:980px){
+    .field-grid.four-col{grid-template-columns:repeat(2,1fr);}
+    .field-grid.three-col{grid-template-columns:repeat(2,1fr);}
+  }
   @media (max-width:620px){
-    .field-grid.four-col,.field-grid.two-col{grid-template-columns:1fr;}
+    .field-grid.four-col,.field-grid.three-col,.field-grid.two-col{grid-template-columns:1fr;}
+    .field-group .inner-two-col{grid-template-columns:1fr;}
     .masthead{flex-direction:column;text-align:center;}
   }
   .field-group{background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:12px;border-top:4px solid var(--accent);padding:14px 16px 16px;box-shadow:0 2px 10px rgba(40,60,70,.06);transition:box-shadow .2s ease;}
@@ -876,12 +882,12 @@
 
   <div class="tabbar">
     <button class="tab-btn active" data-tab="sheet">📋 Spec Sheet</button>
+    <button class="tab-btn" data-tab="manual">📖 Packaging Manual</button>
     <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
+    <button class="tab-btn" data-tab="model3d">🧊 3D Model</button>
+    <button class="tab-btn" data-tab="products">📦 Products</button>
     <button class="tab-btn" data-tab="options">🗂️ Manage Options</button>
     <button class="tab-btn" data-tab="formulas">🧮 Formulas</button>
-    <button class="tab-btn" data-tab="products">📦 Products</button>
-    <button class="tab-btn" data-tab="model3d">🧊 3D Model</button>
-    <button class="tab-btn" data-tab="manual">📖 Packaging Manual</button>
   </div>
   </div>
   <div class="main-content">
@@ -954,7 +960,7 @@
     </div>
 
     <div class="section-banner">Required Information</div>
-    <div class="field-grid four-col">
+    <div class="field-grid three-col">
 
       <div class="field-group group-teal">
         <h3>General</h3>
@@ -966,26 +972,28 @@
       </div>
 
       <div class="field-group group-lime">
-        <h3>Category</h3>
-        <label class="field">Category<select id="category"></select></label>
-        <label class="field">Packaging Category<select id="packagingCategory"></select></label>
-        <label class="field">Packaging Type<select id="packagingType"></select></label>
-        <label class="field">Pallet Type<select id="palletType"></select></label>
-        <label class="field">Container's Type<select id="containerType"></select></label>
-        <label class="field">Container's Destination<select id="containerDestination"></select></label>
-        <label class="field">Separator Setup<select id="separatorSetup"></select></label>
-        <input id="separatorFlap" type="hidden" value="no_flap">
-        <div class="req-extra" id="reqExtra-category"></div>
-      </div>
-
-      <div class="field-group group-gold">
-        <h3>Hardware</h3>
-        <label class="field">Top Frame Wooden<select id="topFrameWooden"></select></label>
-        <label class="field">Caps<select id="caps"></select></label>
-        <label class="field">No. Straps / Long Side<input id="strapsLongSide" type="number" step="1" value="2" min="0"></label>
-        <label class="field">No. Straps / Short Side<input id="strapsShortSide" type="number" step="1" value="2" min="0"></label>
-        <label class="field">Total No. Straps<input id="totalStraps" type="text" readonly></label>
-        <div class="req-extra" id="reqExtra-hardware"></div>
+        <h3>Packaging specifications</h3>
+        <div class="inner-two-col">
+          <div>
+            <label class="field">Category<select id="category"></select></label>
+            <label class="field">Packaging Category<select id="packagingCategory"></select></label>
+            <label class="field">Packaging Type<select id="packagingType"></select></label>
+            <label class="field">Pallet Type<select id="palletType"></select></label>
+            <label class="field">Container's Type<select id="containerType"></select></label>
+            <label class="field">Container's Destination<select id="containerDestination"></select></label>
+            <label class="field">Separator Setup<select id="separatorSetup"></select></label>
+            <input id="separatorFlap" type="hidden" value="no_flap">
+            <div class="req-extra" id="reqExtra-category"></div>
+          </div>
+          <div>
+            <label class="field">Top Frame Wooden<select id="topFrameWooden"></select></label>
+            <label class="field">Caps<select id="caps"></select></label>
+            <label class="field">No. Straps / Long Side<input id="strapsLongSide" type="number" step="1" value="2" min="0"></label>
+            <label class="field">No. Straps / Short Side<input id="strapsShortSide" type="number" step="1" value="2" min="0"></label>
+            <label class="field">Total No. Straps<input id="totalStraps" type="text" readonly></label>
+            <div class="req-extra" id="reqExtra-hardware"></div>
+          </div>
+        </div>
       </div>
 
       <div class="field-group group-magenta">
@@ -1048,14 +1056,31 @@
         <h3>Inputs <span class="required-pill">Kindly enter the required data</span></h3>
         <div class="split-media" style="gap:14px;align-items:start;">
           <div>
-        <label class="field">Unit Max Diameter (mm) &nbsp;<span style="font-weight:600;color:#999;">value ± tolerance</span><span class="tol-row"><input id="unitMaxDiameter" type="number" step="0.01" value="65.28"><span class="tol-sign">±</span><input id="unitMaxDiameterTol" class="tol" type="number" step="0.01" min="0" placeholder="tol."></span></label>
+        <div class="field-grid two-col" id="cpUnitShapeWrap" style="gap:14px;">
+          <label class="field">Unit Shape
+            <select id="cpUnitShape">
+              <option value="circle" selected>Circle (Ø from Unit Max Diameter)</option>
+              <option value="rect">Rectangle</option>
+              <option value="square">Square</option>
+              <option value="rounded-rect">Rounded-Corner Rectangle</option>
+              <option value="rounded-square">Rounded-Corner Square</option>
+            </select>
+          </label>
+          <label class="field hidden" id="cpUnitRadiusWrap">Unit Corner Radius (mm)<input id="cpUnitRadius" type="number" step="any" min="0" value="10"></label>
+        </div>
+        <div class="field-grid two-col hidden" id="cpUnitSizeWrap" style="gap:14px;">
+          <label class="field">Unit Length (mm)<input id="cpUnitL" type="number" step="any" min="0" value="100"></label>
+          <label class="field">Unit Width (mm)<input id="cpUnitW" type="number" step="any" min="0" value="80"></label>
+        </div>
+        <p class="hint hidden" id="cpUnitShapeHint" style="margin:0 0 10px;font-weight:600;">Non-circular units use Length × Width for layout (Unit Max Diameter is hidden). Square shapes use the larger side.</p>
+        <label class="field" id="unitDiameterField">Unit Max Diameter (mm) &nbsp;<span style="font-weight:600;color:#999;">value ± tolerance</span><span class="tol-row"><input id="unitMaxDiameter" type="number" step="0.01" value="65.28"><span class="tol-sign">±</span><input id="unitMaxDiameterTol" class="tol" type="number" step="0.01" min="0" placeholder="tol."></span></label>
         <label class="field" id="boxLengthLabel">Box Length (mm)<input id="boxLength" type="number" step="0.01" value="300"></label>
         <label class="field" id="boxWidthLabel">Box Width (mm)<input id="boxWidth" type="number" step="0.01" value="200"></label>
         <label class="field">Unit Height (mm) &nbsp;<span style="font-weight:600;color:#999;">value ± tolerance</span><span class="tol-row"><input id="unitHeight" type="number" step="0.01" value="197.84"><span class="tol-sign">±</span><input id="unitHeightTol" class="tol" type="number" step="0.01" min="0" placeholder="tol."></span></label>
         <label class="field">Unit Weight (gm) &nbsp;<span style="font-weight:600;color:#999;">value ± tolerance</span><span class="tol-row"><input id="unitWeight" type="number" step="0.01" value="212.69"><span class="tol-sign">±</span><input id="unitWeightTol" class="tol" type="number" step="0.01" min="0" placeholder="tol."></span></label>
         <label class="field">Brimful Capacity (ml) &nbsp;<span style="font-weight:600;color:#999;">syncs to Packaging Manual</span><span class="tol-row"><input id="brimfulCapacity" type="number" step="any" min="0"><span class="tol-sign">±</span><input id="brimfulCapacityTol" class="tol" type="number" step="any" min="0" placeholder="tol."></span></label>
-        <label class="field" id="units1Label">Units / Row 1<input id="units1" type="number" step="1" value="210" readonly></label>
-        <label class="field" id="units2Label">Units / Row 2<input id="units2" type="number" step="1" value="0" readonly></label>
+        <label class="field" id="units1Label">No of Units per Layer<input id="units1" type="number" step="1" value="210" readonly></label>
+        <label class="field hidden" id="units2Label" style="display:none !important;">Units / Row 2<input id="units2" type="number" step="1" value="0" readonly></label>
         <label class="field">Pallet / Container
           <span style="display:flex;gap:6px;align-items:center;">
             <input id="palletPerContainer" type="number" step="1" value="21" style="flex:1;">
@@ -1121,14 +1146,14 @@
     </div>
 
     <div class="section-banner" style="display:flex;justify-content:space-between;align-items:center;">
-      <span id="cpSectionTitle">Units / Layer — Circle Packing</span>
+      <span id="cpSectionTitle">Layout Preview</span>
       <label style="display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;color:#fff;cursor:pointer;margin:0;">
         <input type="checkbox" id="cpEnabled" checked style="width:auto;accent-color:#4FC6CB;"> Enable Packing Tool
       </label>
     </div>
     <p class="hint" id="cpHint">
-      Lay the circular units out inside the pallet footprint to see exactly how many fit per layer — the <strong>Total Circles</strong>
-      result below drives <strong>Units / Layer</strong>. When disabled, Units/Row 1 and Units/Row 2 above are used directly.
+      Lay units out inside the pallet footprint to see exactly how many fit per layer — the <strong>Total</strong>
+      result below drives <strong>No of Units per Layer</strong>. When disabled, that field above is used directly.
     </p>
 
     <div class="field-group group-teal hidden" id="packingPhotoSection">
@@ -1162,7 +1187,7 @@
           <label class="field">Offset Y / side (mm)<input id="cpOffY" type="number" step="any" value="7.5"></label>
         </div>
         <label class="field" id="cpGapWrap">Min Gap Between Circles (mm)<input id="cpGap" type="number" step="any" min="0" value="0"></label>
-        <p class="hint" id="cpDiameterHint" style="margin:-6px 0 12px;">Circle Ø is synced live from "Unit Max Diameter" in Calculations Inputs.</p>
+        <p class="hint" id="cpDiameterHint" style="margin:-6px 0 12px;">Unit size is taken from Calculations Inputs (diameter for circles, or Length × Width for other shapes).</p>
         <div class="field-grid two-col" id="cpBoundaryShapeWrap" style="gap:14px;">
           <label class="field">Boundary Shape
             <select id="cpBoundaryShape">
@@ -1185,23 +1210,6 @@
           <label class="field hidden" id="cpBoxRadiusWrap">Corner Radius (mm)<input id="cpBoxRadius" type="number" step="any" min="0" value="15"></label>
         </div>
         <p class="hint hidden" id="cpBoxShapeHint" style="margin:-6px 0 12px;">Square shapes use the larger of Box Length / Box Width as the side so the unit always fits.</p>
-        <div class="field-grid two-col" id="cpUnitShapeWrap" style="gap:14px;">
-          <label class="field">Unit Shape
-            <select id="cpUnitShape">
-              <option value="circle">Circle (Ø from Unit Max Diameter)</option>
-              <option value="rect">Rectangle</option>
-              <option value="square">Square</option>
-              <option value="rounded-rect">Rounded-Corner Rectangle</option>
-              <option value="rounded-square">Rounded-Corner Square</option>
-            </select>
-          </label>
-          <label class="field hidden" id="cpUnitRadiusWrap">Unit Corner Radius (mm)<input id="cpUnitRadius" type="number" step="any" min="0" value="10"></label>
-        </div>
-        <div class="field-grid two-col hidden" id="cpUnitSizeWrap" style="gap:14px;">
-          <label class="field">Unit Length (mm)<input id="cpUnitL" type="number" step="any" min="0" value="100"></label>
-          <label class="field">Unit Width (mm)<input id="cpUnitW" type="number" step="any" min="0" value="80"></label>
-        </div>
-        <p class="hint hidden" id="cpUnitShapeHint" style="margin:-6px 0 12px;">Non-circular units are laid out in a straight grid using the Unit Length &amp; Width entered here (Unit Max Diameter is ignored). Square shapes use the larger of the two values as the side.</p>
         <div class="field-grid two-col hidden" id="cpBoxScenarioWrap" style="gap:14px;">
           <label class="field">Box Arrangement Scenario
             <select id="cpBoxScenario">
@@ -1227,7 +1235,7 @@
         </div>
         <p class="hint" id="cpExtraFillHint" style="margin:-6px 0 12px;">Adds extra circles beyond the auto-fit grid to use up leftover space. These may slightly cross the inner boundary line (right/bottom only) but will never cross the outer pallet edge.</p>
         <div class="out-row"><span class="out-label">Inner L × Inner W</span><span class="out-value" id="cpInnerLW">—</span></div>
-        <div class="out-row"><span class="out-label">Rows × Cols (max)</span><span class="out-value" id="cpRowsColsOut">—</span></div>
+        <div class="out-row"><span class="out-label">Layout (Columns × Rows)</span><span class="out-value" id="cpRowsColsOut">—</span></div>
         <div class="out-row hidden" id="cpArrangeRow"><span class="out-label">Arrangement</span><span class="out-value" id="cpArrangeOut">—</span></div>
         <div class="out-row"><span class="out-label" id="cpTotalLabel">Total Circles → Units/Layer</span><span class="out-value" id="cpTotal" style="font-size:1.05rem;color:var(--teal-dark);">—</span></div>
         <div class="bom-toolbar" style="justify-content:flex-start;margin-top:14px;">
@@ -1641,7 +1649,7 @@
 
     <div class="field-group group-magenta" id="pmSectionsEditorWrap" style="margin-bottom:18px;">
       <h3 style="margin:0 0 8px;">Sections &amp; fields on this Manual</h3>
-      <p class="hint" style="margin-top:0;"><strong>Tip:</strong> you can now edit right inside the tables below — click any section title or field name to rename it, hover a field for ↑ ↓ ✕, and use the buttons on each section bar to move it, add fields, or delete it. The list below shows the extra sections/fields you've added. Changes apply to this tab and to the PDF/Word export.</p>
+      <p class="hint" style="margin-top:0;"><strong>Tip:</strong> edit section titles and field names in the tables below. Fields you add to a section are treated as <strong>original fields</strong> of that section (same order, PDF/Word export, and layout controls). Built-in <strong>Finish</strong> is always the product-code text after the 8th dash (e.g. J-R-G-OLA-0263-PLN-F-H-T-58 → T-58).</p>
       <div id="pmCustomSectionsAdmin"></div>
     </div>
 
@@ -1720,7 +1728,7 @@
         <tr><th>Height (mm)</th><td><input id="pmHeight" type="text" placeholder="auto"></td></tr>
         <tr><th>Diameter (mm)</th><td><input id="pmDiameter" type="text" placeholder="auto"></td></tr>
         <tr><th>Colour</th><td><select id="pmColour"></select></td></tr>
-        <tr><th>Finish</th><td><input id="pmFinish" type="text" placeholder="auto — from SKU after H/K grade"></td></tr>
+        <tr><th>Finish</th><td><input id="pmFinish" type="text" readonly placeholder="auto — after 8th dash (e.g. …-H-T-58 → T-58)" title="Built-in original field: everything after the 8th “-” in the product code. Example: J-R-G-OLA-0263-PLN-F-H-T-58 → T-58"></td></tr>
         <tr><th>Labelling</th><td><input id="pmLabelling" type="text" value="N/A"></td></tr>
         <tr><th>Printing</th><td><input id="pmPrinting" type="text" value="N/A"></td></tr>
         <tr><th>TD Reference / Date</th><td><input id="pmTDRef" type="date"></td></tr>
@@ -1891,7 +1899,7 @@ const DEFAULT_OPTIONS = {
   category: ["Local","Export"],
   packagingCategory: ["Standard","Special Online","Special Offline"],
   packagingType: ["Full Pallet","Half Pallet","Shrinks","Bulk/Box","Box on FP","Box on HP","Shrink on FP","Shrink on HP"],
-  separatorSetup: ["Sheet","Flap-Inverted","Flap-Normal"],
+  separatorSetup: ["Normal Flap Sheet","Inverted Flap Sheet","Sheet without Flap","Plastic Sheet","Chipboard Sheet","Slip Sheet"],
   woodenFrame: ["Yes","No"],
   caps: ["TO 38","TO 53","TO 63","Without","TO 82"],
   palletType: ["Local","Export","GMA","USA - A","USA - B","Euro"],
@@ -2099,16 +2107,32 @@ function normalizePackagingType(v){
   let changed = false;
   const need = {
     packagingType: ["Shrink on FP","Shrink on HP"],
-    cartonSeparator: ["Sheet with No Flap (80*120 cm)"],
+    cartonSeparator: ["Sheet with No Flap (80*120 cm)","Slip Sheet (100*120 cm)","Slip Sheet (80*120 cm)","Slip Sheet (121.92*101.6 cm) GMA","Slip Sheet (142*112 cm)"],
     pallet: ["Wooden Pallet (142*112 cm) US - Type A","Wooden Pallet (142*112 cm) US - Type B"],
-    separatorSetup: ["Plastic Sheet","Chipboard Sheet"],
     woodFrame: ["US","GMA","Euro"]
   };
   Object.keys(need).forEach(k=>{
     OPTIONS[k] = Array.isArray(OPTIONS[k]) ? OPTIONS[k] : [];
     need[k].forEach(v=>{ if(!OPTIONS[k].some(x=>String(x).trim().toLowerCase()===v.toLowerCase())){ OPTIONS[k].push(v); changed = true; } });
   });
+  // Separator Setup is a fixed catalogue — replace any legacy values
+  const sepFixed = ["Normal Flap Sheet","Inverted Flap Sheet","Sheet without Flap","Plastic Sheet","Chipboard Sheet","Slip Sheet"];
+  const sepNow = (OPTIONS.separatorSetup||[]).map(s=>String(s).trim());
+  if(sepNow.length !== sepFixed.length || sepFixed.some((v,i)=> (sepNow[i]||"").toLowerCase() !== v.toLowerCase())){
+    OPTIONS.separatorSetup = sepFixed.slice();
+    changed = true;
+  }
   if(changed) persistOptions();
+})();
+(function dedupeOptionLists(){
+  let ch = false;
+  Object.keys(OPTIONS).forEach(k=>{
+    if(!Array.isArray(OPTIONS[k])) return;
+    const seen = new Set(), out = [];
+    OPTIONS[k].forEach(v=>{ const key = String(v).trim().toLowerCase(); if(!key || seen.has(key)){ ch = true; return; } seen.add(key); out.push(v); });
+    if(out.length !== OPTIONS[k].length) OPTIONS[k] = out;
+  });
+  if(ch) persistOptions();
 })();
 /* Packaging-type helpers: Shrink on FP/HP follow exactly the same relations as Box on FP/HP. */
 function pkgNorm(pt){ return String(pt||"").trim().toLowerCase(); }
@@ -2269,8 +2293,8 @@ function persistCustomFields(){ saveJSON(CUSTOM_FIELDS_KEY, CUSTOM_FIELDS); }
 ===================================================================== */
 const REPORT_SECTIONS = [
   {key:"sec_req_general", label:"Required Info — General (Customer, Product, Code)"},
-  {key:"sec_req_category", label:"Required Info — Category & Separator"},
-  {key:"sec_req_hardware", label:"Required Info — Hardware (Frame, Caps, Straps)"},
+  {key:"sec_req_category", label:"Required Info — Packaging specifications"},
+  {key:"sec_req_hardware", label:"Required Info — Packaging specifications (hardware fields)"},
   {key:"sec_req_shrink", label:"Required Info — Shrink / Box"},
   {key:"sec_req_custom", label:"Required Info — Custom Fields"},
   {key:"sec_special", label:"Special Requirements (Labels)"},
@@ -2280,7 +2304,7 @@ const REPORT_SECTIONS = [
   {key:"sec_custom_calc", label:"Custom Calculations (Equation Builder)"},
   {key:"sec_bom_calc", label:"BOM Calculations (Shrink Size, Strap Length)"},
   {key:"sec_bom_table", label:"Bill of Materials Table"},
-  {key:"sec_pack_diagram", label:"Circle Packing Diagram"},
+  {key:"sec_pack_diagram", label:"Layout Preview Diagram"},
 ];
 const REPORT_VIS_KEY = "kandilReportVis_v1";
 let REPORT_VISIBILITY = loadJSON(REPORT_VIS_KEY) || {};
@@ -2324,8 +2348,8 @@ function slugifyReqKey(label, excludeId){
 
 const REQ_GROUPS = [
   {id:"general", label:"Required Info — General"},
-  {id:"category", label:"Required Info — Category"},
-  {id:"hardware", label:"Required Info — Hardware"},
+  {id:"category", label:"Packaging specifications"},
+  {id:"hardware", label:"Packaging specifications"},
   {id:"shrink", label:"Required Info — Shrink / Box"},
   {id:"special", label:"Special Requirements (Labels)"},
   {id:"inputs", label:"Calculations — Inputs"},
@@ -2534,8 +2558,7 @@ const FIELD_REFERENCE = [
   {key:"unitMaxDiameter", label:"Unit Max Diameter (mm)", group:"Inputs"},
   {key:"unitHeight", label:"Unit Height (mm)", group:"Inputs"},
   {key:"unitWeight", label:"Unit Weight (gm)", group:"Inputs"},
-  {key:"units1", label:"Units / 1", group:"Inputs"},
-  {key:"units2", label:"Units / 2", group:"Inputs"},
+  {key:"units1", label:"No of Units per Layer", group:"Inputs"},
   {key:"palletPerContainer", label:"Pallet / Container", group:"Inputs"},
   {key:"layersPerPallet", label:"Layers / Pallet", group:"Inputs"},
   {key:"strapsLongSide", label:"No. Straps / Long Side", group:"Inputs"},
@@ -3072,8 +3095,9 @@ function refreshPmManualDropdowns(){
 
 function populateSelect(selectEl, options, keepValue){
   const prev = keepValue !== undefined ? keepValue : selectEl.value;
-  const list = options.slice();
-  if(prev && !list.includes(prev)) list.unshift(prev);
+  const seenOpt = new Set();
+  const list = options.filter(o=>{ const k = String(o).trim().toLowerCase(); if(seenOpt.has(k)) return false; seenOpt.add(k); return true; });
+  if(prev && !list.some(o=>String(o).trim().toLowerCase() === String(prev).trim().toLowerCase())) list.unshift(prev);
   selectEl.innerHTML = list.map(o=>`<option value="${escapeAttr(o)}">${escapeHtml(o)}</option>`).join("");
   if(prev) selectEl.value = prev;
 }
@@ -3085,7 +3109,7 @@ function refreshCoreDropdowns(applyInitialDefaults){
   }
   if(applyInitialDefaults){
     const d = {
-      category:"Export", packagingCategory:"Standard", separatorSetup:"Flap-Normal",
+      category:"Export", packagingCategory:"Standard", separatorSetup:"Normal Flap Sheet",
       topFrameWooden:"No", caps:"Without", packagingType:"Half Pallet",
       palletType:"USA - B", containerType:"40 HC", containerDestination:"USA"
     };
@@ -3143,8 +3167,8 @@ function applyPackagingModeUI(isBoxMode){
     if($("unitsPerPackLabel")) $("unitsPerPackLabel").firstChild.textContent = _sh ? "Units / Shrink" : (_bx ? "Units / Box" : "Units / Shrink-Box");
     if($("packsPerLayerLabel")) $("packsPerLayerLabel").firstChild.textContent = _sh ? "Shrink / Layer" : "Box / Layer";
   }
-  setFieldNA("unitMaxDiameter", isBoxMode, 65.28);
-  setFieldNA("unitMaxDiameterTol", isBoxMode, "");
+  // Keep Unit Max Diameter available in box/shrink modes so Packaging Manual
+  // product data (diameter) can still be filled from the Spec Sheet.
   setFieldNA("units1", isBoxMode, 0);
   setFieldNA("units2", isBoxMode, 0);
 
@@ -3176,14 +3200,14 @@ function applyPackagingModeUI(isBoxMode){
   if($("boxWidthLabel")) $("boxWidthLabel").classList.toggle("hidden", !isBoxMode);
 
   const cpSectionTitle = $("cpSectionTitle");
-  if(cpSectionTitle) cpSectionTitle.textContent = isBoxMode ? "Boxes / Layer — Rectangle (Box) Packing" : "Units / Layer — Circle Packing";
+  if(cpSectionTitle) cpSectionTitle.textContent = "Layout Preview";
   const cpTotalLabel = $("cpTotalLabel");
-  if(cpTotalLabel) cpTotalLabel.textContent = isBoxMode ? (pkgIsShrink(strFromField("packagingType")) ? "Total Shrinks → Shrinks/Layer" : "Total Boxes → Boxes/Layer") : "Total Circles → Units/Layer";
-  if($("cpAutoFitLabel")) $("cpAutoFitLabel").textContent = isBoxMode ? "Auto-fit max boxes" : "Auto-fit max circles";
-  if($("cpGapWrap")) $("cpGapWrap").firstChild.textContent = isBoxMode ? "Min Gap Between Boxes (mm)" : "Min Gap Between Circles (mm)";
+  if(cpTotalLabel) cpTotalLabel.textContent = isBoxMode ? (pkgIsShrink(strFromField("packagingType")) ? "Total Shrinks → Shrinks/Layer" : "Total Boxes → Boxes/Layer") : "Total Units → Units/Layer";
+  if($("cpAutoFitLabel")) $("cpAutoFitLabel").textContent = isBoxMode ? "Auto-fit max boxes" : "Auto-fit max units";
+  if($("cpGapWrap")) $("cpGapWrap").firstChild.textContent = isBoxMode ? "Min Gap Between Boxes (mm)" : "Min Gap Between Units (mm)";
   if($("cpDiameterHint")) $("cpDiameterHint").innerHTML = isBoxMode
     ? "Box Length &amp; Width are synced live from \"Box Length / Box Width\" in Calculations Inputs."
-    : "Circle Ø is synced live from \"Unit Max Diameter\" in Calculations Inputs.";
+    : "Unit size is taken from Calculations Inputs (diameter for circles, or Length × Width for other shapes).";
   // Rectangle boundary shape / corner options only apply to circle packing —
   // box mode always uses a plain rectangle with only the outer boundary drawn.
   if($("cpBoundaryShapeWrap")) $("cpBoundaryShapeWrap").classList.toggle("hidden", isBoxMode);
@@ -3289,18 +3313,19 @@ function bomAutoSheet(kind, setup, unitHeightMM){
   if(!DIMS[kind]) return null;
   const [L,W] = DIMS[kind];
   const sl = String(setup||"").toLowerCase();
-  const type = /inverted/.test(sl) ? "inv" : /flap/.test(sl) ? "flap" : /plastic/.test(sl) ? "plastic" : /chip/.test(sl) ? "chip" : "noflap";
+  const type = /slip/.test(sl) ? "slip" : (/(no|without|non)[\s-]*flap/.test(sl) || /^sheets?$/.test(sl.trim())) ? "noflap" : /inverted/.test(sl) ? "inv" : /flap/.test(sl) ? "flap" : /plastic/.test(sl) ? "plastic" : /chip/.test(sl) ? "chip" : "noflap";
   const items = (OPTIONS.cartonSeparator||[]).map(t=>{
     const m = t.match(/\(\s*([\d.]+)\s*\*\s*([\d.]+)(?:\s*\*\s*([\d.]+))?\s*cm\s*\)/);
     if(!m) return null;
     const lt = t.toLowerCase();
-    const ty = /inverted/.test(lt) ? "inv" : /with flap/.test(lt) ? "flap" : /no flap/.test(lt) ? "noflap" : /plastic/.test(lt) ? "plastic" : /chip/.test(lt) ? "chip" : "other";
+    const ty = /slip/.test(lt) ? "slip" : /(no|without|non)[\s-]*flap/.test(lt) ? "noflap" : /inverted/.test(lt) ? "inv" : /flap/.test(lt) ? "flap" : /plastic/.test(lt) ? "plastic" : /chip/.test(lt) ? "chip" : "other";
     return {t, ty, l:+m[1], w:+m[2], h: m[3] != null ? +m[3] : null, clean:/\)\s*$/.test(t)};
   }).filter(Boolean);
   const sameDim = x=> Math.abs(x.l-L) < 0.15 && Math.abs(x.w-W) < 0.15;
   const pick = (ty)=>{ const c = items.filter(x=>x.ty===ty && sameDim(x)); return c.filter(x=>x.clean).length ? c.filter(x=>x.clean) : c; };
   const fmtN = n=> String(+n);
   if(type === "noflap"){ const c = pick("noflap"); return c.length ? c[0].t : `Sheet with No Flap (${fmtN(L)}*${fmtN(W)} cm)`; }
+  if(type === "slip"){ const c = pick("slip"); return c.length ? c[0].t : `Slip Sheet (${fmtN(L)}*${fmtN(W)} cm)`; }
   if(type === "plastic"){ const c = pick("plastic"); return c.length ? c[0].t : `Plastic Sheet (${fmtN(L)}*${fmtN(W)} cm)`; }
   if(type === "chip"){ const c = pick("chip"); return c.length ? c[0].t : `Chipboard Sheet (${fmtN(L)}*${fmtN(W)} cm)`; }
   // flap types: flap height = half the unit height (cm), rounded UP to an available height
@@ -3341,9 +3366,11 @@ function recalc(){
   const pmFrameOn = (strFromField("topFrameWooden")||"").trim().toLowerCase() === "yes";
   if($("pmFrameSectionGroup")) $("pmFrameSectionGroup").classList.toggle("pm-section-disabled", !pmFrameOn);
 
-  // Derive Separator Flap from Separator Setup (Flap-Inverted / Flap-Normal => with_flap)
+  // Derive Separator Flap from Separator Setup (Normal/Inverted Flap Sheet => with_flap)
   const sepSetup = strFromField("separatorSetup");
-  if($("separatorFlap")) $("separatorFlap").value = /^flap/i.test(sepSetup) ? "with_flap" : "no_flap";
+  if($("separatorFlap")) $("separatorFlap").value = /flap/i.test(sepSetup) && !/without/i.test(sepSetup) ? "with_flap" : "no_flap";
+  // Boundary shape defaults from Separator Setup (user can still override manually)
+  syncBoundaryFromSeparator(sepSetup);
 
   // Half Pallet and Box on HP always ship with exactly 2 straps per side
   // (total 4) — force the fields so the strap length and BOM stay consistent.
@@ -3407,13 +3434,12 @@ function recalc(){
       $("units1").value = unitsPerLayer;
       $("units2").value = 0;
       $("units1").readOnly = true; $("units2").readOnly = true;
-      if($("units1Label")) $("units1Label").firstChild.textContent = "Units / Row 1 — auto from packing";
-      if($("units2Label")) $("units2Label").firstChild.textContent = "Units / Row 2 — reserved";
+      if($("units1Label")) $("units1Label").firstChild.textContent = "No of Units per Layer — auto from packing";
     } else {
-      $("units1").readOnly = false; $("units2").readOnly = false;
-      if($("units1Label")) $("units1Label").firstChild.textContent = "Units / Row 1";
-      if($("units2Label")) $("units2Label").firstChild.textContent = "Units / Row 2";
-      unitsPerLayer = numFromField("units1") + numFromField("units2");
+      $("units1").readOnly = false; $("units2").readOnly = true;
+      if($("units1Label")) $("units1Label").firstChild.textContent = "No of Units per Layer";
+      unitsPerLayer = numFromField("units1");
+      $("units2").value = 0;
     }
     if(packGrid) packGrid.classList.toggle("hidden", !packingEnabled);
     if(packHint) packHint.classList.toggle("hidden", !packingEnabled);
@@ -3783,6 +3809,36 @@ function boundaryShapeSvg(x0, y0, innL, innW, shape, cornerParam, fill, stroke, 
   return `<polygon points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>`;
 }
 
+/* Boundary shape defaults driven by Separator Setup.
+   User overrides are respected via dataset.touched on the select / corner field. */
+function syncBoundaryFromSeparator(setup){
+  const sel = $("cpBoundaryShape");
+  const corner = $("cpCornerParam");
+  const wrap = $("cpCornerParamWrap");
+  if(!sel) return;
+  const sl = String(setup||"").toLowerCase();
+  let shape = "rect", param = 30;
+  if(/normal\s*flap|inverted\s*flap/.test(sl) || (/flap/.test(sl) && !/without/.test(sl))){
+    shape = "rect";
+  } else if(/chipboard/.test(sl)){
+    shape = "chamfer"; param = 25;
+  } else if(/without|no\s*flap|plastic|slip/.test(sl) || /sheet without/.test(sl)){
+    shape = "rounded"; param = 30;
+  } else {
+    shape = "rect";
+  }
+  if(sel.dataset.touched !== "1"){
+    if(sel.value !== shape) sel.value = shape;
+  }
+  if(corner && corner.dataset.touched !== "1"){
+    // Only push the default when the auto shape needs a corner size
+    if(shape === "rounded" || shape === "chamfer"){
+      if(String(corner.value) !== String(param)) corner.value = param;
+    }
+  }
+  if(wrap) wrap.classList.toggle("hidden", (sel.value || shape) === "rect");
+}
+
 function packHex(innL, innW, d, gap, shape, cornerParam){
   const r = d/2; const s = d + Math.max(0, gap);
   if(innL < d || innW < d || d <= 0) return {rows:0, cols:0, total:0, circles:[]};
@@ -3885,7 +3941,15 @@ function addExtraFill(res, d, gap, outerLimitX, outerLimitY, extraCols, extraRow
     }
   }
 
-  return {rows: res.rows, cols: res.cols, total: circles.length, circles};
+  // Recompute rows × cols from the actual arrangement (includes extras)
+  let maxRow = -1, maxCol = -1;
+  circles.forEach(c=>{
+    if(typeof c.row === "number") maxRow = Math.max(maxRow, c.row);
+    if(typeof c.col === "number") maxCol = Math.max(maxCol, c.col);
+  });
+  const rowsOut = maxRow >= 0 ? maxRow + 1 : res.rows;
+  const colsOut = maxCol >= 0 ? maxCol + 1 : res.cols;
+  return {rows: rowsOut, cols: colsOut, total: circles.length, circles};
 }
 
 /* Box-mode equivalent of addExtraFill above: extends the packed box layout
@@ -3938,7 +4002,20 @@ function addExtraFillBoxes(res, gap, outerLimitX, outerLimitY, extraCols, extraR
     });
   }
 
-  return {rows: res.rows, cols: res.cols, total: boxes.length, boxes, rotated: res.rotated};
+  let maxRow = -1, maxCol = -1;
+  boxes.forEach(b=>{
+    if(typeof b.row === "number") maxRow = Math.max(maxRow, b.row);
+    if(typeof b.col === "number") maxCol = Math.max(maxCol, b.col);
+  });
+  // Prefer geometry-based counts when boxes carry row/col; else estimate from span
+  let rowsOut = maxRow >= 0 ? maxRow + 1 : res.rows;
+  let colsOut = maxCol >= 0 ? maxCol + 1 : res.cols;
+  if(maxRow < 0 && boxes.length){
+    const ys = [...new Set(boxes.map(b=> Math.round((b.y||0)*100)/100))];
+    const xs = [...new Set(boxes.map(b=> Math.round((b.x||0)*100)/100))];
+    rowsOut = ys.length; colsOut = xs.length;
+  }
+  return {rows: rowsOut, cols: colsOut, total: boxes.length, boxes, rotated: res.rotated};
 }
 
 /* Renders the live SVG preview, updates the stat readouts, and returns
@@ -4003,20 +4080,78 @@ function unitShapeGeometry(){
   const radius = rounded ? Math.min(Math.max(0, numFromField("cpUnitRadius")), Math.min(w,h)/2) : 0;
   return {shape:sh, w, h, radius};
 }
-/* Shows/hides the size + radius inputs that belong to the chosen unit shape. */
-function syncUnitShapeFields(isBoxMode){
+/* Shows/hides diameter vs L×W / radius in Calculations Inputs for the chosen unit shape.
+   Unit Shape stays available for every packaging type (including box/shrink) so product
+   dimensions can always be entered — the product itself may not be circular. */
+function syncUnitShapeFields(/* isBoxMode ignored for product-shape fields */){
   const sh = currentUnitShape();
   const rectMode = sh !== "circle";
   const rounded = (sh === "rounded-rect" || sh === "rounded-square");
-  if($("cpUnitShapeWrap")) $("cpUnitShapeWrap").classList.toggle("hidden", !!isBoxMode);
-  if($("cpUnitSizeWrap")) $("cpUnitSizeWrap").classList.toggle("hidden", !!isBoxMode || !rectMode);
-  if($("cpUnitRadiusWrap")) $("cpUnitRadiusWrap").classList.toggle("hidden", !!isBoxMode || !rounded);
-  if($("cpUnitShapeHint")) $("cpUnitShapeHint").classList.toggle("hidden", !!isBoxMode || !rectMode);
-  if(!isBoxMode && $("cpDiameterHint")){
+  if($("cpUnitShapeWrap")) $("cpUnitShapeWrap").classList.remove("hidden");
+  if($("cpUnitSizeWrap")) $("cpUnitSizeWrap").classList.toggle("hidden", !rectMode);
+  if($("cpUnitRadiusWrap")) $("cpUnitRadiusWrap").classList.toggle("hidden", !rounded);
+  if($("cpUnitShapeHint")) $("cpUnitShapeHint").classList.toggle("hidden", !rectMode);
+  // Circle → Unit Max Diameter; other shapes → Length / Width (+ radius when rounded)
+  if($("unitDiameterField")) $("unitDiameterField").classList.toggle("hidden", !!rectMode);
+  if($("cpDiameterHint")){
     $("cpDiameterHint").innerHTML = rectMode
-      ? "Unit Length &amp; Width below define the unit footprint for this shape."
-      : "Circle Ø is synced live from \"Unit Max Diameter\" in Calculations Inputs.";
+      ? "Unit Length × Width (and corner radius if rounded) come from Calculations Inputs — product dimensions for Packaging Manual and layout when applicable."
+      : "Circle Ø is synced from \"Unit Max Diameter\" in Calculations Inputs.";
   }
+}
+
+/* Layout description matching Packaging Manual — supports uneven row/col patterns
+   e.g. "19 Columns x 9 Rows & 18 Columns x 8 Rows" when alternate rows differ. */
+function formatLayoutDescription(items, fallbackRows, fallbackCols){
+  if(!items || !items.length){
+    if(fallbackRows > 0 && fallbackCols > 0)
+      return `${fallbackCols} Columns x ${fallbackRows} Rows`;
+    return "—";
+  }
+  // Count units per row — prefer explicit row index; otherwise bucket by y
+  const perRow = {};
+  let usedY = false;
+  items.forEach(it=>{
+    let ri = (typeof it.row === "number") ? it.row : null;
+    if(ri == null && typeof it.y === "number"){
+      usedY = true;
+      ri = Math.round(it.y * 10) / 10; // group near-identical y
+    }
+    if(ri == null) return;
+    perRow[ri] = (perRow[ri] || 0) + 1;
+  });
+  let rowIdxs = Object.keys(perRow).map(Number).sort((a,b)=>a-b);
+  // When keyed by y, re-index to 0..n-1 so parity still works for staggered layouts
+  if(usedY && rowIdxs.length){
+    const remap = {};
+    rowIdxs.forEach((y,i)=>{ remap[y] = i; });
+    const next = {};
+    rowIdxs.forEach(y=>{ next[remap[y]] = perRow[y]; });
+    Object.keys(perRow).forEach(k=> delete perRow[k]);
+    Object.assign(perRow, next);
+    rowIdxs = Object.keys(perRow).map(Number).sort((a,b)=>a-b);
+  }
+  if(!rowIdxs.length){
+    if(fallbackRows > 0 && fallbackCols > 0)
+      return `${fallbackCols} Columns x ${fallbackRows} Rows`;
+    // last resort: total only
+    const n = items.length;
+    return n ? `${n} units` : "—";
+  }
+  // Distinct column-count patterns (e.g. hex: 19×9 & 18×8)
+  const patterns = {};
+  rowIdxs.forEach(ri=>{
+    const c = perRow[ri];
+    if(!patterns[c]) patterns[c] = 0;
+    patterns[c] += 1;
+  });
+  const keys = Object.keys(patterns).map(Number).sort((x,y)=>y-x);
+  if(keys.length > 1){
+    return keys.map(c=> `${c} Columns x ${patterns[c]} Rows`).join(" & ");
+  }
+  const cols = keys[0] || fallbackCols || 0;
+  const rows = rowIdxs.length || fallbackRows || 0;
+  return `${cols} Columns x ${rows} Rows`;
 }
 /* Straight grid packing of uw × uh units (centres returned, like circles). */
 function packUnitGrid(innL, innW, uw, uh, gap){
@@ -4074,7 +4209,8 @@ function renderCirclePack(){
 
 
   $("cpInnerLW").textContent = innL.toFixed(2) + " × " + innW.toFixed(2) + " mm";
-  $("cpRowsColsOut").textContent = res.rows + " × " + res.cols;
+  const layoutDesc = formatLayoutDescription(res.circles, res.rows, res.cols);
+  $("cpRowsColsOut").textContent = layoutDesc;
   $("cpTotal").textContent = res.total + " Unit";
 
   const r = d/2;
@@ -4470,7 +4606,7 @@ function renderRectPack(){
   if(extraCols>0 || extraRows>0) res = addExtraFillBoxes(res, gap, outerLimitX, outerLimitY, extraCols, extraRows);
 
   $("cpInnerLW").textContent = innL.toFixed(2) + " × " + innW.toFixed(2) + " mm";
-  $("cpRowsColsOut").textContent = res.rows + " × " + res.cols;
+  $("cpRowsColsOut").textContent = formatLayoutDescription(res.boxes, res.rows, res.cols);
   $("cpTotal").textContent = res.total + " Box" + (res.total===1?"":"es");
 
   const pad = Math.max(L,W)*0.15 || 18;
@@ -4628,10 +4764,18 @@ $("cpBoxShape") && $("cpBoxShape").addEventListener("change", ()=>{
 });
 $("cpBoxRadius") && $("cpBoxRadius").addEventListener("input", ()=> recalc());
 $("cpBoxScenario") && $("cpBoxScenario").addEventListener("change", ()=> recalc());
-$("cpUnitShape") && $("cpUnitShape").addEventListener("change", ()=>{ syncUnitShapeFields(false); recalc(); });
+$("cpUnitShape") && $("cpUnitShape").addEventListener("change", ()=>{
+  const isBox = pkgIsBox(strFromField("packagingType"));
+  syncUnitShapeFields(isBox);
+  recalc();
+});
 $("cpUnitL") && $("cpUnitL").addEventListener("input", ()=> recalc());
 $("cpUnitW") && $("cpUnitW").addEventListener("input", ()=> recalc());
 $("cpUnitRadius") && $("cpUnitRadius").addEventListener("input", ()=> recalc());
+// Built-in Finish tracks Product Code / SKU live (after 8th dash)
+["productCode","pmSKU","pmProductCode"].forEach(id=>{
+  if($(id)) $(id).addEventListener("input", ()=> pmApplyFinishFromProductCode());
+});
 
 /* Dark mode — remembered in this browser. */
 const DARK_KEY = "kandilSpecDarkMode";
@@ -4670,9 +4814,11 @@ try{ applyDarkMode(localStorage.getItem(DARK_KEY) === "1"); }catch(e){}
 })();
 
 $("cpBoundaryShape").addEventListener("change", ()=>{
+  $("cpBoundaryShape").dataset.touched = "1";
   $("cpCornerParamWrap").classList.toggle("hidden", $("cpBoundaryShape").value === "rect");
   recalc();
 });
+if($("cpCornerParam")) $("cpCornerParam").addEventListener("input", ()=>{ $("cpCornerParam").dataset.touched = "1"; });
 
 $("cpEnabled") && $("cpEnabled").addEventListener("change", ()=> recalc());
 
@@ -4899,6 +5045,39 @@ async function restoreDropdownValidations(excelArrayBuffer){
   }
 }
 
+/* Trims the empty margin around a generated PNG (anything close to its corner/background colour) and returns the cropped image. */
+function cropPngDataUrl(dataUrl, pad){
+  return new Promise(resolve=>{
+    const img = new Image();
+    img.onerror = ()=> resolve(null);
+    img.onload = ()=>{
+      try{
+        const w = img.naturalWidth, h = img.naturalHeight;
+        const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+        const cx = cv.getContext("2d"); cx.drawImage(img, 0, 0);
+        const d = cx.getImageData(0, 0, w, h).data;
+        const bg = [d[0], d[1], d[2]];
+        let x0 = w, y0 = h, x1 = -1, y1 = -1;
+        for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+          const i = (y*w + x)*4;
+          if(Math.abs(d[i]-bg[0]) + Math.abs(d[i+1]-bg[1]) + Math.abs(d[i+2]-bg[2]) > 24){
+            if(x < x0) x0 = x; if(x > x1) x1 = x; if(y < y0) y0 = y; if(y > y1) y1 = y;
+          }
+        }
+        if(x1 < 0) return resolve({dataUrl, width:w, height:h});
+        pad = pad == null ? 8 : pad;
+        x0 = Math.max(0, x0-pad); y0 = Math.max(0, y0-pad); x1 = Math.min(w-1, x1+pad); y1 = Math.min(h-1, y1+pad);
+        const cw = x1-x0+1, ch = y1-y0+1;
+        const out = document.createElement("canvas"); out.width = cw; out.height = ch;
+        const oc = out.getContext("2d"); oc.fillStyle = "#ffffff"; oc.fillRect(0,0,cw,ch);
+        oc.drawImage(cv, x0, y0, cw, ch, 0, 0, cw, ch);
+        resolve({dataUrl: out.toDataURL("image/png"), width: cw, height: ch});
+      }catch(e){ resolve({dataUrl, width:img.naturalWidth, height:img.naturalHeight}); }
+    };
+    img.src = dataUrl;
+  });
+}
+
 async function exportToExcel(){
   if(typeof ExcelJS === "undefined"){
     setStatus("Couldn't load the Excel engine — check your internet connection and try again.", true);
@@ -5014,6 +5193,16 @@ async function exportToExcel(){
       }
       return (startRow1-1);
     };
+    // Drop the template's placeholder picture in the photo area (and any sheet background) — only the generated layout stays.
+    ws._media = (ws._media||[]).filter(m=>{
+      if(m.type === "background") return false;
+      if(m.type === "image" && m.range && m.range.tl){
+        const c = m.range.tl.nativeCol != null ? m.range.tl.nativeCol : m.range.tl.col;
+        const r = m.range.tl.nativeRow != null ? m.range.tl.nativeRow : m.range.tl.row;
+        if(c >= 6 && r >= 25 && r <= 44) return false;
+      }
+      return true;
+    });
     const PHOTO_COL_START = 8, PHOTO_COL_END = 17;   // H .. Q
     const PHOTO_ROW_START = 28, PHOTO_ROW_END = 43;  // matches the H28:Q43 merge
     const placeImageFitted = (photoId, imgW, imgH) => {
@@ -5028,7 +5217,8 @@ async function exportToExcel(){
     };
 
     if(data.packingEnabled && data.circlePack && data.circlePack.total > 0){
-      const png = await svgMarkupToPngDataUrl($("cpSvgWrap").innerHTML, 900);
+      const png0 = await svgMarkupToPngDataUrl($("cpSvgWrap").innerHTML, 1400);
+      const png = png0 ? (await cropPngDataUrl(png0.dataUrl, 10) || png0) : null;
       if(png){
         const base64 = png.dataUrl.split(",")[1];
         const photoId = wb.addImage({base64, extension:"png"});
@@ -5111,6 +5301,9 @@ async function exportToExcel(){
     if(!pnRow.height || pnRow.height < 30) pnRow.height = 30;
 
     wb.calcProperties.fullCalcOnLoad = true;
+    // open directly on the specification sheet (the template pointed at the 2nd tab = the dropdown lists)
+    wb.views = [{x:0, y:0, width:20000, height:20000, firstSheet:0, activeTab: Math.max(0, wb.worksheets.indexOf(ws)), visibility:"visible"}];
+    wb.worksheets.forEach(w=>{ w.views = (w.views && w.views.length ? w.views : [{}]).map(v=> Object.assign({}, v, {tabSelected: w === ws})); });
 
     const buf = await wb.xlsx.writeBuffer();
     const dvResult = await restoreDropdownValidations(buf);
@@ -5452,11 +5645,10 @@ async function exportToPdf(){
         P.fieldPair("Container's Type", data.containerType, C.gold, C.goldTint, "Container's Destination", data.containerDestination, C.gold, C.goldTint);
         P.fieldPair("Unit Max Diameter (mm)", fmtTol(data.unitMaxDiameter, data.unitMaxDiameterTol), C.gold, C.goldTint, "Box Length (mm)", fmt(data.boxLength), C.gold, C.goldTint);
         P.fieldPair("Box Width (mm)", fmt(data.boxWidth), C.gold, C.goldTint, "Unit Height (mm)", fmtTol(data.unitHeight, data.unitHeightTol), C.gold, C.goldTint);
-        P.fieldPair("Unit Weight (gm)", fmtTol(data.unitWeight, data.unitWeightTol), C.gold, C.goldTint, data.packingEnabled ? "Units / Row 1 (auto from packing)" : "Units / Row 1", data.units1, C.gold, C.goldTint);
-        P.fieldPair("Units / Row 2", data.units2, C.gold, C.goldTint, "Pallet / Container", data.palletPerContainer, C.gold, C.goldTint);
+        P.fieldPair("Unit Weight (gm)", fmtTol(data.unitWeight, data.unitWeightTol), C.gold, C.goldTint, data.packingEnabled ? "No of Units per Layer (auto)" : "No of Units per Layer", data.units1, C.gold, C.goldTint);
+        P.fieldPair("Pallet / Container", data.palletPerContainer, C.gold, C.goldTint, "Layers / Pallet", data.layersPerPallet, C.gold, C.goldTint);
         if(String(data.brimfulCapacity||"").trim() !== "") P.field("Brimful Capacity (ml)", brimfulText(data.brimfulCapacity, data.brimfulCapacityTol), C.gold, C.goldTint);
         extras("inputs", C.gold, C.goldTint);
-        P.field("Layers / Pallet", data.layersPerPallet, C.gold, C.goldTint);
       });
     }
 
@@ -5674,7 +5866,7 @@ function renderOptionsTab(){
     const val = inputEl.value.trim();
     if(!val) return;
     OPTIONS[key] = OPTIONS[key] || [];
-    if(!OPTIONS[key].includes(val)) OPTIONS[key].push(val);
+    if(!OPTIONS[key].some(x=>String(x).trim().toLowerCase() === val.toLowerCase())) OPTIONS[key].push(val);
     persistOptions(); renderOptionsTab(); refreshCoreDropdowns(); refreshAllBomRowOptions(); refreshPmManualDropdowns();
   }
   container.querySelectorAll(".opt-add-btn").forEach(btn=>{
@@ -6717,7 +6909,20 @@ function setSelectVal(id, v){
 function loadProductIntoForm(p){
   const setVal = (id,v) => { const el = $(id); if(el) el.value = (v==null?"":v); };
   setVal("codeRequest", p.codeRequest); setVal("customer", p.customer); setVal("productName", p.productName); setVal("productCode", p.productCode);
-  setSelectVal("category", p.category); setSelectVal("packagingCategory", p.packagingCategory); setSelectVal("separatorSetup", p.separatorSetup);
+  setSelectVal("category", p.category); setSelectVal("packagingCategory", p.packagingCategory);
+  { // Map legacy separator names → fixed catalogue
+    const raw = String(p.separatorSetup||"").trim();
+    const map = {
+      "flap-normal":"Normal Flap Sheet", "flap normal":"Normal Flap Sheet", "normal flap":"Normal Flap Sheet",
+      "flap-inverted":"Inverted Flap Sheet", "flap inverted":"Inverted Flap Sheet", "inverted flap":"Inverted Flap Sheet",
+      "sheet":"Sheet without Flap", "sheet without flap":"Sheet without Flap", "sheets without flap":"Sheet without Flap",
+      "plastic sheets":"Plastic Sheet", "plastic sheet":"Plastic Sheet",
+      "chipboard sheets":"Chipboard Sheet", "chipboard sheet":"Chipboard Sheet",
+      "slip sheet":"Slip Sheet"
+    };
+    const mapped = map[raw.toLowerCase()] || raw;
+    setSelectVal("separatorSetup", mapped);
+  }
   setSelectVal("topFrameWooden", p.topFrameWooden); setSelectVal("caps", p.caps);
   // Straps: preserve exact per-side integers. For legacy saves that only
   // stored strapsPerSide (single number), keep the value on the long side
@@ -6767,6 +6972,10 @@ function loadProductIntoForm(p){
   setVal("cpExtraRows", cp.extraRows || 0);
   setSelectVal("cpBoundaryShape", cp.boundaryShape || "rect");
   setVal("cpCornerParam", cp.cornerParam!=null ? cp.cornerParam : 30);
+  if(cp.boundaryShape){ if($("cpBoundaryShape")) $("cpBoundaryShape").dataset.touched = "1"; }
+  if(cp.cornerParam!=null){ if($("cpCornerParam")) $("cpCornerParam").dataset.touched = "1"; }
+  if(!cp.boundaryShape && $("cpBoundaryShape")) delete $("cpBoundaryShape").dataset.touched;
+  if(cp.cornerParam==null && $("cpCornerParam")) delete $("cpCornerParam").dataset.touched;
   setSelectVal("cpBoxShape", cp.boxShape || "rect");
   setVal("cpBoxRadius", cp.boxRadius != null ? cp.boxRadius : 15);
   setSelectVal("cpBoxScenario", cp.boxScenario || "max");
@@ -7950,13 +8159,33 @@ function pmUpdatePackRows(){
     if(document.activeElement !== th) th.textContent = custom || lab;
   });
 }
-/* Finish = the part of the SKU's code segment after the grade symbol (H or K),
-   e.g. P1631/XFHF4/J-R-C-ELN-500-PLN-F-H-T-70  ->  T-70 */
+/* Built-in Finish = everything after the 8th "-" in the product-code segment.
+   Example: J-R-G-OLA-0263-PLN-F-H-T-58 → T-58
+   Full SKUs like P…/…/J-R-… use the part after the last "/". */
 function pmFinishFromSku(sku){
-  const parts = String(sku||"").split("/");
-  const code = parts.length > 2 ? parts.slice(2).join("/") : parts[parts.length-1];
-  const m = code.match(/(?:^|-)([HK])(?:-(.+))?$/);
+  let code = String(sku||"").trim();
+  if(!code) return "";
+  const slash = code.lastIndexOf("/");
+  if(slash >= 0) code = code.slice(slash + 1).trim();
+  // Prefer explicit count of dash characters (8th dash → rest of string)
+  let dashes = 0, cut = -1;
+  for(let i = 0; i < code.length; i++){
+    if(code[i] === "-"){
+      dashes++;
+      if(dashes === 8){ cut = i; break; }
+    }
+  }
+  if(cut >= 0) return code.slice(cut + 1).trim();
+  // Fallback: after grade letter H or K near the end
+  const m = code.match(/(?:^|-)([HK])-(.+)$/);
   return (m && m[2]) ? m[2].trim() : "";
+}
+function pmApplyFinishFromProductCode(){
+  if(!$("pmFinish")) return;
+  const src = strFromField("productCode") || strFromField("pmSKU") || strFromField("pmProductCode") || "";
+  const fin = pmFinishFromSku(src);
+  $("pmFinish").value = fin || "";
+  $("pmFinish").dataset.builtin = "1";
 }
 /* Pulls the current Spec Sheet values into the auto-fill fields. Manual-only
    fields (Colour, CSR, etc.) are left untouched. */
@@ -7992,38 +8221,26 @@ function pmSyncFromSpec(){
 
   const L = numFromField("cpOuterL"), W = numFromField("cpOuterW");
   $("pmPalletSize").value = `${fmt(L)} x ${fmt(W)} mm`;
-  $("pmProductDimension").value = isBoxMode
-    ? `${fmt(data.boxLength)} x ${fmt(data.boxWidth)} mm`
-    : `${fmtTol(data.unitMaxDiameter, data.unitMaxDiameterTol)} mm`;
+  // Product dimension follows Unit Shape (always available, including box/shrink)
+  { const sh = currentUnitShape();
+    if(sh && sh !== "circle"){
+      const ug = unitShapeGeometry();
+      const rad = ug.radius > 0 ? ` R${fmt(ug.radius)}` : "";
+      $("pmProductDimension").value = `${fmt(ug.w)} x ${fmt(ug.h)} mm${rad}`;
+    } else if(isBoxMode){
+      $("pmProductDimension").value = `${fmt(data.boxLength)} x ${fmt(data.boxWidth)} mm`;
+    } else {
+      $("pmProductDimension").value = `${fmtTol(data.unitMaxDiameter, data.unitMaxDiameterTol)} mm`;
+    }
+  }
 
   const cp = LAST_CIRCLE_PACK || {};
   $("pmUsableArea").value = (cp.usableW!=null) ? `${fmt(cp.usableW)} x ${fmt(cp.usableH)} mm` : "";
 
-  // Dual-pattern layout string (e.g. "19 Columns x 9 Rows & 18 Columns x 8 Rows"),
-  // matching hex-packed circles' alternating even/odd row column counts.
-  if(!isBoxMode && cp.circles && cp.circles.length){
-    const byParity = {0:new Set(), 1:new Set()};
-    const rowsByParity = {0:new Set(), 1:new Set()};
-    cp.circles.forEach(c=>{
-      const p = c.row % 2;
-      rowsByParity[p].add(c.row);
-      byParity[p].add(c.row + ":" + c.col);
-    });
-    const countCols = (p)=>{
-      const perRow = {};
-      cp.circles.filter(c=>c.row%2===p).forEach(c=> perRow[c.row] = (perRow[c.row]||0)+1);
-      const vals = Object.values(perRow);
-      return vals.length ? Math.max(...vals) : 0;
-    };
-    const evenCols = countCols(0), oddCols = countCols(1);
-    const evenRows = rowsByParity[0].size, oddRows = rowsByParity[1].size;
-    $("pmLayout").value = (evenCols && oddCols && evenCols!==oddCols)
-      ? `${evenCols} Columns x ${evenRows} Rows & ${oddCols} Columns x ${oddRows} Rows`
-      : `${cp.cols} Columns x ${cp.rows} Rows`;
-  } else if(isBoxMode && cp.rows){
-    $("pmLayout").value = `${cp.cols} Columns x ${cp.rows} Rows`;
-  } else {
-    $("pmLayout").value = "";
+  // Same dual-pattern string as Layout Preview (uneven rows/cols supported)
+  { const items = (!isBoxMode && cp.circles) ? cp.circles : (cp.boxes || null);
+    const desc = formatLayoutDescription(items, cp.rows||0, cp.cols||0);
+    $("pmLayout").value = (desc && desc !== "—") ? desc : "";
   }
 
   const offX = numFromField("cpOffX"), offY = numFromField("cpOffY");
@@ -8087,7 +8304,17 @@ function pmSyncFromSpec(){
 
   $("pmWeight").value = fmtTol(data.unitWeight, data.unitWeightTol) + " gm";
   $("pmHeight").value = fmtTol(data.unitHeight, data.unitHeightTol) + " mm";
-  $("pmDiameter").value = isBoxMode ? "N/A" : fmtTol(data.unitMaxDiameter, data.unitMaxDiameterTol) + " mm";
+  // Diameter / footprint from Unit Shape (kept for all packaging types)
+  { const sh = currentUnitShape();
+    if(sh && sh !== "circle"){
+      const ug = unitShapeGeometry();
+      $("pmDiameter").value = ug.radius > 0
+        ? `${fmt(ug.w)} x ${fmt(ug.h)} mm (R${fmt(ug.radius)})`
+        : `${fmt(ug.w)} x ${fmt(ug.h)} mm`;
+    } else {
+      $("pmDiameter").value = fmtTol(data.unitMaxDiameter, data.unitMaxDiameterTol) + " mm";
+    }
+  }
   // Brimful Capacity always mirrors Spec Sheet (with tolerance when present)
   $("pmBrimful").value = String(data.brimfulCapacity||"").trim() !== ""
     ? brimfulText(data.brimfulCapacity, data.brimfulCapacityTol)
@@ -8097,9 +8324,8 @@ function pmSyncFromSpec(){
   if(typeof syncProductPhotoToManual === "function") syncProductPhotoToManual(true);
 
   $("pmOnlineProcess").value = $("pmSKU").value || "";
-  // Finish = portion of SKU after the grade symbol (H or K), e.g. …-H-T-70 → T-70
-  { const fin = pmFinishFromSku(data.productCode);
-    if($("pmFinish")) $("pmFinish").value = fin || ""; }
+  // Built-in Finish = rest of product code after the 8th dash (e.g. …-H-T-58 → T-58)
+  pmApplyFinishFromProductCode();
 
   // Pallet Name mirrors Pallet Type — auto-applies its saved construction
   // preset (Type/Code/Size/Material + deck boards) if one exists for it.
@@ -8130,9 +8356,14 @@ if($("containerType")) $("containerType").addEventListener("change", ()=>{
 let pmSyncedOnce = false;
 document.querySelectorAll(".tab-btn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    if(btn.dataset.tab === "manual" && !pmSyncedOnce){
-      pmSyncedOnce = true;
-      pmSyncFromSpec();
+    if(btn.dataset.tab === "manual"){
+      if(!pmSyncedOnce){
+        pmSyncedOnce = true;
+        pmSyncFromSpec();
+      } else {
+        // Always refresh built-in Finish from product code when opening the tab
+        pmApplyFinishFromProductCode();
+      }
     }
   });
 });
@@ -9162,10 +9393,6 @@ function anRender(){
     kpis += card("teal","Best units / container", best?anNum(best.unitsPerContainer):"—", best?`${escapeHtml(best.pallet)} · ${escapeHtml(best.variant)} · ${best.layers} layers`:"no valid configuration");
     kpis += card("magenta","Current configuration", cur?anNum(cur.unitsPerContainer):"—", cur?`${escapeHtml(cur.pallet)} · ${escapeHtml(cur.variant)}${best&&best.unitsPerContainer>0?` · ${anPct(cur.unitsPerContainer/best.unitsPerContainer)} of best`:""}`:"packaging type is not Full/Half (or Box FP/HP)");
     kpis += card("lime","Best payload efficiency", bestEff?anPct(bestEff.payloadEff):"—", bestEff?`${escapeHtml(bestEff.pallet)} · ${escapeHtml(bestEff.variant)} (product ÷ gross weight)`:"");
-    if(best){
-      const extra = unitW>0 && best.spareTon>0 ? Math.floor(best.spareTon*1e6/unitW) : 0;
-      kpis += card("gold","Weight headroom (best)", (best.spareTon).toFixed(2)+" Ton", `${anPct(best.weightUtil)} of ${best.allowance} Ton used · limited by ${escapeHtml(best.limit)}${extra?` · ≈${anNum(extra)} more units by weight alone`:""}`);
-    }
     const hasCost = R.rows.some(r=>r.cost && r.cost.perPallet > 0);
     const cur$ = bomCur();
     let cheapest = null;
@@ -9445,7 +9672,6 @@ async function exportAnalyticsToPdf(){
     kpis.push({l:"Best units / container", v:best?anNum(best.unitsPerContainer):"—", s:best?`${best.pallet} · ${best.variant} · ${best.layers} layers`:"—", c:C.teal});
     kpis.push({l:"Current configuration", v:cur?anNum(cur.unitsPerContainer):"—", s:cur?`${cur.pallet} · ${cur.variant}${best&&best.unitsPerContainer>0?` · ${anPct(cur.unitsPerContainer/best.unitsPerContainer)} of best`:""}`:"not part of this case", c:C.magenta});
     kpis.push({l:"Best payload efficiency", v:bestEff?anPct(bestEff.payloadEff):"—", s:bestEff?`${bestEff.pallet} · ${bestEff.variant}`:"—", c:C.lime});
-    if(best) kpis.push({l:"Weight headroom (best)", v:best.spareTon.toFixed(2)+" Ton", s:`${anPct(best.weightUtil)} of ${best.allowance} T · limited by ${best.limit}`, c:C.gold});
     if(hasCost && cheapest) kpis.push({l:"Lowest cost / 1,000 units", v:bomMoney(cheapest.cost.per1000)+" "+cur$, s:`${cheapest.pallet} · ${cheapest.variant}`, c:C.lime});
     if(hasCost && cur && cur.cost && cur.cost.per1000>0) kpis.push({l:"Current cost / 1,000 units", v:bomMoney(cur.cost.per1000)+" "+cur$, s:`${bomMoney(cur.cost.perPallet)} ${cur$} / pallet`, c:C.magenta});
     const kn = Math.min(6, kpis.length), kw = (CW-3*(kn-1))/kn;
