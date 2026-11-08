@@ -524,6 +524,37 @@
   .an-scroll tr.an-best td{background:rgba(185,213,50,.22) !important;font-weight:700;}
   .an-scroll tr.an-cur td{box-shadow:inset 0 0 0 1px var(--magenta);}
   .an-insights li{margin-bottom:6px;font-size:.86rem;}
+  .bom-code{font-size:.7rem;font-weight:800;background:var(--teal-tint);color:var(--teal-dark);border-radius:6px;padding:2px 7px;white-space:nowrap;}
+  .bom-code.empty{background:transparent;color:#b5b5b5;font-weight:600;font-style:italic;}
+  .pm-mat-cell{display:flex;gap:6px;align-items:center;width:100%;}
+  .pm-mat-cell > input, .pm-mat-cell > select{flex:1;min-width:0;}
+  .pm-mat-cell .bom-code{flex-shrink:0;}
+  /* Manual Pallet Setup codes — high-contrast so they stand out next to materials */
+  .pm-mat-cell .bom-code:not(.empty){
+    background:#D71672;
+    color:#fff;
+    border:1px solid #b0125c;
+    box-shadow:0 1px 2px rgba(215,22,114,.25);
+    letter-spacing:.03em;
+  }
+  .pm-mat-cell .bom-code.empty{
+    background:rgba(215,22,114,.08);
+    color:#c45a8a;
+    border:1px dashed #e8a0c0;
+    font-style:normal;
+  }
+  body.dark-mode .pm-mat-cell .bom-code:not(.empty){
+    background:#e83a8c;
+    color:#fff;
+    border-color:#f06aa8;
+  }
+  body.dark-mode .pm-mat-cell .bom-code.empty{
+    background:rgba(232,58,140,.12);
+    color:#f09bc4;
+    border-color:#8a3a5c;
+  }
+  input.bp-code{font-weight:700;}
+  input.bp-code.dup{border-color:var(--red);background:var(--magenta-tint);}
   .rf-group-title{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink);margin:14px 0 6px;}
 
   /* reorderable option chips */
@@ -1686,18 +1717,18 @@
       <h3>2. PALLET SETUP</h3>
       <div class="pm-inline-custom-fields" id="pmCustomFields-palletSetup"></div>
       <table class="pm-kv-table">
-        <tr><th>Pallet Type</th><td><input id="pmPalletTypeName" type="text" placeholder="auto — editable"></td></tr>
+        <tr><th>Pallet Type</th><td><span class="pm-mat-cell"><input id="pmPalletTypeName" type="text" placeholder="auto — editable"><span class="bom-code empty" id="pmCodePallet" title="Material code from BOM / costing table">no code</span></span></td></tr>
         <tr><th>Units / Layer</th><td><input id="pmUnitsLayer" type="text" placeholder="auto"></td></tr>
         <tr><th>Layer / Pallet</th><td><input id="pmLayerPallet" type="text" placeholder="auto"></td></tr>
         <tr><th>Units / Pallet</th><td><input id="pmUnitsPallet" type="text" placeholder="auto"></td></tr>
         <tr><th>Pallet Height (mm)</th><td><input id="pmPalletHeight" type="text" placeholder="auto"></td></tr>
-        <tr><th>Plastic Hood (shrink)</th><td><input id="pmSealing" type="text" placeholder="auto — from BOM Plastic Hoods (spec × qty)"></td></tr>
+        <tr><th>Plastic Hood (shrink)</th><td><span class="pm-mat-cell"><input id="pmSealing" type="text" placeholder="auto — from BOM Plastic Hoods (spec × qty)"><span class="bom-code empty" id="pmCodeHood" title="Material code from BOM / costing table">no code</span></span></td></tr>
         <tr><th>Pallet Separators Type</th><td><input id="pmSeparatorsType" type="text" placeholder="e.g. Carton Corrugated Tier sheets"></td></tr>
-        <tr><th>Pallet Separators Size / Qty</th><td><input id="pmSeparatorsSizeQty" type="text" placeholder="auto — from BOM Carton layer"></td></tr>
-        <tr><th>Pallet Cover</th><td><input id="pmPalletCover" type="text" placeholder="auto — from BOM Carton Cover"></td></tr>
-        <tr><th>Frame</th><td><input id="pmFrame" type="text" placeholder="e.g. US Size Fumigated wood"></td></tr>
-        <tr><th>Strap (m)</th><td><input id="pmStrapM" type="text" placeholder="auto — editable"></td></tr>
-        <tr><th>Pallet Label Color</th><td><select id="pmLabelColor"></select></td></tr>
+        <tr><th>Pallet Separators Size / Qty</th><td><span class="pm-mat-cell"><input id="pmSeparatorsSizeQty" type="text" placeholder="auto — from BOM Carton layer"><span class="bom-code empty" id="pmCodeSeparators" title="Material code from BOM / costing table">no code</span></span></td></tr>
+        <tr><th>Pallet Cover</th><td><span class="pm-mat-cell"><input id="pmPalletCover" type="text" placeholder="auto — from BOM Carton Cover"><span class="bom-code empty" id="pmCodeCover" title="Material code from BOM / costing table">no code</span></span></td></tr>
+        <tr><th>Frame</th><td><span class="pm-mat-cell"><input id="pmFrame" type="text" placeholder="e.g. US Size Fumigated wood"><span class="bom-code empty" id="pmCodeFrame" title="Material code from BOM / costing table">no code</span></span></td></tr>
+        <tr><th>Strap (m)</th><td><span class="pm-mat-cell"><input id="pmStrapM" type="text" placeholder="auto — editable"><span class="bom-code empty" id="pmCodeStrap" title="Material code from BOM / costing table">no code</span></span></td></tr>
+        <tr><th>Pallet Label Color</th><td><span class="pm-mat-cell"><select id="pmLabelColor"></select><span class="bom-code empty" id="pmCodeLabel" title="Material code from BOM Label - Kandil">no code</span></span></td></tr>
         <tr><th>Pallet Label Dimensions</th><td><input id="pmLabelDims" type="text" value="7*15 cm"></td></tr>
         <tr><th>Customer Special Request (CSR)</th><td><input id="pmCSR" type="text" value="To be filled by Customer"></td></tr>
       </table>
@@ -1837,6 +1868,17 @@
       <button type="button" class="btn btn-ghost btn-sm" id="pmAddFrameRowBtn" style="margin-top:8px;">+ Add Row</button>
     </div>
 
+    <div data-pm-key="bomCodes" class="field-group group-gold pm-section">
+      <h3>PACKAGING MATERIAL CODES (BOM)</h3>
+      <p class="hint" style="margin-top:10px;">Every packaging material in the Spec Sheet BOM with its unique code. Codes are entered once in <strong>Manage Options → BOM Component Prices</strong> (next to each material's price) and appear here, in the BOM, and in the manual export automatically.</p>
+      <div style="padding:0 14px 14px;overflow-x:auto;">
+        <table class="bom-table">
+          <thead><tr><th>Item</th><th>Specification</th><th>Code</th><th>UOM</th><th>Qty</th></tr></thead>
+          <tbody id="pmBomCodesBody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <div id="pmCustomSectionsWrap"></div>
 
     <div class="field-group group-magenta">
@@ -1913,7 +1955,8 @@ const DEFAULT_OPTIONS = {
   pallet: [
     "Wooden Pallet (100*120*15.4 cm) VMF","Wooden Pallet (100*120*10*7.5 cm) Local",
     "Wooden Pallet (100*120*7.5*8.5 cm) Pepsi","Wooden Pallet (121.92*101.6 cm) GMA",
-    "Wooden Pallet (142*112) US","Wooden Pallet (100*120*10*14 cm) Anife",
+    "Wooden Pallet (142*112 cm) US-A","Wooden Pallet (142*112 cm) US-B",
+    "Wooden Pallet (100*120*10*14 cm) Anife",
     "Wooden Pallet (120*80*14.4 cm) Euro","Wooden Pallet (100*120*15 cm) Export"
   ],
   plasticHood: [
@@ -2108,13 +2151,47 @@ function normalizePackagingType(v){
   const need = {
     packagingType: ["Shrink on FP","Shrink on HP"],
     cartonSeparator: ["Sheet with No Flap (80*120 cm)","Slip Sheet (100*120 cm)","Slip Sheet (80*120 cm)","Slip Sheet (121.92*101.6 cm) GMA","Slip Sheet (142*112 cm)"],
-    pallet: ["Wooden Pallet (142*112 cm) US - Type A","Wooden Pallet (142*112 cm) US - Type B"],
+    pallet: ["Wooden Pallet (142*112 cm) US-A","Wooden Pallet (142*112 cm) US-B"],
     woodFrame: ["US","GMA","Euro"]
   };
   Object.keys(need).forEach(k=>{
     OPTIONS[k] = Array.isArray(OPTIONS[k]) ? OPTIONS[k] : [];
     need[k].forEach(v=>{ if(!OPTIONS[k].some(x=>String(x).trim().toLowerCase()===v.toLowerCase())){ OPTIONS[k].push(v); changed = true; } });
   });
+  // Canonical USA pallet specs: only one "US-A" and one "US-B" (drop Type A/B, bare US, spaced variants)
+  if(Array.isArray(OPTIONS.pallet)){
+    const CANON_A = "Wooden Pallet (142*112 cm) US-A";
+    const CANON_B = "Wooden Pallet (142*112 cm) US-B";
+    const isUsa142 = (t)=> /142\s*\*\s*112/i.test(t) && /\bus\b/i.test(t);
+    const isUsb = (t)=> isUsa142(t) && (/\bus\s*-?\s*b\b/i.test(t) || /type\s*-?\s*b\b/i.test(t));
+    const isUsa = (t)=> isUsa142(t) && !isUsb(t); // Type A, US-A, or bare US → A
+    let hadA = false, hadB = false;
+    const next = [];
+    OPTIONS.pallet.forEach(s=>{
+      const t = String(s||"").trim();
+      if(!t) return;
+      if(isUsb(t)){
+        if(!hadB){ next.push(CANON_B); hadB = true; }
+        else if(t !== CANON_B) changed = true;
+        return;
+      }
+      if(isUsa(t)){
+        if(!hadA){ next.push(CANON_A); hadA = true; }
+        else if(t !== CANON_A) changed = true;
+        return;
+      }
+      next.push(t);
+    });
+    if(!hadA){ next.push(CANON_A); changed = true; }
+    if(!hadB){ next.push(CANON_B); changed = true; }
+    // Final case-insensitive dedupe (any remaining exact dupes)
+    const seen = new Set();
+    OPTIONS.pallet = next.filter(s=>{
+      const k = String(s).trim().toLowerCase();
+      if(seen.has(k)){ changed = true; return false; }
+      seen.add(k); return true;
+    });
+  }
   // Separator Setup is a fixed catalogue — replace any legacy values
   const sepFixed = ["Normal Flap Sheet","Inverted Flap Sheet","Sheet without Flap","Plastic Sheet","Chipboard Sheet","Slip Sheet"];
   const sepNow = (OPTIONS.separatorSetup||[]).map(s=>String(s).trim());
@@ -3305,13 +3382,16 @@ function bomPalletKind(pt){
 function bomAutoPallet(kind, ptRaw){
   if(kind === "us"){
     const list = (OPTIONS.pallet||[]).filter(t=>/142\s*\*\s*112/.test(t));
+    // Pallet Type "USA - A" / "USA - B" → BOM "US-A" / "US-B" (legacy "Type A/B" still recognised)
     const m = /\b(?:usa|us)\s*-\s*([ab])\b/i.exec(String(ptRaw||""));
-    const letter = m ? m[1].toLowerCase() : "";
+    const letter = m ? m[1].toUpperCase() : "";
     if(letter){
-      const typed = list.find(t=> new RegExp("type\\s*-?\\s*"+letter+"\\b","i").test(t));
-      if(typed) return typed;
+      const prefer = list.find(t=> new RegExp("\\bus\\s*-\\s*"+letter+"\\b","i").test(t));
+      if(prefer) return prefer;
+      const legacy = list.find(t=> new RegExp("type\\s*-?\\s*"+letter+"\\b","i").test(t));
+      if(legacy) return legacy;
     }
-    return list.find(t=>!/type\s*-?\s*[ab]\b/i.test(t)) || list[0] || null;
+    return list.find(t=>/\bus\s*-?\s*a\b/i.test(t)) || list[0] || null;
   }
   const rx = {us:/142\s*\*\s*112/, local:/\blocal\b/i, export:/export/i, gma:/gma/i, euro:/euro/i}[kind];
   if(!rx) return null;
@@ -3646,6 +3726,7 @@ function recalc(){
   renderCustomFieldsOutputs();
   updateKpiCardValues();
   if(typeof updateBomCostLine === "function") updateBomCostLine();
+  try{ refreshBomCodeBadges(); pmRenderBomCodes(); }catch(e){}
   threeDDirty = true;
   refreshChipValues();
 }
@@ -3692,7 +3773,11 @@ const ALL_MATERIAL_KEYS = ["pallet","plasticHood","cartonSeparator","plasticRoll
 
 function combinedMaterialList(){
   const seen = new Set(); const out = [];
-  ALL_MATERIAL_KEYS.forEach(k=>(OPTIONS[k]||[]).forEach(v=>{ if(!seen.has(v)){ seen.add(v); out.push(v); } }));
+  ALL_MATERIAL_KEYS.forEach(k=>(OPTIONS[k]||[]).forEach(v=>{
+    const key = String(v).trim().toLowerCase();
+    if(!key || seen.has(key)) return;
+    seen.add(key); out.push(String(v).trim());
+  }));
   return out;
 }
 function materialKeyForItem(itemName){
@@ -3701,14 +3786,34 @@ function materialKeyForItem(itemName){
 }
 function materialListForItem(itemName){
   const key = materialKeyForItem(itemName);
-  return key ? (OPTIONS[key] || []) : combinedMaterialList();
+  if(!key) return combinedMaterialList();
+  const list = OPTIONS[key] || [];
+  // Extra guard for pallet: only one US-A and one US-B in the BOM dropdown
+  if(key === "pallet"){
+    const CANON_A = "Wooden Pallet (142*112 cm) US-A";
+    const CANON_B = "Wooden Pallet (142*112 cm) US-B";
+    const isUsa142 = (t)=> /142\s*\*\s*112/i.test(t) && /\bus\b/i.test(t);
+    const isUsb = (t)=> isUsa142(t) && (/\bus\s*-?\s*b\b/i.test(t) || /type\s*-?\s*b\b/i.test(t));
+    const isUsa = (t)=> isUsa142(t) && !isUsb(t);
+    let hadA = false, hadB = false;
+    const out = [];
+    list.forEach(s=>{
+      const t = String(s||"").trim();
+      if(!t) return;
+      if(isUsb(t)){ if(!hadB){ out.push(CANON_B); hadB = true; } return; }
+      if(isUsa(t)){ if(!hadA){ out.push(CANON_A); hadA = true; } return; }
+      out.push(t);
+    });
+    return out;
+  }
+  return list;
 }
 
 function appendBomRow(data){
   const tr = document.createElement("tr");
   tr.innerHTML = `
     <td class="col-item"><select class="bom-item"></select></td>
-    <td><span style="display:flex;gap:4px;align-items:center;"><select class="bom-spec" style="flex:1;min-width:0;"></select><button type="button" class="bom-spec-auto btn btn-ghost btn-sm" title="Restore the automatic default from the Spec Sheet" style="padding:1px 6px;font-size:.72rem;">↺</button></span></td>
+    <td><span style="display:flex;gap:4px;align-items:center;"><select class="bom-spec" style="flex:1;min-width:0;"></select><span class="bom-code empty" title="Material code">no code</span><button type="button" class="bom-spec-auto btn btn-ghost btn-sm" title="Restore the automatic default from the Spec Sheet" style="padding:1px 6px;font-size:.72rem;">↺</button></span></td>
     <td><select class="bom-uom"></select></td>
     <td class="col-qty"><span style="display:flex;gap:4px;align-items:center;">
       <input type="number" step="any" class="bom-qty" value="${data.qty}" style="flex:1;">
@@ -5732,9 +5837,9 @@ async function exportToPdf(){
     if(isVisible("sec_bom_table")){
       P.banner("Bill of Materials (BOM)", C.magenta);
       P.table(
-        ["Item","Specifications","UOM","Qty"],
-        [0.18, 1 - 0.18 - 0.12 - 0.12, 0.12, 0.12],
-        data.bom.map(row=>[row.item||"", row.spec||"", row.uom||"", isFinite(row.qty) ? row.qty.toLocaleString(undefined,{maximumFractionDigits:3}) : "0"]),
+        ["Item","Specifications","Code","UOM","Qty"],
+        [0.17, 0.43, 0.17, 0.11, 0.12],
+        data.bom.map(row=>[row.item||"", row.spec||"", bomCodeFor(row.item,row.spec)||"—", row.uom||"", isFinite(row.qty) ? row.qty.toLocaleString(undefined,{maximumFractionDigits:3}) : "0"]),
         C.magenta
       );
     }
@@ -8229,7 +8334,8 @@ function pmSyncFromSpec(){
     if(!row) return "";
     const q = parseFloat(row.qty);
     const qtyStr = isFinite(q) ? (Math.round(q)===q ? String(Math.round(q)) : String(q)) : String(row.qty||"");
-    const spec = (row.spec||"").trim();
+    const cd = bomCodeFor(row.item, row.spec);
+    const spec = (row.spec||"").trim() + ((row.spec||"").trim() && cd ? " ["+cd+"]" : "");
     if(!spec && !qtyStr) return "";
     if(!spec) return qtyStr;
     if(!qtyStr || qtyStr==="0") return spec;
@@ -8283,29 +8389,59 @@ function pmSyncFromSpec(){
   $("pmUnitsPallet").value = fmt(LAST_CALC.unitsPerPallet);
   $("pmPalletHeight").value = fmt(LAST_CALC.palletHeight) + " mm";   // Pallet Height field (not Total Pallet Height) — also for every half-pallet case
 
-  // Pallet Separators Size / Qty ← BOM Carton layer (qty × spec)
+  // Helper: set the teal code badge next to a pallet-setup material field
+  const setPmCode = (badgeId, bomRow)=>{
+    const b = $(badgeId); if(!b) return;
+    const c = bomRow ? bomCodeFor(bomRow.item, bomRow.spec) : "";
+    b.textContent = c || "no code";
+    b.classList.toggle("empty", !c);
+    b.title = c ? ("Material code: " + c) : "No code yet — add it in Manage Options → BOM Component Prices";
+  };
+
+  // Pallet Type ← BOM Pallet
+  const palletBomRow = findBom(["pallet"]);
+  setPmCode("pmCodePallet", palletBomRow);
+
+  // Pallet Separators Size / Qty ← BOM Carton layer (qty × spec [code])
   const cartonLayerRow = findBom(["carton layer"]);
   if($("pmSeparatorsSizeQty")){
     $("pmSeparatorsSizeQty").value = bomQtySpec(cartonLayerRow) || "";
   }
+  setPmCode("pmCodeSeparators", cartonLayerRow);
 
-  // Pallet Cover ← BOM Carton Cover (qty × spec)
+  // Pallet Cover ← BOM Carton Cover (qty × spec [code])
   const cartonCoverRow = findBom(["carton cover"]);
   if($("pmPalletCover")){
     $("pmPalletCover").value = bomQtySpec(cartonCoverRow) || "";
   }
+  setPmCode("pmCodeCover", cartonCoverRow);
 
   $("pmStrapM").value = `${fmt(LAST_CALC.strapLength)} m / ${fmt(data.strapsLongSide)} straps (long) + ${fmt(data.strapsShortSide)} straps (short) per side`;
+  // Strap code ← BOM Straps
+  const strapBomRow = findBom(["straps","strap"]);
+  setPmCode("pmCodeStrap", strapBomRow);
+  // Append code into strap text for PDF/Word when present
+  if(strapBomRow){
+    const sc = bomCodeFor(strapBomRow.item, strapBomRow.spec);
+    if(sc && $("pmStrapM").value && !$("pmStrapM").value.includes("["+sc+"]"))
+      $("pmStrapM").value += " [" + sc + "]";
+  }
 
   // Frame is pulled from the BOM's "Wood Frame" row specification, if present.
   const frameBomRow = findBom(["wood frame"]);
-  $("pmFrame").value = frameBomRow ? (frameBomRow.spec || "N/A") : "N/A";
+  $("pmFrame").value = frameBomRow ? (((frameBomRow.spec || "N/A")) + (bomCodeFor(frameBomRow.item, frameBomRow.spec) ? " ["+bomCodeFor(frameBomRow.item, frameBomRow.spec)+"]" : "")) : "N/A";
+  setPmCode("pmCodeFrame", frameBomRow);
 
-  // Plastic Hood (shrink) on Pallet Setup ← BOM Plastic Hoods (spec × qty)
+  // Plastic Hood (shrink) on Pallet Setup ← BOM Plastic Hoods (spec × qty [code])
   const hoodBomRow = findBom(["plastic hoods","plastic hood"]);
   if($("pmSealing")){
     $("pmSealing").value = bomQtySpec(hoodBomRow) || (hoodBomRow ? ((hoodBomRow.spec||"").trim() || "None") : "None");
   }
+  setPmCode("pmCodeHood", hoodBomRow);
+
+  // Label Color ← BOM Label - Kandil code badge
+  const labelBomRow = findBom(["label - kandil","label-kandil","label kandil"]);
+  setPmCode("pmCodeLabel", labelBomRow);
 
   $("pmPalletsPerCont").value = fmt(data.palletPerContainer * ((pt === "half pallet" || pkgIsHP(pt)) ? 2 : 1));
   // Container Type — always mirror the Spec Sheet selection
@@ -8583,8 +8719,20 @@ async function pmCollectBlocks(){
         case "layerSetup":
           blocks.push({w:"full", color:C.teal, title:titleOf("layerSetup"), rows:rowsFor("layerSetup"), cols:1,
             image: layerImg ? {img:layerImg, frac:0.5, maxH:56} : null}); break;
-        case "palletSetup":
-          blocks.push({w:"half", color:C.magenta, title:titleOf("palletSetup"), rows:rowsFor("palletSetup", {pmFrame: hasFrame ? val("pmFrame") : "N/A"}), cols:1}); break;
+        case "palletSetup": {
+          const badgeCode = (id)=>{ const b=$(id); const t=b&&(b.textContent||"").trim(); return (t && t!=="no code") ? t : ""; };
+          const withCode = (fieldId, badgeId)=>{
+            const v = val(fieldId); const c = badgeCode(badgeId);
+            if(!c) return v;
+            if(String(v||"").includes("["+c+"]")) return v;
+            return (v ? v + " ["+c+"]" : c);
+          };
+          blocks.push({w:"half", color:C.magenta, title:titleOf("palletSetup"), rows:rowsFor("palletSetup", {
+            pmFrame: hasFrame ? val("pmFrame") : "N/A",
+            pmPalletTypeName: withCode("pmPalletTypeName","pmCodePallet"),
+            pmLabelColor: withCode("pmLabelColor","pmCodeLabel")
+          }), cols:1}); break;
+        }
         case "loading":
           blocks.push({w:"half", color:C.lime, title:titleOf("loading"), rows:rowsFor("loading"), cols:1}); break;
         case "product":
@@ -8600,6 +8748,14 @@ async function pmCollectBlocks(){
           blocks.push({w:"full", color:C.lime, title:titleOf("deck"),
             table: deckRows.length ? {headers:["Item","Description","Qty","Dimensions (mm)","Tolerance"], fr:[0.08,0.32,0.08,0.30,0.22], rows:deckRows.map(r => [r.item,r.desc,r.qty,r.dims,r.tol])} : null,
             textTitle:"Compliance & Quality Requirements", text:$("pmComplianceText").value || ""}); break;
+        }
+        case "bomCodes": {
+          const cr = pmBomCodeRows();
+          if(!cr.length) break;
+          blocks.push({w:"full", color:C.gold, title:titleOf("bomCodes"),
+            table:{headers:["Item","Specification","Code","UOM","Qty"], fr:[0.19,0.43,0.16,0.10,0.12],
+              rows:cr.map(r => [r.item, r.spec, r.code || "—", r.uom, String(Math.round((+r.qty||0)*1000)/1000)])}});
+          break;
         }
         case "frame": {
           if(!hasFrame) break;
@@ -8642,6 +8798,34 @@ async function exportManualToPdf(){
         doc.text([val("pmCustomer"), val("pmProductName"), val("pmSKU")].join("  ·  "), 105, 15.6, {align:"center"});
         doc.setDrawColor(...C.ink); doc.setLineWidth(0.25); doc.line(10, 17.5, 200, 17.5);
       };
+      // Draw a value string, highlighting material codes in [brackets] with bright magenta
+      const CODE_RGB = [215, 22, 114]; // #D71672 — matches Manual on-screen badges
+      const drawValueWithCodes = (text, x0, y0, maxW) => {
+        const raw = String(text == null ? "" : text);
+        const lines = doc.splitTextToSize(raw, maxW);
+        // If no [code] markers, fast path
+        if(!/\[[^\]]+\]/.test(raw)){
+          doc.setFont("helvetica","normal"); doc.setFontSize(fsV); doc.setTextColor(51,51,52);
+          doc.text(lines, x0, y0);
+          return lines;
+        }
+        // Line-by-line: paint normal text dark, [CODE] segments bright magenta + bold
+        lines.forEach((line, li) => {
+          const yLine = y0 + li * lh;
+          let x = x0;
+          const parts = String(line).split(/(\[[^\]]+\])/g);
+          parts.forEach(part => {
+            if(!part) return;
+            const isCode = /^\[[^\]]+\]$/.test(part);
+            doc.setFont("helvetica", isCode ? "bold" : "normal");
+            doc.setFontSize(fsV);
+            doc.setTextColor(...(isCode ? CODE_RGB : [51,51,52]));
+            doc.text(part, x, yLine);
+            x += doc.getTextWidth(part);
+          });
+        });
+        return lines;
+      };
       const kv = (rows, x, y, w, cols, draw) => {
         const cw = w/cols, lw = cw*0.4; let yy = y;
         for(let i=0;i<rows.length;i+=cols){
@@ -8650,7 +8834,7 @@ async function exportManualToPdf(){
             const ll = doc.splitTextToSize(String(r.label), lw-2*pad);
             doc.setFont("helvetica","normal"); doc.setFontSize(fsV);
             const vl = doc.splitTextToSize(String(r.value), cw-lw-2*pad);
-            return {ll, vl};
+            return {ll, vl, value: r.value};
           });
           const n = Math.max(1, ...cells.map(c => Math.max(c.ll.length, c.vl.length)));
           const rh = n*lh + 1.9*pad;
@@ -8661,8 +8845,7 @@ async function exportManualToPdf(){
             doc.setDrawColor(...lineC); doc.setLineWidth(0.2); doc.rect(cx, yy, lw, rh); doc.rect(cx+lw, yy, cw-lw, rh);
             doc.setFont("helvetica","bold"); doc.setFontSize(fsL); doc.setTextColor(91,91,92);
             doc.text(c.ll, cx+pad, yy+pad*0.6+lh*0.82);
-            doc.setFont("helvetica","normal"); doc.setFontSize(fsV); doc.setTextColor(51,51,52);
-            doc.text(c.vl, cx+lw+pad, yy+pad*0.6+lh*0.82);
+            drawValueWithCodes(c.value, cx+lw+pad, yy+pad*0.6+lh*0.82, cw-lw-2*pad);
           });
           yy += rh;
         }
@@ -8680,14 +8863,21 @@ async function exportManualToPdf(){
         }
         yy += hh;
         doc.setFont("helvetica","normal"); doc.setFontSize(fsL);
+        const codeCol = t.headers.findIndex(h => /^code$/i.test(String(h||"").trim()));
         t.rows.forEach((r,ri) => {
           const cl = r.map((v,i) => doc.splitTextToSize(String(v||""), cw[i]-2*pad));
           const rh = Math.max(...cl.map(l => l.length))*lh + 1.9*pad;
           if(draw){
             doc.setFillColor(ri%2 ? 248 : 255, ri%2 ? 249 : 255, ri%2 ? 250 : 255); doc.rect(x, yy, w, rh, "F");
             doc.setDrawColor(...lineC); doc.setLineWidth(0.2); doc.rect(x, yy, w, rh);
-            let cx = x; doc.setTextColor(51,51,52);
-            cl.forEach((l,i) => { doc.text(l, cx+pad, yy+pad*0.6+lh*0.82); cx += cw[i]; });
+            let cx = x;
+            cl.forEach((l,i) => {
+              const isCode = codeCol === i && String(r[i]||"").trim() && String(r[i]).trim() !== "—";
+              doc.setFont("helvetica", isCode ? "bold" : "normal");
+              doc.setTextColor(...(isCode ? CODE_RGB : [51,51,52]));
+              doc.text(l, cx+pad, yy+pad*0.6+lh*0.82);
+              cx += cw[i];
+            });
           }
           yy += rh;
         });
@@ -8910,6 +9100,17 @@ async function exportManualToWord(){
       width:{size:w,type:WidthType.DXA}, margins:{top:30,bottom:30,left:90,right:90}, shading:{type:ShadingType.CLEAR, fill:hex(b.color)},
       borders:{top:none,bottom:none,left:none,right:none},
       children:[para([run(String(b.title).toUpperCase(), {bold:true, color:"FFFFFF", size:15})])]})]})]);
+    const valueRunsWithCodes = (text)=>{
+      const raw = String(text == null ? "" : text);
+      if(!/\[[^\]]+\]/.test(raw)) return [run(raw, {color:"333334", size:14})];
+      const parts = raw.split(/(\[[^\]]+\])/g).filter(p=>p!=="");
+      return parts.map(part=>{
+        const isCode = /^\[[^\]]+\]$/.test(part);
+        return run(part, isCode
+          ? {bold:true, color:"D71672", size:14}
+          : {color:"333334", size:14});
+      });
+    };
     const kvTable = (rows, w, cols)=>{
       const cw = Math.floor(w/cols), lw = Math.round(cw*0.4), vw = cw - lw;
       const widths = []; for(let i=0;i<cols;i++){ widths.push(lw, vw); }
@@ -8919,7 +9120,7 @@ async function exportManualToWord(){
         for(let j=0;j<cols;j++){
           const r = rows[i+j];
           cells.push(cell(lw, [para(r ? [run(r.label, {bold:true, color:"5B5B5C", size:13})] : [run("",{size:13})])], {shading:{type:ShadingType.CLEAR, fill:GREY}, verticalAlign:VerticalAlign.CENTER}));
-          cells.push(cell(vw, [para(r ? [run(r.value, {color:"333334", size:14})] : [run("",{size:14})])], {verticalAlign:VerticalAlign.CENTER}));
+          cells.push(cell(vw, [para(r ? valueRunsWithCodes(r.value) : [run("",{size:14})])], {verticalAlign:VerticalAlign.CENTER}));
         }
         trs.push(new TableRow({children:cells, cantSplit:true}));
       }
@@ -8927,8 +9128,12 @@ async function exportManualToWord(){
     };
     const dataTable = (t, w, color)=>{
       const widths = t.fr.map(f=>Math.round(f*w)); widths[widths.length-1] += w - widths.reduce((a,b)=>a+b,0);
+      const codeCol = t.headers.findIndex(h => /^code$/i.test(String(h||"").trim()));
       const head = new TableRow({tableHeader:true, children:t.headers.map((h,i)=> cell(widths[i], [para([run(h, {bold:true, color:"FFFFFF", size:13})])], {shading:{type:ShadingType.CLEAR, fill:hex(color)}}))});
-      const body = t.rows.map((r,ri)=> new TableRow({cantSplit:true, children:r.map((v,i)=> cell(widths[i], [para([run(v||"", {size:13, color:"333334"})])], ri%2 ? {shading:{type:ShadingType.CLEAR, fill:"F8F9FA"}} : {}))}));
+      const body = t.rows.map((r,ri)=> new TableRow({cantSplit:true, children:r.map((v,i)=>{
+        const isCode = codeCol === i && String(v||"").trim() && String(v).trim() !== "—";
+        return cell(widths[i], [para([run(v||"", {size:13, bold:!!isCode, color: isCode ? "D71672" : "333334"})])], ri%2 ? {shading:{type:ShadingType.CLEAR, fill:"F8F9FA"}} : {});
+      })}));
       return tbl(widths, [head, ...body]);
     };
     const textBox = async (title, text, w)=>{
@@ -9065,6 +9270,42 @@ const BOM_PRICES_KEY = "kandilBomPrices_v1";
 let BOM_PRICES = Object.assign({currency:"EGP", items:{}, kits:{}, updatedAt:0}, loadJSON(BOM_PRICES_KEY) || {});
 if(!BOM_PRICES.items) BOM_PRICES.items = {};
 if(!BOM_PRICES.kits) BOM_PRICES.kits = {};
+if(!BOM_PRICES.codes) BOM_PRICES.codes = {};
+/* Migrate legacy USA pallet price/code keys: Type A/B → US-A / US-B */
+(function migrateUsaPalletPriceKeys(){
+  const renames = [
+    [/us\s*-\s*type\s*a\b/i, "Wooden Pallet (142*112 cm) US-A"],
+    [/us\s*-\s*type\s*b\b/i, "Wooden Pallet (142*112 cm) US-B"],
+    [/^pallet\|\|.*\(142\s*\*\s*112\)\s*us$/i, "pallet||Wooden Pallet (142*112 cm) US-A"]
+  ];
+  let ch = false;
+  ["items","codes"].forEach(bucket=>{
+    const src = BOM_PRICES[bucket] || {};
+    Object.keys(src).forEach(k=>{
+      if(!k.startsWith("pallet||")) return;
+      const spec = k.slice("pallet||".length);
+      let nextSpec = null;
+      for(const [rx, to] of renames){
+        if(rx.test(spec) || rx.test(k)){ nextSpec = to.startsWith("pallet||") ? to.slice("pallet||".length) : to; break; }
+      }
+      if(!nextSpec || nextSpec === spec) return;
+      const nk = "pallet||" + nextSpec;
+      if(src[nk] == null) src[nk] = src[k];
+      delete src[k];
+      ch = true;
+    });
+  });
+  if(BOM_PRICES.kits){
+    Object.keys(BOM_PRICES.kits).forEach(name=>{
+      const k = BOM_PRICES.kits[name]; if(!k || !k.pallet) return;
+      const p = String(k.pallet);
+      if(/us\s*-\s*type\s*a\b/i.test(p)){ k.pallet = "Wooden Pallet (142*112 cm) US-A"; ch = true; }
+      else if(/us\s*-\s*type\s*b\b/i.test(p)){ k.pallet = "Wooden Pallet (142*112 cm) US-B"; ch = true; }
+      else if(/\(142\s*\*\s*112\)\s*us\b/i.test(p) && !/us-[ab]\b/i.test(p)){ k.pallet = "Wooden Pallet (142*112 cm) US-A"; ch = true; }
+    });
+  }
+  if(ch){ try{ saveJSON(BOM_PRICES_KEY, BOM_PRICES); }catch(e){} }
+})();
 const PRICE_CATS = [
   {key:"pallet", label:"Pallets", uom:"Units"},
   {key:"plasticHood", label:"Plastic Hoods", uom:"Units"},
@@ -9086,6 +9327,60 @@ function bomPriceFor(item, spec){
   const k = materialKeyForItem(item); if(!k) return 0;
   return +(BOM_PRICES.items[k + "||" + spec]) || 0;
 }
+/* ---- Material codes: one unique code per material (spec), entered in the costing table ---- */
+function bomCodeFor(item, spec){
+  try{
+    const k = materialKeyForItem(item); if(!k) return "";
+    return String((BOM_PRICES.codes||{})[k + "||" + spec] || "").trim();
+  }catch(e){ return ""; }
+}
+function refreshBomCodeBadges(){
+  try{
+    Array.from(bomBody.querySelectorAll("tr")).forEach(tr=>{
+      const b = tr.querySelector(".bom-code"); if(!b) return;
+      const c = bomCodeFor(tr.querySelector(".bom-item").value, tr.querySelector(".bom-spec").value);
+      b.textContent = c || "no code"; b.classList.toggle("empty", !c);
+      b.title = c ? "Material code" : "No code yet — add it in Manage Options → BOM Component Prices";
+    });
+  }catch(e){}
+  try{ refreshPmPalletCodes(); }catch(e){}
+}
+/** Update the teal code badges next to materials in Packaging Manual → Pallet Setup */
+function refreshPmPalletCodes(){
+  try{
+    const rows = (typeof gatherBomRows === "function") ? gatherBomRows() : [];
+    const find = (names)=>{
+      const set = names.map(n=>n.toLowerCase());
+      return rows.find(r => set.includes((r.item||"").trim().toLowerCase()));
+    };
+    const setBadge = (id, row)=>{
+      const b = $(id); if(!b) return;
+      const c = row ? bomCodeFor(row.item, row.spec) : "";
+      b.textContent = c || "no code";
+      b.classList.toggle("empty", !c);
+      b.title = c ? ("Material code: " + c) : "No code yet — add it in Manage Options → BOM Component Prices";
+    };
+    setBadge("pmCodePallet", find(["pallet"]));
+    setBadge("pmCodeHood", find(["plastic hoods","plastic hood"]));
+    setBadge("pmCodeSeparators", find(["carton layer"]));
+    setBadge("pmCodeCover", find(["carton cover"]));
+    setBadge("pmCodeFrame", find(["wood frame"]));
+    setBadge("pmCodeStrap", find(["straps","strap"]));
+    setBadge("pmCodeLabel", find(["label - kandil","label-kandil","label kandil"]));
+  }catch(e){}
+}
+function pmBomCodeRows(){
+  return gatherBomRows().filter(r=>{
+    const sp = String(r.spec||"").trim();
+    return (+r.qty||0) > 0 && sp && !/^(n\/?a|none|0)$/i.test(sp);
+  }).map(r=>({item:r.item, spec:r.spec, code:bomCodeFor(r.item, r.spec), uom:r.uom, qty:r.qty}));
+}
+function pmRenderBomCodes(){
+  const body = $("pmBomCodesBody"); if(!body) return;
+  const rows = pmBomCodeRows();
+  body.innerHTML = rows.length ? rows.map(r=>`<tr><td>${escapeHtml(r.item)}</td><td>${escapeHtml(r.spec)}</td><td><strong>${r.code ? escapeHtml(r.code) : '<span style="color:#b5b5b5;">—</span>'}</strong></td><td>${escapeHtml(r.uom)}</td><td>${escapeHtml(String(Math.round((+r.qty||0)*1000)/1000))}</td></tr>`).join("")
+    : '<tr><td colspan="5" class="hint" style="padding:10px;">No BOM materials with a quantity yet.</td></tr>';
+}
 function persistBomPrices(){ BOM_PRICES.updatedAt = Date.now(); saveJSON(BOM_PRICES_KEY, BOM_PRICES); }
 function suggestedKit(name){
   const n = String(name||"").toLowerCase();
@@ -9094,7 +9389,7 @@ function suggestedKit(name){
   if(/local/.test(n)){ pallet = has("pallet","Wooden Pallet (100*120*10*7.5 cm) Local"); carton = has("cartonSeparator","Sheet with No Flap (100*120 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
   else if(/export/.test(n)){ pallet = has("pallet","Wooden Pallet (100*120*15 cm) Export"); carton = has("cartonSeparator","Sheet with No Flap (100*120 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
   else if(/gma/.test(n)){ pallet = has("pallet","Wooden Pallet  (121.92*101.6 cm) GMA") || has("pallet","Wooden Pallet (121.92*101.6 cm) GMA"); carton = has("cartonSeparator","Sheet with No Flap (121.92*101.6 cm) GMA"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
-  else if(/usa|\bus\b/.test(n)){ pallet = has("pallet","Wooden Pallet (142*112) US"); carton = has("cartonSeparator","Sheet with no Flap (142*112 cm)") || has("cartonSeparator","Sheet with No Flap (142*112 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
+  else if(/usa|\bus\b/.test(n)){ pallet = has("pallet","Wooden Pallet (142*112 cm) US-A") || has("pallet","Wooden Pallet (142*112 cm) US-B"); carton = has("cartonSeparator","Sheet with no Flap (142*112 cm)") || has("cartonSeparator","Sheet with No Flap (142*112 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron 142*112 cm)"); }
   else if(/euro/.test(n)){ pallet = has("pallet","Wooden Pallet (120*80*14.4 cm) Euro"); carton = has("cartonSeparator","Sheet with No Flap (80*120 cm)"); hood = has("plasticHood","Plastic Hood (2 m/150 Micron)"); }
   return {pallet, carton, hood};
 }
@@ -9137,13 +9432,13 @@ function renderBomPricesTab(){
   const html = PRICE_CATS.map(c=>{
     const list = OPTIONS[c.key] || [];
     const filled = list.filter(sp=> +BOM_PRICES.items[c.key+"||"+sp] > 0).length;
-    const shown = q ? list.filter(sp=> (sp+" "+c.label).toLowerCase().includes(q)) : list;
+    const shown = q ? list.filter(sp=> (sp+" "+c.label+" "+((BOM_PRICES.codes||{})[c.key+"||"+sp]||"")).toLowerCase().includes(q)) : list;
     if(!shown.length) return "";
     return `<details class="opt-card" data-cat="${c.key}" ${q?"open":""}>
       <summary>${escapeHtml(c.label)} <span class="count" data-count>${filled}/${list.length} priced · per ${escapeHtml(c.uom)}</span></summary>
       <div class="opt-card-body"><table class="bom-table" style="margin-top:12px;">
-        <thead><tr><th>Specification</th><th style="width:90px;">UOM</th><th style="width:180px;">Price / ${escapeHtml(c.uom)} (${escapeHtml(bomCur())})</th></tr></thead>
-        <tbody>${shown.map(sp=>{ const v = BOM_PRICES.items[c.key+"||"+sp]; return `<tr><td>${escapeHtml(sp)}</td><td style="text-align:center;">${escapeHtml(c.uom)}</td><td><input type="number" step="any" min="0" class="bp-input" data-k="${escapeAttr(c.key+"||"+sp)}" data-cat="${c.key}" value="${v ? v : ""}" placeholder="0.00"></td></tr>`; }).join("")}</tbody>
+        <thead><tr><th>Specification</th><th style="width:170px;">Material code</th><th style="width:90px;">UOM</th><th style="width:180px;">Price / ${escapeHtml(c.uom)} (${escapeHtml(bomCur())})</th></tr></thead>
+        <tbody>${shown.map(sp=>{ const v = BOM_PRICES.items[c.key+"||"+sp]; const cv = (BOM_PRICES.codes||{})[c.key+"||"+sp] || ""; return `<tr><td>${escapeHtml(sp)}</td><td><input type="text" class="bp-code" data-k="${escapeAttr(c.key+"||"+sp)}" value="${escapeAttr(cv)}" placeholder="Code"></td><td style="text-align:center;">${escapeHtml(c.uom)}</td><td><input type="number" step="any" min="0" class="bp-input" data-k="${escapeAttr(c.key+"||"+sp)}" data-cat="${c.key}" value="${v ? v : ""}" placeholder="0.00"></td></tr>`; }).join("")}</tbody>
       </table></div></details>`;
   }).join("");
   wrap.innerHTML = html || '<p class="opt-empty">No materials match your search.</p>';
@@ -9178,6 +9473,24 @@ if($("bomPricesWrap")){
     BOM_PRICES.kits[name] = Object.assign(kitFor(name), {[sel.dataset.f]: sel.value});
     persistBomPrices();
   });
+  function markDupCodes(){
+    const seen = {}; const all = BOM_PRICES.codes || {};
+    Object.keys(all).forEach(k=>{ const c = String(all[k]).toLowerCase(); (seen[c] = seen[c] || []).push(k); });
+    document.querySelectorAll("#bomPricesWrap .bp-code").forEach(inp=>{
+      const c = String(inp.value||"").trim().toLowerCase();
+      const dup = c && seen[c] && seen[c].length > 1;
+      inp.classList.toggle("dup", !!dup);
+      inp.title = dup ? "This code is already used by another material" : "";
+    });
+  }
+  $("bomPricesWrap").addEventListener("input", e=>{
+    const inp = e.target.closest(".bp-code"); if(!inp) return;
+    const v = inp.value.trim();
+    if(v) BOM_PRICES.codes[inp.dataset.k] = v; else delete BOM_PRICES.codes[inp.dataset.k];
+    persistBomPrices(); markDupCodes(); refreshBomCodeBadges(); pmRenderBomCodes();
+  });
+  const _origRenderBp = renderBomPricesTab;
+  renderBomPricesTab = function(){ _origRenderBp(); markDupCodes(); };
   $("bomCurrency").addEventListener("input", ()=>{ BOM_PRICES.currency = $("bomCurrency").value.trim() || "EGP"; persistBomPrices(); renderBomPricesTab(); updateBomCostLine(); });
   $("bomPriceSearch").addEventListener("input", renderBomPricesTab);
   renderBomPricesTab();
@@ -9884,9 +10197,9 @@ $("exportPdf").addEventListener("click", exportToPdf);
 const PM_LAYOUT_KEY = "kandilPmLayout_v1";
 let PM_LAYOUT = Object.assign({order:[], titles:{}, labels:{}, hidden:{}, rowOrder:{}}, loadJSON(PM_LAYOUT_KEY) || {});
 function persistPmLayout(){ saveJSON(PM_LAYOUT_KEY, PM_LAYOUT); }
-const PM_BUILTIN_KEYS = ["header","layerSetup","palletSetup","loading","product","process","material","deck","frame"];
-const PM_SLOT_COLORS = {header:"gold",layerSetup:"teal",palletSetup:"magenta",loading:"lime",product:"gold",process:"teal",material:"magenta",deck:"lime",frame:"teal"};
-const PM_DEFAULT_TITLES = {header:"Customer Data",layerSetup:"1. Pallet Layer Setup",palletSetup:"2. Pallet Setup",loading:"3. Loading Data / Packaging Modifications",product:"4. Product Data / SKU Guidelines",process:"5. Product Production Process / Codes",material:"6. Packaging Material Specification — Wooden Pallet",deck:"Pallet Design & Dimensions — Deck Boards / Blocks",frame:"Wooden Frame"};
+const PM_BUILTIN_KEYS = ["header","layerSetup","palletSetup","loading","product","process","material","deck","frame","bomCodes"];
+const PM_SLOT_COLORS = {header:"gold",layerSetup:"teal",palletSetup:"magenta",loading:"lime",product:"gold",process:"teal",material:"magenta",deck:"lime",frame:"teal",bomCodes:"gold"};
+const PM_DEFAULT_TITLES = {header:"Customer Data",layerSetup:"1. Pallet Layer Setup",palletSetup:"2. Pallet Setup",loading:"3. Loading Data / Packaging Modifications",product:"4. Product Data / SKU Guidelines",process:"5. Product Production Process / Codes",material:"6. Packaging Material Specification — Wooden Pallet",deck:"Pallet Design & Dimensions — Deck Boards / Blocks",frame:"Wooden Frame",bomCodes:"Packaging Material Codes (BOM)"};
 const PM_BUILTIN_ROW_IDS = {};
 
 function pmMergeOrder(stored, all){
