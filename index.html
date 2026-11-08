@@ -8749,14 +8749,9 @@ async function pmCollectBlocks(){
             table: deckRows.length ? {headers:["Item","Description","Qty","Dimensions (mm)","Tolerance"], fr:[0.08,0.32,0.08,0.30,0.22], rows:deckRows.map(r => [r.item,r.desc,r.qty,r.dims,r.tol])} : null,
             textTitle:"Compliance & Quality Requirements", text:$("pmComplianceText").value || ""}); break;
         }
-        case "bomCodes": {
-          const cr = pmBomCodeRows();
-          if(!cr.length) break;
-          blocks.push({w:"full", color:C.gold, title:titleOf("bomCodes"),
-            table:{headers:["Item","Specification","Code","UOM","Qty"], fr:[0.19,0.43,0.16,0.10,0.12],
-              rows:cr.map(r => [r.item, r.spec, r.code || "—", r.uom, String(Math.round((+r.qty||0)*1000)/1000)])}});
+        case "bomCodes":
+          // Intentionally omitted from PDF/Word — codes appear next to materials in Pallet Setup
           break;
-        }
         case "frame": {
           if(!hasFrame) break;
           const fr = gatherPmRows(pmFrameDimsBody, ["std","len","w","treat"]);
