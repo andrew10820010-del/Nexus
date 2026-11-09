@@ -553,66 +553,6 @@
     color:#f09bc4;
     border-color:#8a3a5c;
   }
-  /* ---------- Accounts / login ---------- */
-  #loginGate{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;
-    background:radial-gradient(1200px 600px at 10% -10%, rgba(79,198,203,.28), transparent 55%),
-               radial-gradient(900px 500px at 110% 20%, rgba(215,22,114,.22), transparent 50%),
-               radial-gradient(700px 400px at 50% 120%, rgba(250,187,21,.14), transparent 45%),
-               linear-gradient(160deg,#12161e 0%,#1c2430 45%,#151a22 100%);}
-  #loginGate.hidden{display:none !important;}
-  #loginGate::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;
-    background-image:radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);background-size:22px 22px;}
-  .login-shell{position:relative;z-index:1;width:min(920px,100%);display:grid;grid-template-columns:1.05fr .95fr;gap:0;border-radius:22px;overflow:hidden;
-    box-shadow:0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06);}
-  @media (max-width:760px){.login-shell{grid-template-columns:1fr;}}
-  .login-brand{padding:36px 32px;background:linear-gradient(160deg,rgba(30,40,52,.95),rgba(20,26,34,.98));color:#e8eef5;
-    display:flex;flex-direction:column;justify-content:space-between;min-height:420px;position:relative;}
-  .login-brand::after{content:"";position:absolute;right:-40px;bottom:-40px;width:180px;height:180px;border-radius:50%;
-    background:radial-gradient(circle,rgba(79,198,203,.35),transparent 70%);pointer-events:none;}
-  .login-brand-mark{display:flex;align-items:center;gap:12px;}
-  .login-brand-mark .lb-orb{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#4FC6CB,#D71672);box-shadow:0 8px 24px rgba(79,198,203,.35);}
-  .login-brand h1{margin:0;font-size:1.55rem;font-weight:800;letter-spacing:-.02em;}
-  .login-brand .lb-tag{margin:4px 0 0;font-size:.78rem;opacity:.7;}
-  .login-brand-body{margin-top:28px;}
-  .login-brand-body h2{margin:0 0 10px;font-size:1.35rem;font-weight:800;line-height:1.25;}
-  .login-brand-body p{margin:0;font-size:.9rem;line-height:1.55;opacity:.78;}
-  .login-brand-points{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px;}
-  .login-brand-points li{display:flex;align-items:flex-start;gap:12px;font-size:.84rem;line-height:1.45;opacity:.9;}
-  .login-brand-points li .lb-ico{flex:0 0 22px;width:22px;height:22px;border-radius:8px;background:rgba(79,198,203,.18);color:#7fe0e4;
-    display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;line-height:1;}
-  .login-brand-points li .lb-txt{flex:1;min-width:0;line-height:1.45;}
-  .login-brand-foot{margin-top:28px;font-size:.72rem;opacity:.5;line-height:1.4;}
-  .login-card{background:#fff;padding:34px 30px 28px;display:flex;flex-direction:column;justify-content:center;min-width:0;}
-  body.dark-mode .login-card{background:#1e2430;color:var(--ink-dark);}
-  .login-card h2{margin:0 0 8px;font-size:1.4rem;font-weight:800;color:var(--ink-dark);letter-spacing:-.02em;line-height:1.25;}
-  .login-card .login-sub{margin:0 0 20px;font-size:.86rem;color:#7a8494;line-height:1.5;}
-  .login-card label.field{display:flex !important;flex-direction:column !important;align-items:stretch;gap:7px;margin-bottom:14px;font-size:.78rem;font-weight:700;color:#5b6470;text-transform:uppercase;letter-spacing:.04em;line-height:1.3;}
-  .login-card label.field input{margin:0;width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1px solid #e2e6ec;font-size:.95rem;font-weight:600;line-height:1.3;
-    background:#f7f9fb;transition:border-color .15s, box-shadow .15s, background .15s;text-transform:none;letter-spacing:normal;}
-  .login-card label.field input:focus{outline:none;border-color:#4FC6CB;background:#fff;box-shadow:0 0 0 3px rgba(79,198,203,.2);}
-  body.dark-mode .login-card label.field input{background:#161b24;border-color:#323a48;color:#e6eaf0;}
-  body.dark-mode .login-card label.field input:focus{background:#1a202b;border-color:#4FC6CB;}
-  .login-card .login-err{color:#c2185b;font-size:.82rem;min-height:1.2em;margin:2px 0 12px;font-weight:600;line-height:1.4;}
-  .login-card .login-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;align-items:center;}
-  .login-card .login-actions .btn{min-height:42px;padding:10px 18px;border-radius:12px;font-weight:800;line-height:1.2;}
-  .login-card .login-hint{margin-top:18px;padding-top:14px;border-top:1px solid #eceff3;font-size:.74rem;color:#9aa3b0;line-height:1.5;}
-  body.dark-mode .login-card .login-hint{border-top-color:#323a48;color:#8b95a5;}
-  .user-badge{display:flex;align-items:center;gap:8px;margin:0 18px 12px;padding:8px 10px;border-radius:10px;background:var(--teal-tint);font-size:.78rem;}
-  .user-badge .ub-name{font-weight:800;color:var(--ink-dark);}
-  .user-badge .ub-role{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--magenta);color:#fff;text-transform:uppercase;letter-spacing:.04em;}
-  .user-badge .ub-role.role-user{background:#6b7280;}
-  .user-badge .ub-out{margin-left:auto;border:none;background:transparent;color:var(--teal-dark);font-size:.72rem;font-weight:700;cursor:pointer;text-decoration:underline;}
-  body.dark-mode .user-badge{background:rgba(79,198,203,.12);}
-  .tab-btn.master-only.locked-for-user{opacity:.4;pointer-events:none;position:relative;}
-  .pc-savedby{display:inline-flex;align-items:center;gap:6px;margin-top:5px;font-size:.74rem;font-weight:800;color:#fff;background:var(--magenta);padding:3px 10px;border-radius:20px;letter-spacing:.02em;}
-  body.dark-mode .pc-savedby{color:#fff;background:#e83a8c;}
-  .acct-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:.86rem;flex-wrap:wrap;line-height:1.35;}
-  .acct-row:last-child{border-bottom:none;}
-  .acct-row strong{line-height:1.3;}
-  .acct-role-pill{font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:20px;background:#eee;color:#555;}
-  .acct-role-pill.master{background:var(--magenta-tint);color:var(--magenta);}
-  .acct-role-pill.acct-active{background:#E8F6E8;color:#2a7a2a;}
-  .acct-role-pill.acct-inactive{background:#FCE9F1;color:#9E0F54;}
   input.bp-code{font-weight:700;}
   input.bp-code.dup{border-color:var(--red);background:var(--magenta-tint);}
   .rf-group-title{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink);margin:14px 0 6px;}
@@ -958,53 +898,6 @@
 })();
 </script>
 
-<!-- Login gate — must sign in before using the app -->
-<div id="loginGate">
-  <div class="login-shell">
-    <div class="login-brand">
-      <div>
-        <div class="login-brand-mark">
-          <div class="lb-orb" aria-hidden="true"></div>
-          <div>
-            <h1>NEXUS</h1>
-            <p class="lb-tag">Glass packaging · specs · manuals</p>
-          </div>
-        </div>
-        <div class="login-brand-body">
-          <h2>One place for every pallet spec.</h2>
-          <p>Build layouts, manuals and BOM costs — then share products with your team under clear account control.</p>
-          <ul class="login-brand-points">
-            <li><span class="lb-ico">✓</span><span class="lb-txt">Personal accounts with save history on every product</span></li>
-            <li><span class="lb-ico">✓</span><span class="lb-txt">Master controls options, formulas and access</span></li>
-            <li><span class="lb-ico">✓</span><span class="lb-txt">Cloud sync so the whole team stays aligned</span></li>
-          </ul>
-        </div>
-      </div>
-      <div class="login-brand-foot">Kandil Packaging · NEXUS workspace</div>
-    </div>
-    <div class="login-card">
-      <h2 id="loginTitle">Welcome back</h2>
-      <p class="login-sub" id="loginSub">Sign in to open your workspace. Only <strong>master</strong> accounts can change system settings and manage users.</p>
-      <div id="loginFields">
-        <label class="field">Username<input type="text" id="loginUser" autocomplete="username" placeholder="Enter your username"></label>
-        <label class="field">Password<input type="password" id="loginPass" autocomplete="current-password" placeholder="Enter your password"></label>
-      </div>
-      <div id="registerFields" class="hidden">
-        <label class="field">Choose username<input type="text" id="regUser" autocomplete="username" placeholder="e.g. ahmed"></label>
-        <label class="field">Password<input type="password" id="regPass" autocomplete="new-password" placeholder="At least 4 characters"></label>
-        <label class="field">Confirm password<input type="password" id="regPass2" autocomplete="new-password" placeholder="Repeat password"></label>
-      </div>
-      <div class="login-err" id="loginErr"></div>
-      <div class="login-actions">
-        <button type="button" class="btn btn-magenta" id="loginBtn">Sign in</button>
-        <button type="button" class="btn btn-teal hidden" id="registerBtn">Create account</button>
-        <button type="button" class="btn btn-ghost" id="toggleAuthModeBtn">Create an account</button>
-      </div>
-      <p class="login-hint">First-time master login: <code>master</code> / <code>master123</code> — change the username and password from the Accounts tab after signing in.</p>
-    </div>
-  </div>
-</div>
-
 <div class="app-shell">
   <div class="sidebar">
   <div class="masthead">
@@ -1016,11 +909,6 @@
     </div>
     <button type="button" class="dark-toggle" id="darkModeToggle" title="Toggle dark mode">🌙 Dark mode</button>
   </div>
-  <div class="user-badge hidden" id="userBadge">
-    <span class="ub-name" id="userBadgeName">—</span>
-    <span class="ub-role role-user" id="userBadgeRole">user</span>
-    <button type="button" class="ub-out" id="logoutBtn" title="Sign out">Sign out</button>
-  </div>
   <div class="rainbow-bar"></div>
 
   <div class="tabbar">
@@ -1029,9 +917,8 @@
     <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
     <button class="tab-btn" data-tab="model3d">🧊 3D Model</button>
     <button class="tab-btn" data-tab="products">📦 Products</button>
-    <button class="tab-btn master-only" data-tab="accounts">👥 Accounts</button>
-    <button class="tab-btn master-only" data-tab="options">🗂️ Manage Options</button>
-    <button class="tab-btn master-only" data-tab="formulas">🧮 Formulas</button>
+    <button class="tab-btn" data-tab="options">🗂️ Manage Options</button>
+    <button class="tab-btn" data-tab="formulas">🧮 Formulas</button>
   </div>
   </div>
   <div class="main-content">
@@ -1729,7 +1616,6 @@
         <label class="field" style="flex:1;min-width:200px;margin-bottom:0;">Save as<input type="text" id="productSaveName" placeholder="Defaults to Product Name"></label>
         <button type="button" class="btn btn-magenta" id="saveProductBtn">💾 Save as New</button>
         <button type="button" class="btn btn-gold hidden" id="updateProductBtn">↻ Update Loaded Product</button>
-        <button type="button" class="btn btn-ghost btn-sm" id="changePassBtn" title="Change your password">🔑 Password</button>
       </div>
     </div>
 
@@ -1742,48 +1628,6 @@
     </div>
 
     <div id="productListContainer"></div>
-  </div>
-
-  <!-- =================== TAB: ACCOUNTS (master only) =================== -->
-  <div class="tab-panel" id="tab-accounts">
-    <div class="section-banner">Account Management</div>
-    <p class="hint">Master only — manage every account, promote users to master, activate or deactivate access, and edit your own master profile.</p>
-
-    <div class="field-group group-gold">
-      <h3>My master profile</h3>
-      <p class="hint" style="margin-top:-4px;">Change the username or password for the account you are signed in with (must already be a master).</p>
-      <div class="field-grid two-col">
-        <label class="field">Username<input type="text" id="masterEditUser" placeholder="current username" autocomplete="off"></label>
-        <label class="field">Display name<input type="text" id="masterEditDisplay" placeholder="optional display name" autocomplete="off"></label>
-        <label class="field">Current password<input type="password" id="masterEditOldPass" placeholder="required to save" autocomplete="current-password"></label>
-        <label class="field">New password <span style="font-weight:500;text-transform:none;letter-spacing:0;color:#999;">(optional)</span><input type="password" id="masterEditNewPass" placeholder="leave blank to keep" autocomplete="new-password"></label>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
-        <button type="button" class="btn btn-magenta btn-sm" id="masterSaveProfileBtn">Save master profile</button>
-      </div>
-    </div>
-
-    <div class="field-group group-magenta">
-      <h3>All accounts</h3>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
-        <label class="field" style="margin:0;flex:1;min-width:180px;">Search<input type="text" id="acctSearch" placeholder="Filter by username…"></label>
-        <button type="button" class="btn btn-ghost btn-sm" id="acctRefreshBtn">🔄 Refresh</button>
-      </div>
-      <div id="accountsList"></div>
-    </div>
-
-    <div class="field-group group-teal">
-      <h3>Create user</h3>
-      <div class="field-grid two-col">
-        <label class="field">Username<input type="text" id="acctNewUser" placeholder="e.g. ahmed" autocomplete="off"></label>
-        <label class="field">Password<input type="password" id="acctNewPass" placeholder="min. 4 characters" autocomplete="new-password"></label>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
-        <button type="button" class="btn btn-teal btn-sm" id="acctCreateBtn">＋ Create user</button>
-        <button type="button" class="btn btn-ghost btn-sm" id="acctChangeMyPassBtn">Change my password</button>
-      </div>
-      <p class="hint" id="acctStatus" style="margin-top:8px;"></p>
-    </div>
   </div>
 
   <!-- =================== TAB: 3D MODEL =================== -->
@@ -3275,10 +3119,6 @@ function setOut(id, value, unit){ const el = $(id); el.dataset.raw = value; el.t
 let _tabSwitching = false;
 document.querySelectorAll(".tab-btn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    if(btn.classList.contains("master-only") && typeof isMaster === "function" && !isMaster()){
-      alert("This section is restricted to the master account.");
-      return;
-    }
     const targetId = "tab-" + btn.dataset.tab;
     const next = $(targetId);
     const current = document.querySelector(".tab-panel.active");
@@ -6725,423 +6565,6 @@ $("eqnSaveBtn").addEventListener("click", ()=>{
 });
 
 /* =====================================================================
-   User accounts — master vs regular users
-   - Master: full access (Manage Options, Formulas, create users, cloud setup)
-   - User: Spec Sheet, Manual, Analytics, 3D, Products (save/load) only
-   Accounts are stored locally and synced to Firebase /accounts when cloud is on.
-===================================================================== */
-const ACCOUNTS_KEY = "kandilAccounts_v1";
-const SESSION_KEY = "kandilSession_v1";
-let ACCOUNTS = []; // [{username, passHash, role, displayName, createdAt, active}]
-let CURRENT_USER = null; // {username, role, displayName}
-let AUTH_MODE = "login"; // "login" | "register"
-
-async function hashPass(pw){
-  try{
-    const data = new TextEncoder().encode("knd$"+String(pw||""));
-    const buf = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
-  }catch(e){
-    // Fallback if SubtleCrypto unavailable
-    let h = 2166136261;
-    const s = "knd$"+String(pw||"");
-    for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
-    return ("00000000"+(h>>>0).toString(16)).slice(-8);
-  }
-}
-function normalizeAccount(a){
-  if(!a || typeof a !== "object") return null;
-  return {
-    username: String(a.username||"").trim().toLowerCase(),
-    passHash: a.passHash || "",
-    role: a.role === "master" ? "master" : "user",
-    displayName: a.displayName || a.username || "",
-    createdAt: a.createdAt || 0,
-    createdBy: a.createdBy || "",
-    // Default active when field missing (legacy accounts)
-    active: a.active !== false
-  };
-}
-function loadAccountsLocal(){
-  const list = loadJSON(ACCOUNTS_KEY);
-  ACCOUNTS = (Array.isArray(list) ? list : []).map(normalizeAccount).filter(Boolean);
-}
-function persistAccountsLocal(){ saveJSON(ACCOUNTS_KEY, ACCOUNTS); }
-function isMaster(){ return !!(CURRENT_USER && CURRENT_USER.role === "master"); }
-function currentUsername(){ return (CURRENT_USER && CURRENT_USER.username) || ""; }
-function isAccountActive(acc){ return !!(acc && acc.active !== false); }
-
-async function ensureDefaultMaster(){
-  loadAccountsLocal();
-  // Ensure every account has active flag
-  let fixed = false;
-  ACCOUNTS.forEach(a=>{ if(a.active === undefined){ a.active = true; fixed = true; } });
-  if(fixed) persistAccountsLocal();
-  if(ACCOUNTS.some(a=>a.role==="master")) return;
-  const passHash = await hashPass("master123");
-  ACCOUNTS = [{username:"master", passHash, role:"master", displayName:"Master", createdAt:Date.now(), active:true}];
-  persistAccountsLocal();
-}
-function findAccount(username){
-  const u = String(username||"").trim().toLowerCase();
-  return ACCOUNTS.find(a=>String(a.username).toLowerCase()===u) || null;
-}
-function saveSession(user){
-  CURRENT_USER = user ? {username:user.username, role:user.role, displayName:user.displayName||user.username} : null;
-  try{
-    if(CURRENT_USER) sessionStorage.setItem(SESSION_KEY, JSON.stringify(CURRENT_USER));
-    else sessionStorage.removeItem(SESSION_KEY);
-  }catch(e){}
-}
-function restoreSession(){
-  try{
-    const raw = sessionStorage.getItem(SESSION_KEY);
-    if(!raw) return null;
-    const u = JSON.parse(raw);
-    if(!u || !u.username) return null;
-    // Re-validate against current account list
-    const acc = findAccount(u.username);
-    if(!acc || !isAccountActive(acc)) return null;
-    return {username:acc.username, role:acc.role, displayName:acc.displayName||acc.username};
-  }catch(e){ return null; }
-}
-function applyRoleUi(){
-  const master = isMaster();
-  document.querySelectorAll(".tab-btn.master-only").forEach(btn=>{
-    btn.classList.toggle("locked-for-user", !master);
-    btn.title = master ? "" : "Master account only";
-  });
-  document.querySelectorAll(".master-only-panel").forEach(el=>{
-    el.classList.toggle("hidden", !master);
-  });
-  // Cloud setup: master only
-  const cloudCard = $("cloudSetupCard");
-  if(cloudCard) cloudCard.classList.toggle("hidden", !master);
-  // User badge
-  const badge = $("userBadge");
-  if(badge && CURRENT_USER){
-    badge.classList.remove("hidden");
-    if($("userBadgeName")) $("userBadgeName").textContent = CURRENT_USER.displayName || CURRENT_USER.username;
-    const roleEl = $("userBadgeRole");
-    if(roleEl){
-      roleEl.textContent = CURRENT_USER.role;
-      roleEl.classList.toggle("role-user", CURRENT_USER.role !== "master");
-    }
-  } else if(badge) badge.classList.add("hidden");
-  // If a non-master is on a locked tab, switch to sheet
-  if(!master){
-    const active = document.querySelector(".tab-btn.active");
-    if(active && active.classList.contains("master-only")){
-      const sheet = document.querySelector('.tab-btn[data-tab="sheet"]');
-      if(sheet) sheet.click();
-    }
-  }
-  try{ renderAccountsList(); }catch(e){}
-  try{ fillMasterProfileForm(); }catch(e){}
-}
-function showLoginGate(show){
-  const gate = $("loginGate");
-  if(!gate) return;
-  gate.classList.toggle("hidden", !show);
-  if(show){
-    const u = $("loginUser"); if(u){ u.value = ""; setTimeout(()=>u.focus(), 50); }
-    const p = $("loginPass"); if(p) p.value = "";
-    const e = $("loginErr"); if(e) e.textContent = "";
-  }
-}
-async function tryLogin(username, password){
-  await ensureDefaultMaster();
-  // Prefer cloud accounts if available
-  try{ await pullAccountsFromCloud(); }catch(e){}
-  const acc = findAccount(username);
-  if(!acc) return {ok:false, msg:"Unknown username."};
-  if(!isAccountActive(acc)) return {ok:false, msg:"This account is deactivated. Contact the master account."};
-  const h = await hashPass(password);
-  if(h !== acc.passHash) return {ok:false, msg:"Incorrect password."};
-  saveSession(acc);
-  showLoginGate(false);
-  applyRoleUi();
-  return {ok:true};
-}
-function logoutUser(){
-  saveSession(null);
-  showLoginGate(true);
-  applyRoleUi();
-}
-function setAuthMode(mode){
-  AUTH_MODE = mode === "register" ? "register" : "login";
-  const isReg = AUTH_MODE === "register";
-  if($("loginTitle")) $("loginTitle").textContent = isReg ? "Create your account" : "Welcome back";
-  if($("loginSub")) $("loginSub").innerHTML = isReg
-    ? "Pick a username and password. New accounts are regular <strong>users</strong> — a master can promote, activate or deactivate them later."
-    : "Sign in to open your workspace. Only <strong>master</strong> accounts can change system settings and manage users.";
-  if($("loginFields")) $("loginFields").classList.toggle("hidden", isReg);
-  if($("registerFields")) $("registerFields").classList.toggle("hidden", !isReg);
-  if($("loginBtn")) $("loginBtn").classList.toggle("hidden", isReg);
-  if($("registerBtn")) $("registerBtn").classList.toggle("hidden", !isReg);
-  if($("toggleAuthModeBtn")) $("toggleAuthModeBtn").textContent = isReg ? "Back to sign in" : "Create an account";
-  if($("loginErr")) $("loginErr").textContent = "";
-}
-function fillMasterProfileForm(){
-  if(!CURRENT_USER || !isMaster()) return;
-  if($("masterEditUser")) $("masterEditUser").value = CURRENT_USER.username || "";
-  if($("masterEditDisplay")) $("masterEditDisplay").value = CURRENT_USER.displayName || CURRENT_USER.username || "";
-  if($("masterEditOldPass")) $("masterEditOldPass").value = "";
-  if($("masterEditNewPass")) $("masterEditNewPass").value = "";
-}
-async function saveMasterProfile(){
-  if(!isMaster()) return {ok:false, msg:"Master only."};
-  const acc = findAccount(currentUsername());
-  if(!acc || acc.role !== "master") return {ok:false, msg:"Master account not found."};
-  const oldPass = ($("masterEditOldPass")&&$("masterEditOldPass").value) || "";
-  const newUser = String(($("masterEditUser")&&$("masterEditUser").value)||"").trim().toLowerCase();
-  const newDisplay = String(($("masterEditDisplay")&&$("masterEditDisplay").value)||"").trim();
-  const newPass = ($("masterEditNewPass")&&$("masterEditNewPass").value) || "";
-  if(!oldPass) return {ok:false, msg:"Enter your current password to save changes."};
-  const h = await hashPass(oldPass);
-  if(h !== acc.passHash) return {ok:false, msg:"Current password is wrong."};
-  if(!/^[a-z0-9._-]{2,32}$/.test(newUser)) return {ok:false, msg:"Username: 2–32 chars, letters/numbers . _ - only."};
-  if(newUser !== acc.username && findAccount(newUser)) return {ok:false, msg:"That username is already taken."};
-  if(newPass && newPass.length < 4) return {ok:false, msg:"New password must be at least 4 characters."};
-  acc.username = newUser;
-  acc.displayName = newDisplay || newUser;
-  if(newPass) acc.passHash = await hashPass(newPass);
-  persistAccountsLocal();
-  try{ await pushAccountsToCloud(); }catch(e){}
-  saveSession(acc);
-  applyRoleUi();
-  fillMasterProfileForm();
-  return {ok:true};
-}
-async function setAccountRole(username, role){
-  if(!isMaster()) return {ok:false, msg:"Master only."};
-  const acc = findAccount(username);
-  if(!acc) return {ok:false, msg:"Account not found."};
-  if(acc.role === "master" && role !== "master"){
-    // Prevent demoting the last master
-    const masters = ACCOUNTS.filter(a=>a.role==="master" && isAccountActive(a));
-    if(masters.length <= 1) return {ok:false, msg:"Cannot remove master rights from the only master account."};
-  }
-  acc.role = role === "master" ? "master" : "user";
-  if(role === "master") acc.active = true;
-  persistAccountsLocal();
-  try{ await pushAccountsToCloud(); }catch(e){}
-  // If promoting/demoting current user, refresh session
-  if(CURRENT_USER && String(CURRENT_USER.username).toLowerCase()===String(acc.username).toLowerCase()){
-    saveSession(acc);
-    applyRoleUi();
-  }
-  renderAccountsList();
-  return {ok:true};
-}
-function renderAccountsList(){
-  const wrap = $("accountsList"); if(!wrap) return;
-  if(!isMaster()){ wrap.innerHTML = '<p class="hint">Sign in as master to manage accounts.</p>'; return; }
-  if(!ACCOUNTS.length){ wrap.innerHTML = '<p class="hint">No accounts yet.</p>'; return; }
-  const q = (($("acctSearch")&&$("acctSearch").value)||"").trim().toLowerCase();
-  const list = ACCOUNTS.slice()
-    .filter(a=>!q || String(a.username).toLowerCase().includes(q) || String(a.displayName||"").toLowerCase().includes(q))
-    .sort((a,b)=> (a.role===b.role?0:a.role==="master"?-1:1) || String(a.username).localeCompare(b.username));
-  if(!list.length){ wrap.innerHTML = '<p class="hint">No accounts match the search.</p>'; return; }
-  wrap.innerHTML = list.map(a=>{
-    const active = isAccountActive(a);
-    const isM = a.role === "master";
-    const isSelf = CURRENT_USER && String(CURRENT_USER.username).toLowerCase()===String(a.username).toLowerCase();
-    return `<div class="acct-row" style="${active?"":"opacity:.65;"}">
-      <strong>${escapeHtml(a.username)}</strong>
-      ${a.displayName && a.displayName!==a.username ? `<span style="color:#777;font-size:.8rem;">${escapeHtml(a.displayName)}</span>` : ""}
-      <span class="acct-role-pill ${isM?"master":""}">${escapeHtml(a.role)}</span>
-      <span class="acct-role-pill ${active?"acct-active":"acct-inactive"}">${active?"Active":"Inactive"}</span>
-      <span style="color:#999;font-size:.75rem;">${a.createdAt ? new Date(a.createdAt).toLocaleDateString() : ""}${a.createdBy ? " · by "+escapeHtml(a.createdBy) : ""}</span>
-      <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
-        ${!isM ? `<button type="button" class="btn btn-magenta btn-sm acct-promote" data-u="${escapeAttr(a.username)}" title="Grant master access">Make master</button>` : (!isSelf ? `<button type="button" class="btn btn-ghost btn-sm acct-demote" data-u="${escapeAttr(a.username)}" title="Remove master access">Remove master</button>` : "")}
-        ${!isM ? `<button type="button" class="btn btn-sm ${active?"btn-ghost":"btn-teal"} acct-toggle" data-u="${escapeAttr(a.username)}" data-on="${active?"0":"1"}">${active?"Deactivate":"Activate"}</button>` : ""}
-        <button type="button" class="btn btn-ghost btn-sm acct-reset" data-u="${escapeAttr(a.username)}">Reset PW</button>
-        ${!isM ? `<button type="button" class="btn btn-ghost btn-sm acct-del" data-u="${escapeAttr(a.username)}">Remove</button>` : (isSelf ? `<span style="font-size:.72rem;color:#999;">you</span>` : "")}
-      </span>
-    </div>`;
-  }).join("");
-  wrap.querySelectorAll(".acct-promote").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      if(!isMaster()) return;
-      const u = btn.dataset.u;
-      if(!confirm("Grant master access to \""+u+"\"? They will be able to edit options, formulas and accounts.")) return;
-      const res = await setAccountRole(u, "master");
-      if($("acctStatus")) $("acctStatus").textContent = res.ok ? (u+" is now a master ✓") : (res.msg||"Failed");
-    });
-  });
-  wrap.querySelectorAll(".acct-demote").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      if(!isMaster()) return;
-      const u = btn.dataset.u;
-      if(!confirm("Remove master access from \""+u+"\"? They will become a regular user.")) return;
-      const res = await setAccountRole(u, "user");
-      if($("acctStatus")) $("acctStatus").textContent = res.ok ? (u+" is now a user ✓") : (res.msg||"Failed");
-    });
-  });
-  wrap.querySelectorAll(".acct-toggle").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      if(!isMaster()) return;
-      const u = btn.dataset.u;
-      const turnOn = btn.dataset.on === "1";
-      const acc = findAccount(u);
-      if(!acc || acc.role==="master") return;
-      acc.active = turnOn;
-      persistAccountsLocal();
-      try{ await pushAccountsToCloud(); }catch(e){}
-      renderAccountsList();
-      if($("acctStatus")) $("acctStatus").textContent = turnOn ? ("Activated "+u+" ✓") : ("Deactivated "+u+" ✓");
-    });
-  });
-  wrap.querySelectorAll(".acct-reset").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      if(!isMaster()) return;
-      const u = btn.dataset.u;
-      const np = prompt("New password for \""+u+"\" (min 4 characters):");
-      if(np==null) return;
-      const res = await changePassword(u, null, np);
-      alert(res.ok ? "Password reset for "+u : (res.msg||"Failed"));
-    });
-  });
-  wrap.querySelectorAll(".acct-del").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      if(!isMaster()) return;
-      const u = btn.dataset.u;
-      if(!confirm("Remove user \""+u+"\"?")) return;
-      ACCOUNTS = ACCOUNTS.filter(a=>String(a.username).toLowerCase()!==String(u).toLowerCase());
-      persistAccountsLocal();
-      try{ await pushAccountsToCloud(); }catch(e){}
-      renderAccountsList();
-    });
-  });
-}
-/** Create account — master panel or public self-registration (always role user). */
-async function createUserAccount(username, password, role, opts){
-  opts = opts || {};
-  const selfReg = !!opts.selfRegister;
-  if(!selfReg && !isMaster()) return {ok:false, msg:"Only master can create accounts here."};
-  const u = String(username||"").trim().toLowerCase();
-  if(!/^[a-z0-9._-]{2,32}$/.test(u)) return {ok:false, msg:"Username: 2–32 chars, letters/numbers . _ - only."};
-  if(String(password||"").length < 4) return {ok:false, msg:"Password must be at least 4 characters."};
-  try{ await pullAccountsFromCloud(); }catch(e){}
-  if(findAccount(u)) return {ok:false, msg:"That username already exists."};
-  // Self-registration can never create a master
-  const r = (!selfReg && role==="master") ? "master" : "user";
-  const passHash = await hashPass(password);
-  ACCOUNTS.push({
-    username:u, passHash, role:r, displayName:u,
-    createdAt:Date.now(),
-    createdBy: selfReg ? u : (currentUsername()||"master"),
-    active: true
-  });
-  persistAccountsLocal();
-  try{ await pushAccountsToCloud(); }catch(e){}
-  renderAccountsList();
-  return {ok:true};
-}
-async function changePassword(username, oldPass, newPass){
-  const acc = findAccount(username);
-  if(!acc) return {ok:false, msg:"Account not found."};
-  const isSelf = CURRENT_USER && String(CURRENT_USER.username).toLowerCase()===String(username).toLowerCase();
-  if(!isSelf && !isMaster()) return {ok:false, msg:"Not allowed."};
-  // Self must prove current password; master reset skips that check
-  if(isSelf && oldPass != null){
-    const h = await hashPass(oldPass);
-    if(h !== acc.passHash) return {ok:false, msg:"Current password is wrong."};
-  }
-  if(String(newPass||"").length < 4) return {ok:false, msg:"New password must be at least 4 characters."};
-  acc.passHash = await hashPass(newPass);
-  persistAccountsLocal();
-  try{ await pushAccountsToCloud(); }catch(e){}
-  return {ok:true};
-}
-async function pushAccountsToCloud(){
-  if(typeof CLOUD_CONFIG === "undefined" || !CLOUD_CONFIG) return;
-  const url = CLOUD_CONFIG.dbUrl.replace(/\/+$/, "") + "/accounts.json";
-  await fetch(url, {method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify(ACCOUNTS)});
-}
-async function pullAccountsFromCloud(){
-  if(typeof CLOUD_CONFIG === "undefined" || !CLOUD_CONFIG) return;
-  const url = CLOUD_CONFIG.dbUrl.replace(/\/+$/, "") + "/accounts.json";
-  const r = await fetch(url);
-  if(!r.ok) return;
-  const json = await r.json();
-  if(!Array.isArray(json) || !json.length) return;
-  // Cloud is source of truth when present — normalize active flags
-  ACCOUNTS = json.map(normalizeAccount).filter(Boolean);
-  persistAccountsLocal();
-}
-
-// Wire login UI + registration + accounts tab
-(function bootAuthUi(){
-  const doLogin = async ()=>{
-    const u = ($("loginUser")&&$("loginUser").value||"").trim();
-    const p = ($("loginPass")&&$("loginPass").value||"");
-    const err = $("loginErr");
-    if(err) err.textContent = "Signing in…";
-    const res = await tryLogin(u, p);
-    if(err) err.textContent = res.ok ? "" : (res.msg||"Login failed");
-  };
-  const doRegister = async ()=>{
-    const u = ($("regUser")&&$("regUser").value||"").trim();
-    const p = ($("regPass")&&$("regPass").value||"");
-    const p2 = ($("regPass2")&&$("regPass2").value||"");
-    const err = $("loginErr");
-    if(p !== p2){ if(err) err.textContent = "Passwords do not match."; return; }
-    if(err) err.textContent = "Creating account…";
-    const res = await createUserAccount(u, p, "user", {selfRegister:true});
-    if(!res.ok){ if(err) err.textContent = res.msg||"Could not create account"; return; }
-    // Auto sign-in after successful registration
-    const loginRes = await tryLogin(u, p);
-    if(err) err.textContent = loginRes.ok ? "" : (loginRes.msg||"Account created — please sign in.");
-    if(!loginRes.ok) setAuthMode("login");
-  };
-  if($("loginBtn")) $("loginBtn").addEventListener("click", doLogin);
-  if($("registerBtn")) $("registerBtn").addEventListener("click", doRegister);
-  if($("toggleAuthModeBtn")) $("toggleAuthModeBtn").addEventListener("click", ()=> setAuthMode(AUTH_MODE==="login"?"register":"login"));
-  if($("loginPass")) $("loginPass").addEventListener("keydown", e=>{ if(e.key==="Enter") doLogin(); });
-  if($("loginUser")) $("loginUser").addEventListener("keydown", e=>{ if(e.key==="Enter"){ const p=$("loginPass"); if(p) p.focus(); }});
-  if($("regPass2")) $("regPass2").addEventListener("keydown", e=>{ if(e.key==="Enter") doRegister(); });
-  if($("logoutBtn")) $("logoutBtn").addEventListener("click", ()=>{ if(confirm("Sign out?")) logoutUser(); });
-  if($("acctCreateBtn")) $("acctCreateBtn").addEventListener("click", async ()=>{
-    const st = $("acctStatus");
-    const res = await createUserAccount(($("acctNewUser")||{}).value, ($("acctNewPass")||{}).value, "user");
-    if(st) st.textContent = res.ok ? "User created ✓" : (res.msg||"Failed");
-    if(res.ok){ if($("acctNewUser")) $("acctNewUser").value=""; if($("acctNewPass")) $("acctNewPass").value=""; }
-  });
-  if($("acctSearch")) $("acctSearch").addEventListener("input", ()=> renderAccountsList());
-  if($("acctRefreshBtn")) $("acctRefreshBtn").addEventListener("click", async ()=>{
-    try{ await pullAccountsFromCloud(); }catch(e){}
-    renderAccountsList();
-    if($("acctStatus")) $("acctStatus").textContent = "List refreshed.";
-  });
-  const changeMyPass = async ()=>{
-    if(!CURRENT_USER){ alert("Sign in first."); return; }
-    const oldP = prompt("Current password:"); if(oldP==null) return;
-    const newP = prompt("New password (min 4 characters):"); if(newP==null) return;
-    const res = await changePassword(currentUsername(), oldP, newP);
-    alert(res.ok ? "Password updated." : (res.msg||"Failed"));
-  };
-  if($("acctChangeMyPassBtn")) $("acctChangeMyPassBtn").addEventListener("click", changeMyPass);
-  if($("changePassBtn")) $("changePassBtn").addEventListener("click", changeMyPass);
-  if($("masterSaveProfileBtn")) $("masterSaveProfileBtn").addEventListener("click", async ()=>{
-    const st = $("acctStatus");
-    if(st) st.textContent = "Saving profile…";
-    const res = await saveMasterProfile();
-    if(st) st.textContent = res.ok ? "Master profile updated ✓" : (res.msg||"Failed");
-    if(!res.ok) alert(res.msg||"Could not update profile");
-  });
-})();
-
-// Boot session after DOM accounts default is ready
-(async function bootSession(){
-  await ensureDefaultMaster();
-  const sess = restoreSession();
-  if(sess){ CURRENT_USER = sess; showLoginGate(false); applyRoleUi(); }
-  else { showLoginGate(true); applyRoleUi(); }
-})();
-
-/* =====================================================================
    Cloud sync (Firebase Realtime Database) & shared Products library.
    All products live as one JSON array at "/products" in the database.
    Reads/writes use the plain REST API (GET/PUT — no SDK needed); live
@@ -7462,11 +6885,6 @@ function connectFirebase(cfg){
   fetchProductsFromCloud();
   fetchPresetsFromCloud();
   pullSettingsFromCloud();
-  // Sync user accounts from cloud (master list shared across devices)
-  pullAccountsFromCloud().then(()=>{
-    if(!ACCOUNTS.length) return pushAccountsToCloud();
-    applyRoleUi();
-  }).catch(()=>{});
   pollRevs();
   startCloudPolling();
 }
@@ -7481,19 +6899,15 @@ function connectFirebase(cfg){
   }
 })();
 
-$("saveCloudConfigBtn").addEventListener("click", async ()=>{
-  if(!isMaster()){ alert("Only the master account can change cloud setup."); return; }
+$("saveCloudConfigBtn").addEventListener("click", ()=>{
   let dbUrl = $("cloudDbUrl").value.trim();
   if(!dbUrl){ alert("Please paste your Firebase Realtime Database URL."); return; }
   if(!/^https:\/\//i.test(dbUrl)){ alert("That doesn't look like a URL — it should start with https://"); return; }
   const cfg = {dbUrl};
   saveJSON(CLOUD_CONFIG_KEY, cfg);
   connectFirebase(cfg);
-  try{ await pullAccountsFromCloud(); if(ACCOUNTS.length) persistAccountsLocal(); else await pushAccountsToCloud(); }catch(e){}
-  applyRoleUi();
 });
 $("clearCloudConfigBtn").addEventListener("click", ()=>{
-  if(!isMaster()){ alert("Only the master account can change cloud setup."); return; }
   if(!confirm("Disconnect cloud sync on this device? Products already saved in the cloud are not deleted.")) return;
   localStorage.removeItem(CLOUD_CONFIG_KEY);
   CLOUD_CONFIG = null;
@@ -7582,8 +6996,7 @@ $("refreshProductsBtn").addEventListener("click", ()=>{
 });
 
 async function saveProductToCloud(asNew){
-  if(!CURRENT_USER){ alert("Please sign in first."); showLoginGate(true); return; }
-  if(!CLOUD_CONFIG){ alert("Cloud sync isn't connected yet — ask the master account to set it up in Products."); return; }
+  if(!CLOUD_CONFIG){ alert("Cloud sync isn't connected yet — set it up in the panel above first."); return; }
   recalc();
   const data = gatherData();
   const name = $("productSaveName").value.trim() || data.productName || "Untitled Product";
@@ -7591,21 +7004,14 @@ async function saveProductToCloud(asNew){
   try{
     await fetchProductsFromCloud(); // pull the freshest list first so we don't clobber a teammate's recent save
     const id = (asNew || !currentLoadedProductId) ? ("p_" + Date.now().toString(36) + Math.random().toString(36).slice(2,7)) : currentLoadedProductId;
-    const existing = PRODUCTS_CACHE.find(p=>p.id===id);
-    const who = currentUsername();
-    const payload = Object.assign({}, data, {
-      id, savedName: name, savedAtLocal: Date.now(),
-      savedBy: who,
-      createdBy: (existing && existing.createdBy) ? existing.createdBy : who,
-      updatedBy: who
-    });
+    const payload = Object.assign({}, data, {id, savedName: name, savedAtLocal: Date.now()});
     const idx = PRODUCTS_CACHE.findIndex(p=>p.id===id);
     if(idx>-1) PRODUCTS_CACHE[idx] = payload; else PRODUCTS_CACHE.unshift(payload);
     await pushProductsToCloud();
     currentLoadedProductId = id;
     $("updateProductBtn").classList.remove("hidden");
     renderProductList();
-    setStatus("Product saved by "+who+" ✓ — everyone using this tool will see it");
+    setStatus("Product saved to the cloud ✓ — everyone using this tool will see it");
   }catch(err){
     console.error(err);
     setStatus("Couldn't save: " + err.message, true);
@@ -7744,7 +7150,6 @@ function loadProductIntoForm(p){
 
 async function deleteProduct(id){
   if(!CLOUD_CONFIG) return;
-  if(!isMaster()){ alert("Only the master account can delete products."); return; }
   if(!confirm("Delete this saved product for everyone? This can't be undone.")) return;
   try{
     await fetchProductsFromCloud(); // pull freshest list first
@@ -7768,32 +7173,23 @@ function renderProductList(){
   const q = ($("productSearch").value||"").trim().toLowerCase();
   const list = PRODUCTS_CACHE.filter(p=>{
     if(!q) return true;
-    return [p.savedName,p.productName,p.productCode,p.customer,p.codeRequest,p.savedBy,p.createdBy,p.updatedBy].some(v=>(v||"").toLowerCase().includes(q));
+    return [p.savedName,p.productName,p.productCode,p.customer,p.codeRequest].some(v=>(v||"").toLowerCase().includes(q));
   });
   if(!list.length){
     wrap.innerHTML = '<p class="opt-empty">No saved products yet — save your first one above.</p>';
     return;
   }
-  wrap.innerHTML = list.map(p=>{
-    const creator = p.createdBy || p.savedBy || "";
-    const lastBy = p.savedBy || p.updatedBy || p.createdBy || "";
-    const same = creator && lastBy && String(creator).toLowerCase()===String(lastBy).toLowerCase();
-    const whoLabel = !lastBy ? "" : (same || !creator
-      ? `👤 ${lastBy}`
-      : `👤 Created by ${creator} · Last saved by ${lastBy}`);
-    return `
+  wrap.innerHTML = list.map(p=>`
     <div class="product-card${p.id===currentLoadedProductId ? " is-loaded" : ""}">
       <div>
         <div class="pc-name">${escapeHtml(p.savedName||p.productName||"Untitled")}</div>
         <div class="pc-meta">${escapeHtml(p.customer||"—")} · ${escapeHtml(p.productCode||"—")}${p.codeRequest ? " · Code Req: "+escapeHtml(p.codeRequest) : ""} · ${p.savedAtLocal ? new Date(p.savedAtLocal).toLocaleString() : ""}</div>
-        ${whoLabel ? `<div class="pc-savedby">${escapeHtml(whoLabel)}</div>` : `<div class="pc-savedby" style="background:#999;">👤 Unknown user</div>`}
       </div>
       <div style="display:flex;gap:8px;">
         <button type="button" class="btn btn-teal btn-sm prod-load" data-id="${p.id}">Load</button>
-        ${isMaster() ? `<button type="button" class="btn btn-ghost btn-sm prod-delete" data-id="${p.id}">Delete</button>` : ""}
+        <button type="button" class="btn btn-ghost btn-sm prod-delete" data-id="${p.id}">Delete</button>
       </div>
-    </div>`;
-  }).join("");
+    </div>`).join("");
   wrap.querySelectorAll(".prod-load").forEach(b=> b.addEventListener("click", ()=>{
     const idx = PRODUCTS_CACHE.findIndex(p=>p.id===b.dataset.id);
     currentProductIndex = idx; currentLoadedProductId = b.dataset.id;
@@ -9353,9 +8749,14 @@ async function pmCollectBlocks(){
             table: deckRows.length ? {headers:["Item","Description","Qty","Dimensions (mm)","Tolerance"], fr:[0.08,0.32,0.08,0.30,0.22], rows:deckRows.map(r => [r.item,r.desc,r.qty,r.dims,r.tol])} : null,
             textTitle:"Compliance & Quality Requirements", text:$("pmComplianceText").value || ""}); break;
         }
-        case "bomCodes":
-          // Intentionally omitted from PDF/Word — codes appear next to materials in Pallet Setup
+        case "bomCodes": {
+          const cr = pmBomCodeRows();
+          if(!cr.length) break;
+          blocks.push({w:"full", color:C.gold, title:titleOf("bomCodes"),
+            table:{headers:["Item","Specification","Code","UOM","Qty"], fr:[0.19,0.43,0.16,0.10,0.12],
+              rows:cr.map(r => [r.item, r.spec, r.code || "—", r.uom, String(Math.round((+r.qty||0)*1000)/1000)])}});
           break;
+        }
         case "frame": {
           if(!hasFrame) break;
           const fr = gatherPmRows(pmFrameDimsBody, ["std","len","w","treat"]);
