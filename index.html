@@ -7074,7 +7074,7 @@ async function pushAccountsToCloud(){
 async function pullAccountsFromCloud(){
   if(typeof CLOUD_CONFIG === "undefined" || !CLOUD_CONFIG) return;
   const url = CLOUD_CONFIG.dbUrl.replace(/\/+$/, "") + "/accounts.json";
-  const r = await fetch(url);
+  const r = await nsFetch(url);
   if(!r.ok) return;
   const json = await r.json();
   ACCOUNTS_PULLED_OK = true;
@@ -7169,6 +7169,8 @@ const CLOUD_CONFIG_KEY = "kandilCloudConfig_v3";
 /* The database address is built into the app, so the cloud connects automatically on every device,
    every browser and every restart - it no longer depends on this browser remembering a setting. */
 const DEFAULT_CLOUD_DB_URL = "https://specs-sheet-generator-v2-default-rtdb.firebaseio.com";
+/* Every read from the cloud bypasses ALL caches (browser, service worker, proxies) with a unique URL */
+function nsFetch(url, opts){ return fetch(url + (url.indexOf("?")>-1 ? "&" : "?") + "_=" + Date.now(), Object.assign({cache:"no-store"}, opts||{})); }
 let PRODUCT_KEYS = {};                       // product id -> Firebase child key
 let CLOUD_PRODUCTS_OK = false, SETTINGS_PULLED_OK = false, PRESETS_PULLED_OK = false, ACCOUNTS_PULLED_OK = false;
 let PENDING_COUNT = 0;
@@ -7185,7 +7187,7 @@ async function cloudFetchJson(url, tries){
   let lastErr;
   for(let i=0;i<(tries||3);i++){
     try{
-      const res = await fetch(url, {cache:"no-store"});
+      const res = await nsFetch(url);
       if(!res.ok){
         let d = ""; try{ const b = await res.json(); d = b && b.error ? b.error : ""; }catch(e){}
         const hint = (res.status===401||res.status===403) ? " — Firebase rules deny access (test-mode rules expire after 30 days: open Firebase → Realtime Database → Rules and set read/write to true)"
@@ -7364,7 +7366,7 @@ async function bumpRev(name, val){
 async function pollRevs(){
   if(!CLOUD_CONFIG) return;
   try{
-    const r = await fetch(firebaseBase() + "/meta.json"); if(!r.ok) return;
+    const r = await nsFetch(firebaseBase() + "/meta.json"); if(!r.ok) return;
     const m = (await r.json()) || {};
     const upd = (name, fn)=>{
       const v = m[name + "Rev"]; if(!v) return;
@@ -7382,7 +7384,7 @@ let _settingsPushTimer = null;
 function scheduleSettingsPush(){
   try{ if(!CLOUD_CONFIG) return; }catch(e){ return; }
   clearTimeout(_settingsPushTimer);
-  _settingsPushTimer = setTimeout(()=>{ pushSettingsToCloud().catch(e=>console.error(e)); }, 1500);
+  _settingsPushTimer = setTimeout(()=>{ pushSettingsToCloud().catch(e=>console.error(e)); }, 500);
 }
 async function pushSettingsToCloud(){
   if(!CLOUD_CONFIG) return;
@@ -7398,7 +7400,7 @@ async function pushSettingsToCloud(){
 async function pullSettingsFromCloud(){
   if(!CLOUD_CONFIG) return;
   try{
-    const r = await fetch(firebaseSettingsUrl()); if(!r.ok) return;
+    const r = await nsFetch(firebaseSettingsUrl()); if(!r.ok) return;
     const j = await r.json();
     SETTINGS_PULLED_OK = true;
     const localRev = Number(localStorage.getItem(SETTINGS_REV_KEY) || 0);
@@ -7465,9 +7467,9 @@ async function fetchPresetsFromCloud(){
   if(!CLOUD_CONFIG) return;
   try{
     const [pr, fr, tr] = await Promise.all([
-      fetch(firebasePalletProfilesUrl()),
-      fetch(firebaseFrameProfilesUrl()),
-      fetch(firebaseTombstonesUrl())
+      nsFetch(firebasePalletProfilesUrl()),
+      nsFetch(firebaseFrameProfilesUrl()),
+      nsFetch(firebaseTombstonesUrl())
     ]);
     // 1) merge deletion records first so deleted presets stay deleted
     if(tr.ok){
@@ -11337,7 +11339,7 @@ function pmDeleteSection(key){
     if(!("serviceWorker" in navigator)) return;
     if(!/^https?:$/i.test(location.protocol)) return;
     try{
-      const reg = await navigator.serviceWorker.register("./sw.js", { scope: "./" });
+      const reg = await navigator.serviceWorker.register("./sw.js", { scope: "./", updateViaCache: "none" });
       console.info("NEXUS service worker registered", reg.scope);
 
       // Reload at most once when a *new* worker takes over (after you publish an update).
@@ -11483,6 +11485,33 @@ function pmDeleteSection(key){
     };
     rd.readAsText(f); e.target.value = "";
   });
+})();
+</script>
+
+<script>
+/* ===== Always show the latest data: re-check the cloud whenever you come back to the app or open Products ===== */
+(function(){
+  let last = 0;
+  function refreshNow(force){
+    if(typeof CLOUD_CONFIG === "undefined" || !CLOUD_CONFIG) return;
+    const now = Date.now(); if(!force && now - last < 4000) return; last = now;
+    fetchProductsFromCloud();
+    try{ fetchPresetsFromCloud(); }catch(e){}
+    try{ pollRevs(); }catch(e){}
+  }
+  document.addEventListener("visibilitychange", ()=>{
+    if(document.visibilityState === "visible") refreshNow(false);
+    else { try{ if(typeof pushSettingsToCloud === "function") pushSettingsToCloud().catch(()=>{}); }catch(e){} }   // leaving: push settings immediately
+  });
+  window.addEventListener("pagehide", ()=>{ try{ pushSettingsToCloud().catch(()=>{}); }catch(e){} });
+  window.addEventListener("focus", ()=> refreshNow(false));
+  window.addEventListener("pageshow", e=>{ if(e.persisted) refreshNow(true); });   // page restored from the browser back/forward cache
+  const pb = document.querySelector('.tab-btn[data-tab="products"]'); if(pb) pb.addEventListener("click", ()=> refreshNow(true));
+  const ab = document.querySelector('.tab-btn[data-tab="analytics"]'); if(ab) ab.addEventListener("click", ()=> refreshNow(false));
+  /* one-time clean-up: delete caches left behind by older versions of the app */
+  try{ if(window.caches && !localStorage.getItem("nexusCacheCleaned_v30")){
+    caches.keys().then(ks=> Promise.all(ks.filter(k=>k !== "nexus-shell-v30").map(k=>caches.delete(k)))).then(()=>{ try{ localStorage.setItem("nexusCacheCleaned_v30","1"); }catch(e){} });
+  } }catch(e){}
 })();
 </script>
 </body>
